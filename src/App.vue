@@ -4,6 +4,20 @@ import RoadmapTimeline from "./components/RoadmapTimeline.vue";
 import Modal from "./components/Modal.vue";
 
 const isDark = ref(false);
+const projectCarouselRef = ref(null);
+
+const scrollProjects = (direction) => {
+  if (projectCarouselRef.value) {
+    const cardWidth = projectCarouselRef.value.children[0]?.offsetWidth || 300;
+    const gap = 32; // gap-8 = 32px
+    const scrollAmount =
+      direction === "left" ? -(cardWidth + gap) : cardWidth + gap;
+    projectCarouselRef.value.scrollBy({
+      left: scrollAmount,
+      behavior: "smooth",
+    });
+  }
+};
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value;
@@ -31,7 +45,7 @@ onMounted(() => {
 
 // Tab state
 const activeTab = ref("Frontend");
-const tabs = ["Frontend", "Backend", "AI"];
+const tabs = ["Frontend", "Backend", "AI / ML"];
 
 // Modal state
 const isModalOpen = ref(false);
@@ -56,7 +70,8 @@ const overviews = {
     "Frontend engineering focuses on crafting the user-facing portion of web applications. It bridges the gap between visual design and technical implementation, ensuring responsive and performant user experiences.",
   Backend:
     "Backend engineering manages the server-side logic, databases, APIs, and architecture that power web applications. It focuses on system reliability, secure data flows, and performant server processes.",
-  AI: "Artificial Intelligence integration leverages powerful machine learning models to solve complex cognitive tasks. It connects modern applications with intelligent logic, vector reasoning, and real-time generation.",
+  "AI / ML":
+    "Artificial Intelligence integration leverages powerful machine learning models to solve complex cognitive tasks. It connects modern applications with intelligent logic, vector reasoning, and real-time generation.",
 };
 
 // 4-5 dummy data nodes for the roadmap
@@ -239,7 +254,7 @@ const roadmapData = {
       ],
     },
   ],
-  AI: [
+  "AI / ML": [
     {
       step: "01",
       title: "Python & Foundational AI APIs",
@@ -390,7 +405,7 @@ const projectTiers = {
       ],
     },
   ],
-  AI: [
+  "AI / ML": [
     {
       level: "Level 1: Beginner",
       title: "Semantic Document Searcher",
@@ -435,22 +450,9 @@ const generalAdvice = [
   >
     <!-- Header -->
     <header
-      class="border-b border-zinc-200/60 dark:border-zinc-800/60 sticky top-0 bg-[#fbfbfa]/85 dark:bg-[#0c0c0d]/85 backdrop-blur-sm z-50"
+      class="border-b border-zinc-200/60 dark:border-zinc-800/60 sticky top-0 bg-white/85 dark:bg-zinc-900/85 backdrop-blur-sm z-50"
     >
-      <div
-        class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between"
-      >
-        <div class="flex items-center gap-2">
-          <!-- Minimalist logo -->
-          <div
-            class="w-2.5 h-2.5 bg-zinc-800 dark:bg-zinc-100 rounded-none"
-          ></div>
-          <span class="font-mono text-sm tracking-widest uppercase font-medium"
-            >survival.map</span
-          >
-        </div>
-
-        <!-- Dark/Light Mode Toggle Switch -->
+      <div class="mx-auto px-6 h-16 flex items-center justify-end">
         <button
           @click="toggleDarkMode"
           class="group relative flex items-center justify-between w-14 h-8 px-1 rounded-full focus:outline-none border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 transition-colors duration-300 hover:border-zinc-700 dark:hover:border-zinc-200"
@@ -473,21 +475,105 @@ const generalAdvice = [
     <main class="flex-grow max-w-4xl w-full mx-auto px-6 py-16 md:py-24">
       <!-- Hero Section -->
       <section class="mb-16 text-left">
-        <p
-          class="font-mono text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-4"
-        >
-          the engineer's compass
-        </p>
         <h1
           class="text-3xl md:text-5xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 mb-6 leading-tight"
         >
-          A minimalist guide to surviving modern software engineering.
+          A no bs guide/roadmap to what I have learned in 6 months
         </h1>
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg max-w-2xl leading-relaxed font-light"
+          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg leading-relaxed font-light"
         >
-          No noise, no hype. Just a structured, distilled roadmap covering the
-          core competencies that stand the test of time.
+          Okay so, consider this para as the "docs" of the roadmap. There is
+          litchy so much in this field that I can't remember from the top of my
+          head, however I will update the stuff here if I remember them/as my
+          own learning increases.
+        </p>
+        <h1
+          class="text-3xl md:text-5xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 mt-6 mb-6 leading-tight"
+        >
+          Sooo, what's the roadmap about?
+        </h1>
+        <p
+          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+        >
+          I've made this site such that it has all the 3 areas I learned, i.e
+          Frontend, Backend, AI / ML. Kinza told me ke you wanna learn AI, but I
+          still added the other stuff just in case you wanna explore it. Each
+          category has an overview, a roadmap of how to learn and what to learn,
+          and a list of projects to build to truly know if you've grasped the
+          concepts.
+        </p>
+        <p
+          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+        >
+          In the roadmap, there are clickable nodes. Most nodes have a
+          description and a list of resources to learn from, and some other
+          miscellaneous info. The roadmap is designed to be followed in order,
+          but you can also jump around if you want to focus on a specific area.
+        </p>
+
+        <p
+          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+        >
+          DO THE PROJECTS LAZMI !!! They are the best way to learn and retain
+          the concepts. The projects might be difficult at first, but remember,
+          our brains learn the most when we're struggling so try not to go
+          "Screw this, I'll just skip this" or use ai. Also bonus tip, think of
+          projects that YOU wanna do or you think might be useful to you. Like
+          say, I can't speak for you, but I often get bored of songs quickly,
+          and it takes weeks or months for me to find a song which reminds me of
+          the vibe of the song I play on repeat, so if you have the same
+          problem, you could use the spotify API to analyze the songs you like
+          the most, and it could automatically generate a playlist of
+          recommended songs. Or say, you're watching your calories, so create a
+          program with an array of nutritional value of foods, and you can
+          easily just add the foods you ate into the program and it tracks your
+          daily macros, ykwim? Like fun stuff.
+        </p>
+        <p
+          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+        >
+          This will sound like unc advice and it's annoying af but do NAWT use
+          AI for coding. Stay away from vibe coding like it's an O level paper
+          leaker on discord. When I was first learning coding, ALL my seniors
+          told me to stay away from AI but for the first 2 months I didn't
+          listen and secretly used AI, and guess what. I learned nothing. And
+          once you get hooked on vibe coding, it's OVER for your learning. So
+          for your own sake, stay away from AI. You can hmu, or ask reddit, or
+          check stackoverflow for solutions, but do NOT consult chatgpt or
+          gemini or claude. Even if you do use chatgpt or gemini, then tell it
+          to act as an INSTRUCTOR instead of generating you code. Tell it to
+          explain concepts to you and YOU should solve the problem yourself,
+          even if it takes multiple days.
+        </p>
+        <p
+          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+        >
+          Btw, your screen WILL light up with multiple red errors constantly.
+          That doesn't mean you're failing, that's just what coding is 90% of
+          the time 🙁🥀. The debugging is actually one of the funnest parts
+          about coding and problem solving (or maybe I'm a masochist...)
+        </p>
+        <p
+          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+        >
+          VERY VERY IMP FINAL TIP: Try to read the docs (documentation) for any
+          language/framework/library/tool you want to learn/use instead of just
+          watching tutorials. I know docs are the most annoying and head bashing
+          part, but they are genuinely the best way to learn about the thing
+          you're learning.
+        </p>
+        <p
+          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+        >
+          TLDR: read docs >>> watch tutorials (consult ai IF and only if needed)
+          >>> build projects >>> get 194883 bugs >>> fix project >>> learn new
+          topic >>> repeat
+        </p>
+        <p
+          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg leading-relaxed font-light"
+        >
+          Anws, enough yapping, let's get into it 😋
         </p>
       </section>
 
@@ -501,7 +587,7 @@ const generalAdvice = [
               v-for="tab in tabs"
               :key="tab"
               @click="activeTab = tab"
-              class="pb-4 px-1 font-mono text-xs uppercase tracking-widest transition-all duration-300 border-b-2 bg-transparent focus:outline-none"
+              class="pb-4 px-1 font-mono text-xl uppercase tracking-widest transition-all duration-300 border-b-2 bg-transparent focus:outline-none"
               :class="
                 activeTab === tab
                   ? 'border-zinc-800 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 font-medium'
@@ -516,79 +602,127 @@ const generalAdvice = [
 
       <!-- 3-Tab Restructured Dynamic Core Area -->
       <div class="space-y-24">
-        <!-- 1. Overview Section -->
-        <section class="text-left max-w-2xl mx-auto">
+        <section class="max-w-2xl mx-auto">
           <h2
-            class="font-mono text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-3 border-b border-zinc-100 dark:border-zinc-900/50 pb-2"
+            class="font-mono text-xl max-w-52 mx-auto text-center uppercase tracking-widest text-zinc-800 dark:text-zinc-200 mb-3 border-b border-zinc-100 dark:border-zinc-400 pb-2"
           >
             Field Overview
           </h2>
           <p
-            class="text-zinc-600 dark:text-zinc-300 text-base leading-relaxed font-light"
+            class="text-zinc-500 dark:text-zinc-400 text-base leading-relaxed font-light"
           >
             {{ overviews[activeTab] }}
           </p>
         </section>
 
-        <!-- 2. The Roadmap Section (Timeline) -->
         <section class="max-w-2xl mx-auto">
           <h2
-            class="font-mono text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-10 text-left border-b border-zinc-100 dark:border-zinc-900/50 pb-2"
+            class="font-mono text-xl max-w-64 mx-auto text-center uppercase tracking-widest text-zinc-800 dark:text-zinc-200 mb-3 border-b border-zinc-100 dark:border-zinc-400 pb-2"
           >
             The Timeline Path
           </h2>
-          <RoadmapTimeline
-            :items="roadmapData[activeTab]"
-            @node-click="openDetailsModal"
-          />
+          <div class="max-h-[580px] overflow-y-auto pr-2 custom-scrollbar">
+            <RoadmapTimeline
+              :items="roadmapData[activeTab]"
+              @node-click="openDetailsModal"
+            />
+          </div>
         </section>
 
-        <!-- 3. Projects Section -->
-        <section class="max-w-4xl mx-auto text-left">
+        <section class="max-w-4xl mx-auto text-left relative group/carousel">
           <h2
-            class="font-mono text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-8 border-b border-zinc-100 dark:border-zinc-900/50 pb-2"
+            class="font-mono text-xl max-w-72 mx-auto text-center justify-center uppercase tracking-widest text-zinc-800 dark:text-zinc-200 mb-8 border-b border-zinc-100 dark:border-zinc-400 pb-2"
           >
             Projects to Build
           </h2>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div
-              v-for="project in projectTiers[activeTab]"
-              :key="project.level"
-              class="p-6 border border-zinc-200/60 dark:border-zinc-800/60 flex flex-col justify-between"
+          <!-- Carousel Container with Arrows -->
+          <div class="relative px-4">
+            <!-- Left Arrow Button -->
+            <button
+              @click="scrollProjects('left')"
+              class="absolute left-[-24px] top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex items-center justify-center hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all shadow-sm focus:outline-none"
+              aria-label="Previous project"
             >
-              <div>
-                <span
-                  class="font-mono text-[9px] uppercase tracking-wider text-zinc-400 dark:text-zinc-500 block mb-3"
-                >
-                  {{ project.level }}
-                </span>
-                <h3
-                  class="text-base font-normal text-zinc-800 dark:text-zinc-100 mb-3"
-                >
-                  {{ project.title }}
-                </h3>
-                <p
-                  class="text-zinc-500 dark:text-zinc-400 text-xs font-light leading-relaxed mb-6"
-                >
-                  {{ project.desc }}
-                </p>
-              </div>
-
-              <div
-                class="border-t border-zinc-100 dark:border-zinc-900/50 pt-4 mt-auto"
+              <svg
+                class="w-5 h-5 text-zinc-500 dark:text-zinc-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <div class="flex flex-wrap gap-1">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+
+            <!-- Scrollable Track -->
+            <div
+              ref="projectCarouselRef"
+              class="flex gap-8 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-2"
+            >
+              <div
+                v-for="project in projectTiers[activeTab]"
+                :key="project.level"
+                class="min-w-full md:min-w-[calc(33.3333%-21.33px)] snap-start p-6 border border-zinc-200/60 dark:border-zinc-800/60 flex flex-col justify-between"
+              >
+                <div>
                   <span
-                    v-for="tech in project.stack"
-                    :key="tech"
-                    class="font-mono text-[8px] text-zinc-400 dark:text-zinc-500 bg-zinc-50 dark:bg-zinc-900/30 px-1.5 py-0.5 border border-zinc-200/40 dark:border-zinc-800/40"
+                    class="font-mono text-[9px] uppercase tracking-wider text-zinc-400 dark:text-zinc-500 block mb-3"
                   >
-                    {{ tech }}
+                    {{ project.level }}
                   </span>
+                  <h3
+                    class="text-base font-normal text-zinc-800 dark:text-zinc-100 mb-3"
+                  >
+                    {{ project.title }}
+                  </h3>
+                  <p
+                    class="text-zinc-500 dark:text-zinc-400 text-xs font-light leading-relaxed mb-6"
+                  >
+                    {{ project.desc }}
+                  </p>
+                </div>
+
+                <div
+                  class="border-t border-zinc-100 dark:border-zinc-900/50 pt-4 mt-auto"
+                >
+                  <div class="flex flex-wrap gap-1">
+                    <span
+                      v-for="tech in project.stack"
+                      :key="tech"
+                      class="font-mono text-[8px] text-zinc-400 dark:text-zinc-500 bg-zinc-50 dark:bg-zinc-900/30 px-1.5 py-0.5 border border-zinc-200/40 dark:border-zinc-800/40"
+                    >
+                      {{ tech }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <!-- Right Arrow Button -->
+            <button
+              @click="scrollProjects('right')"
+              class="absolute right-[-24px] top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex items-center justify-center hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all shadow-sm focus:outline-none"
+              aria-label="Next project"
+            >
+              <svg
+                class="w-5 h-5 text-zinc-500 dark:text-zinc-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
           </div>
         </section>
       </div>
@@ -648,25 +782,21 @@ const generalAdvice = [
         class="max-w-4xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4"
       >
         <div class="text-left">
-          <span class="font-mono text-[11px] text-zinc-400 dark:text-zinc-500"
-            >© 2026 CODING SURVIVAL ROADMAP.</span
+          <span class="font-mono text-[15px] text-zinc-400 dark:text-zinc-500"
+            >Some useful links 🤓👉</span
           >
         </div>
-        <div class="flex gap-6 font-mono text-[11px]">
-          <a
-            href="#"
-            class="text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-100 transition-colors duration-200"
-            >ROADMAP</a
-          >
+        <div class="flex gap-12 font-mono text-[15px]">
           <a
             href="#"
             class="text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-100 transition-colors duration-200"
             >RESOURCES</a
           >
           <a
-            href="#"
+            href="https://youtu.be/QDia3e12czc"
+            target="_blank"
             class="text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-100 transition-colors duration-200"
-            >GITHUB</a
+            >TOP SECRET</a
           >
         </div>
       </div>

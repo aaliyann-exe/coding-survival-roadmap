@@ -1,4 +1,6 @@
 <script setup>
+import { ref, onMounted } from "vue";
+
 defineProps({
   items: {
     type: Array,
@@ -7,6 +9,27 @@ defineProps({
 });
 
 defineEmits(["node-click"]);
+
+const completedSteps = ref({});
+
+onMounted(() => {
+  const saved = localStorage.getItem("roadmap-completed-steps");
+  if (saved) {
+    try {
+      completedSteps.value = JSON.parse(saved);
+    } catch (e) {
+      completedSteps.value = {};
+    }
+  }
+});
+
+const toggleCompleted = (title) => {
+  completedSteps.value[title] = !completedSteps.value[title];
+  localStorage.setItem(
+    "roadmap-completed-steps",
+    JSON.stringify(completedSteps.value),
+  );
+};
 </script>
 
 <template>
@@ -24,8 +47,14 @@ defineEmits(["node-click"]);
         class="absolute -left-[41px] top-1 w-[18px] h-[18px] rounded-full bg-[#fbfbfa] dark:bg-[#0c0c0d] border-2 border-zinc-300 dark:border-zinc-700 group-hover:border-zinc-800 dark:group-hover:border-zinc-100 transition-colors duration-300 flex items-center justify-center focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600"
         aria-label="View details"
       >
+        <!-- Bullet which will light green when a step is toggled as "Completed" -->
         <span
-          class="w-1.5 h-1.5 rounded-full bg-transparent group-hover:bg-zinc-800 dark:group-hover:bg-zinc-100 transition-colors duration-300"
+          class="w-1.5 h-1.5 rounded-full transition-colors duration-300"
+          :class="
+            completedSteps[item.title]
+              ? 'bg-emerald-400 dark:bg-emerald-800'
+              : 'bg-transparent group-hover:bg-zinc-800 dark:group-hover:bg-zinc-100'
+          "
         ></span>
       </button>
 
@@ -65,6 +94,31 @@ defineEmits(["node-click"]);
             {{ milestone }}
           </li>
         </ul>
+
+        <!-- Toggle Button for Completed Step -->
+        <div
+          class="mt-5 pt-4 border-t border-zinc-100 dark:border-zinc-900/50 flex justify-end"
+        >
+          <button
+            @click.stop="toggleCompleted(item.title)"
+            class="flex items-center gap-2 px-3 py-1.5 font-mono text-[11px] tracking-wider uppercase border transition-all duration-300"
+            :class="
+              completedSteps[item.title]
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+                : 'border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 bg-transparent'
+            "
+          >
+            <span
+              class="w-1.5 h-1.5 rounded-full transition-colors duration-300"
+              :class="
+                completedSteps[item.title]
+                  ? 'bg-emerald-500'
+                  : 'bg-zinc-300 dark:bg-zinc-700'
+              "
+            ></span>
+            {{ completedSteps[item.title] ? "Learned" : "Mark as Learned" }}
+          </button>
+        </div>
       </div>
     </div>
   </div>

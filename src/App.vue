@@ -67,7 +67,7 @@ const openDetailsModal = (node) => {
 // Field overview texts (exactly two sentences)
 const overviews = {
   Frontend:
-    "Frontend engineering focuses on crafting the user-facing portion of web applications. It bridges the gap between visual design and technical implementation, ensuring responsive and performant user experiences.",
+    "Frontend dev focuses on crafting the user-facing portion of web applications. It bridges the gap between visual design and technical implementation, ensuring responsive and performant user experiences.",
   Backend:
     "Backend engineering manages the server-side logic, databases, APIs, and architecture that power web applications. It focuses on system reliability, secure data flows, and performant server processes.",
   "AI / ML":
@@ -446,20 +446,20 @@ const generalAdvice = [
 
 <template>
   <div
-    class="min-h-screen flex flex-col selection:bg-zinc-200 dark:selection:bg-zinc-800 transition-colors duration-300"
+    class="flex flex-col min-h-screen transition-colors duration-300 selection:bg-zinc-200 dark:selection:bg-zinc-800"
   >
     <!-- Header -->
     <header
-      class="border-b border-zinc-200/60 dark:border-zinc-800/60 sticky top-0 bg-white/85 dark:bg-zinc-900/85 backdrop-blur-sm z-50"
+      class="sticky top-0 z-50 border-b border-zinc-200/60 dark:border-zinc-800/60 bg-white/85 dark:bg-zinc-900/85 backdrop-blur-sm"
     >
-      <div class="mx-auto px-6 h-16 flex items-center justify-end">
+      <div class="flex items-center justify-end h-16 px-6 mx-auto">
         <button
           @click="toggleDarkMode"
-          class="group relative flex items-center justify-between w-14 h-8 px-1 rounded-full focus:outline-none border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 transition-colors duration-300 hover:border-zinc-700 dark:hover:border-zinc-200"
+          class="relative flex items-center justify-between h-8 px-1 transition-colors duration-300 border rounded-full group w-14 focus:outline-none border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 hover:border-zinc-700 dark:hover:border-zinc-200"
           aria-label="Toggle dark mode"
         >
           <span
-            class="absolute left-1 top-1 w-6 h-6 rounded-full shadow-sm transition-transform duration-300 ease-out"
+            class="absolute w-6 h-6 transition-transform duration-300 ease-out rounded-full shadow-sm left-1 top-1"
             :class="
               isDark
                 ? 'translate-x-6 bg-white text-zinc-800'
@@ -472,16 +472,16 @@ const generalAdvice = [
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-grow max-w-4xl w-full mx-auto px-6 py-16 md:py-24">
+    <main class="flex-grow w-full max-w-4xl px-6 py-16 mx-auto md:py-24">
       <!-- Hero Section -->
       <section class="mb-16 text-left">
         <h1
-          class="text-3xl md:text-5xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 mb-6 leading-tight"
+          class="mb-6 text-3xl font-light leading-tight tracking-tight md:text-5xl text-zinc-900 dark:text-zinc-100"
         >
           A no bs guide/roadmap to what I have learned in 6 months
         </h1>
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg leading-relaxed font-light"
+          class="text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-lg"
         >
           Okay so, consider this para as the "docs" of the roadmap. There is
           litchy so much in this field that I can't remember from the top of my
@@ -489,12 +489,12 @@ const generalAdvice = [
           own learning increases.
         </p>
         <h1
-          class="text-3xl md:text-5xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 mt-6 mb-6 leading-tight"
+          class="mt-6 mb-6 text-3xl font-light leading-tight tracking-tight md:text-5xl text-zinc-900 dark:text-zinc-100"
         >
           Sooo, what's the roadmap about?
         </h1>
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+          class="mb-6 text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-lg"
         >
           I've made this site such that it has all the 3 areas I learned, i.e
           Frontend, Backend, AI / ML. Kinza told me ke you wanna learn AI, but I
@@ -504,7 +504,7 @@ const generalAdvice = [
           concepts.
         </p>
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+          class="mb-6 text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-lg"
         >
           In the roadmap, there are clickable nodes. Most nodes have a
           description and a list of resources to learn from, and some other
@@ -513,7 +513,7 @@ const generalAdvice = [
         </p>
 
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+          class="mb-6 text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-lg"
         >
           DO THE PROJECTS LAZMI !!! They are the best way to learn and retain
           the concepts. The projects might be difficult at first, but remember,
@@ -531,7 +531,7 @@ const generalAdvice = [
           daily macros, ykwim? Like fun stuff.
         </p>
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+          class="mb-6 text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-lg"
         >
           This will sound like unc advice and it's annoying af but do NAWT use
           AI for coding. Stay away from vibe coding like it's an O level paper
@@ -547,7 +547,7 @@ const generalAdvice = [
           even if it takes multiple days.
         </p>
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+          class="mb-6 text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-lg"
         >
           Btw, your screen WILL light up with multiple red errors constantly.
           That doesn't mean you're failing, that's just what coding is 90% of
@@ -555,7 +555,7 @@ const generalAdvice = [
           about coding and problem solving (or maybe I'm a masochist...)
         </p>
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+          class="mb-6 text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-lg"
         >
           VERY VERY IMP FINAL TIP: Try to read the docs (documentation) for any
           language/framework/library/tool you want to learn/use instead of just
@@ -564,14 +564,14 @@ const generalAdvice = [
           you're learning.
         </p>
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg mb-6 leading-relaxed font-light"
+          class="mb-6 text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-lg"
         >
           TLDR: read docs >>> watch tutorials (consult ai IF and only if needed)
           >>> build projects >>> get 194883 bugs >>> fix project >>> learn new
           topic >>> repeat
         </p>
         <p
-          class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg leading-relaxed font-light"
+          class="text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-lg"
         >
           Anws, enough yapping, let's get into it 😋
         </p>
@@ -587,7 +587,7 @@ const generalAdvice = [
               v-for="tab in tabs"
               :key="tab"
               @click="activeTab = tab"
-              class="pb-4 px-1 font-mono text-xl uppercase tracking-widest transition-all duration-300 border-b-2 bg-transparent focus:outline-none"
+              class="px-1 pb-4 font-mono text-xl tracking-widest uppercase transition-all duration-300 bg-transparent border-b-2 focus:outline-none"
               :class="
                 activeTab === tab
                   ? 'border-zinc-800 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 font-medium'
@@ -604,12 +604,12 @@ const generalAdvice = [
       <div class="space-y-24">
         <section class="max-w-2xl mx-auto">
           <h2
-            class="font-mono text-xl max-w-52 mx-auto text-center uppercase tracking-widest text-zinc-800 dark:text-zinc-200 mb-3 border-b border-zinc-100 dark:border-zinc-400 pb-2"
+            class="pb-2 mx-auto mb-3 font-mono text-xl tracking-widest text-center uppercase border-b max-w-52 text-zinc-800 dark:text-zinc-200 border-zinc-100 dark:border-zinc-400"
           >
             Field Overview
           </h2>
           <p
-            class="text-zinc-500 dark:text-zinc-400 text-base leading-relaxed font-light"
+            class="text-base font-light leading-relaxed text-zinc-500 dark:text-zinc-400"
           >
             {{ overviews[activeTab] }}
           </p>
@@ -617,7 +617,7 @@ const generalAdvice = [
 
         <section class="max-w-2xl mx-auto">
           <h2
-            class="font-mono text-xl max-w-64 mx-auto text-center uppercase tracking-widest text-zinc-800 dark:text-zinc-200 mb-3 border-b border-zinc-100 dark:border-zinc-400 pb-2"
+            class="pb-2 mx-auto mb-3 font-mono text-xl tracking-widest text-center uppercase border-b max-w-64 text-zinc-800 dark:text-zinc-200 border-zinc-100 dark:border-zinc-400"
           >
             The Timeline Path
           </h2>
@@ -629,9 +629,9 @@ const generalAdvice = [
           </div>
         </section>
 
-        <section class="max-w-4xl mx-auto text-left relative group/carousel">
+        <section class="relative max-w-4xl mx-auto text-left group/carousel">
           <h2
-            class="font-mono text-xl max-w-72 mx-auto text-center justify-center uppercase tracking-widest text-zinc-800 dark:text-zinc-200 mb-8 border-b border-zinc-100 dark:border-zinc-400 pb-2"
+            class="justify-center pb-2 mx-auto mb-8 font-mono text-xl tracking-widest text-center uppercase border-b max-w-72 text-zinc-800 dark:text-zinc-200 border-zinc-100 dark:border-zinc-400"
           >
             Projects to Build
           </h2>
@@ -662,7 +662,7 @@ const generalAdvice = [
             <!-- Scrollable Track -->
             <div
               ref="projectCarouselRef"
-              class="flex gap-8 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-2"
+              class="flex gap-8 pb-2 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
             >
               <div
                 v-for="project in projectTiers[activeTab]"
@@ -676,19 +676,19 @@ const generalAdvice = [
                     {{ project.level }}
                   </span>
                   <h3
-                    class="text-base font-normal text-zinc-800 dark:text-zinc-100 mb-3"
+                    class="mb-3 text-base font-normal text-zinc-800 dark:text-zinc-100"
                   >
                     {{ project.title }}
                   </h3>
                   <p
-                    class="text-zinc-500 dark:text-zinc-400 text-xs font-light leading-relaxed mb-6"
+                    class="mb-6 text-xs font-light leading-relaxed text-zinc-500 dark:text-zinc-400"
                   >
                     {{ project.desc }}
                   </p>
                 </div>
 
                 <div
-                  class="border-t border-zinc-100 dark:border-zinc-900/50 pt-4 mt-auto"
+                  class="pt-4 mt-auto border-t border-zinc-100 dark:border-zinc-900/50"
                 >
                   <div class="flex flex-wrap gap-1">
                     <span
@@ -729,11 +729,11 @@ const generalAdvice = [
 
       <!-- Persistent Best Practices & Advice Section -->
       <section
-        class="mt-32 pt-16 border-t border-zinc-200/60 dark:border-zinc-800/60"
+        class="pt-16 mt-32 border-t border-zinc-200/60 dark:border-zinc-800/60"
       >
-        <div class="text-left mb-10">
+        <div class="mb-10 text-left">
           <p
-            class="font-mono text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-2"
+            class="mb-2 font-mono text-xs tracking-widest uppercase text-zinc-400 dark:text-zinc-500"
           >
             guideline
           </p>
@@ -742,19 +742,19 @@ const generalAdvice = [
           </h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div
             v-for="advice in generalAdvice"
             :key="advice.title"
             class="p-6 border border-zinc-200/40 dark:border-zinc-800/40 bg-zinc-50/30 dark:bg-zinc-900/10"
           >
             <h3
-              class="font-mono text-xs uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-3"
+              class="mb-3 font-mono text-xs tracking-wider uppercase text-zinc-700 dark:text-zinc-300"
             >
               {{ advice.title }}
             </h3>
             <p
-              class="text-zinc-500 dark:text-zinc-400 text-sm font-light leading-relaxed"
+              class="text-sm font-light leading-relaxed text-zinc-500 dark:text-zinc-400"
             >
               {{ advice.body }}
             </p>
@@ -764,10 +764,10 @@ const generalAdvice = [
 
       <!-- Extra Quote Section (Utilizing lot of negative space) -->
       <section
-        class="mt-20 py-12 border-t border-b border-zinc-100 dark:border-zinc-900 text-center"
+        class="py-12 mt-20 text-center border-t border-b border-zinc-100 dark:border-zinc-900"
       >
         <p
-          class="font-light italic text-zinc-400 dark:text-zinc-500 max-w-xl mx-auto text-sm leading-relaxed"
+          class="max-w-xl mx-auto text-sm italic font-light leading-relaxed text-zinc-400 dark:text-zinc-500"
         >
           "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra
         </p>
@@ -779,7 +779,7 @@ const generalAdvice = [
       class="border-t border-zinc-200/60 dark:border-zinc-800/60 mt-auto bg-[#fbfbfa]/50 dark:bg-[#0c0c0d]/50"
     >
       <div
-        class="max-w-4xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4"
+        class="flex flex-col items-center justify-between max-w-4xl gap-4 px-6 py-8 mx-auto md:flex-row"
       >
         <div class="text-left">
           <span class="font-mono text-[15px] text-zinc-400 dark:text-zinc-500"
@@ -789,13 +789,13 @@ const generalAdvice = [
         <div class="flex gap-12 font-mono text-[15px]">
           <a
             href="#"
-            class="text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-100 transition-colors duration-200"
+            class="transition-colors duration-200 text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-100"
             >RESOURCES</a
           >
           <a
             href="https://youtu.be/QDia3e12czc"
             target="_blank"
-            class="text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-100 transition-colors duration-200"
+            class="transition-colors duration-200 text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-100"
             >TOP SECRET</a
           >
         </div>

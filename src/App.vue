@@ -262,7 +262,16 @@ const roadmapData = {
         "Grasp fundamental Python libraries and learn to make structured inference queries to model APIs.",
       detailedDescription:
         "Getting started in AI integration begins with leveraging cloud APIs. This phase teaches you environment management, synchronous/asynchronous SDK structures, and structured JSON payload handling.",
-      milestones: ["Python SDKs", "JSON Responses", "Rate Limits"],
+      milestones: [
+        "Python SDKs",
+        "Tuples, Lists, Dictionaries, Sets",
+        "Deeplearning.ai",
+        "Numpy",
+        "Pandas",
+        "Matplotlib",
+        "Seaborne",
+        "Scikit-learn",
+      ],
       resources: [
         {
           name: "OpenAI API Reference Guide",

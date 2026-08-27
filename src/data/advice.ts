@@ -3,16 +3,16 @@ import type { AdviceCard } from "./types";
 /** The original three advice cards, kept exactly as written. */
 export const generalAdvice: AdviceCard[] = [
   {
-    title: "Embrace the struggle",
-    body: "Learning to code is non-linear. Feeling stuck is a natural part of developing neural pathways for logic, not a sign of lack of ability.",
+    title: "Embrace the ragrra",
+    body: "Trust, seeing hundreds of errors is not only normal, it's good. The more you're stuck on something, the better it is cuz you're ACTUALLY learning something.",
   },
   {
     title: "Build to learn",
-    body: "Reading documentation or tutorials provides familiarity, but building projects, breaking them, and debugging them builds true muscle memory.",
+    body: "Reading docs or watching tutorials is good, but actually building projects no matter how small, breaking them, and debugging them is how you learn.",
   },
   {
-    title: "Prioritize consistency",
-    body: "Devoting 45 minutes of daily, high-focus effort yields vastly superior retention compared to an occasional 8-hour sprint on weekends.",
+    title: "Make it a hobby not a full time j*b",
+    body: "Devoting even just 45 minutes of daily, high-focus effort is sooo much better than trying to do 8 hour sprints and then burning yourself out and losing all your spark.",
   },
 ];
 

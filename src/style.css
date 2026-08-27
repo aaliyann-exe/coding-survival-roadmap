@@ -79,7 +79,7 @@
   body {
     /* No colour transition here: only body would animate while every other
        surface swaps instantly, which reads as a broken half-themed flash. */
-    @apply bg-canvas text-ink antialiased;
+    @apply antialiased bg-canvas text-ink;
     overflow-x: hidden;
   }
 
@@ -112,15 +112,17 @@
 --------------------------------------------------------------------------- */
 @layer components {
   .label-mono {
-    @apply font-mono text-[10px] uppercase tracking-widest text-faint;
+    @apply font-mono text-[18px] tracking-widest text-faint;
   }
 
   .rule-heading {
-    @apply flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-muted;
+    @apply items-center flex gap-3 font-mono text-[16px] uppercase tracking-widest text-muted;
   }
+
+  .rule-heading::before,
   .rule-heading::after {
     content: "";
-    @apply h-px flex-1 bg-line;
+    @apply flex-1 h-px bg-line;
   }
 
   .panel {

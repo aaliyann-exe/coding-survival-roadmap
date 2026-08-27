@@ -83,7 +83,12 @@ function openNext() {
       />
 
       <div class="relative max-w-6xl px-4 py-16 mx-auto sm:px-6 sm:py-24">
-        <p class="mb-6 label-mono">6-7 (omg 67) months of coding, mapped out</p>
+        <p class="mb-6 label-mono seesaw-text">
+          <span class="seesaw-num num-6">6</span>-<span class="seesaw-num num-7"
+            >7</span
+          >
+          (omg 67) months of coding, mapped out
+        </p>
 
         <h1
           class="max-w-4xl text-3xl font-light leading-[1.15] tracking-tight text-ink md:text-5xl lg:text-[3.4rem]"
@@ -275,7 +280,8 @@ function openNext() {
               <p
                 class="text-base font-light leading-relaxed text-muted md:text-[17px]"
               >
-                Anws, enough yapping, let's get into it 😋
+                Anws, enough with the yappucino, let's get to the programmucino
+                😋
               </p>
             </div>
           </div>
@@ -439,7 +445,7 @@ function openNext() {
     <!-- =========================================================== ADVICE -->
     <section class="max-w-6xl px-4 mx-auto py-14 sm:px-6 sm:py-20">
       <div class="mb-10">
-        <p class="mb-2 label-mono">guideline</p>
+        <p class="mb-2 label-mono">Guideline</p>
         <h2 class="text-xl font-normal text-ink">
           Best Practices &amp; Advice
         </h2>
@@ -491,3 +497,47 @@ function openNext() {
     </section>
   </div>
 </template>
+
+<style>
+.seesaw-num {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+/* Start the animation when hovering over the paragraph */
+.seesaw-text:hover .num-6 {
+  animation: moveUpFirst 1.2s ease-in-out infinite;
+}
+
+.seesaw-text:hover .num-7 {
+  animation: moveDownFirst 1.2s ease-in-out infinite;
+}
+
+/* 6 goes up first, then down */
+@keyframes moveUpFirst {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-5px);
+  }
+  75% {
+    transform: translateY(5px);
+  }
+}
+
+/* 7 goes down first, then up */
+@keyframes moveDownFirst {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(5px);
+  }
+  75% {
+    transform: translateY(-5px);
+  }
+}
+</style>

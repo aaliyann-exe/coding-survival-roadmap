@@ -1,5 +1,10 @@
 /// <reference types="vite/client" />
 
+interface ImportMetaEnv {
+  /** Base URL of the Go backend (see backend/README.md). Defaults to http://localhost:8080. */
+  readonly VITE_API_URL?: string;
+}
+
 declare module "*.vue" {
   import type { DefineComponent } from "vue";
   const component: DefineComponent<Record<string, unknown>, Record<string, unknown>, unknown>;

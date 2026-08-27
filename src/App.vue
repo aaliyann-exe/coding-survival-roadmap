@@ -3,6 +3,7 @@ import AppNav from "@/components/layout/AppNav.vue";
 import AppFooter from "@/components/layout/AppFooter.vue";
 import CommandPalette from "@/components/search/CommandPalette.vue";
 import AchievementToast from "@/components/achievements/AchievementToast.vue";
+import LoginModal from "@/components/auth/LoginModal.vue";
 import { useTheme } from "@/composables/useTheme";
 import { useAchievements } from "@/composables/useAchievements";
 
@@ -40,5 +41,6 @@ useAchievements();
     <AppFooter />
     <CommandPalette />
     <AchievementToast />
+    <LoginModal />
   </div>
 </template>

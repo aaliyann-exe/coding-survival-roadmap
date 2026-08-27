@@ -4,12 +4,14 @@ import { useRoute } from "vue-router";
 import { useTheme } from "@/composables/useTheme";
 import { useProgress } from "@/composables/useProgress";
 import { useCommandPalette } from "@/composables/useSearch";
+import { useUser } from "@/composables/useUser";
 import AppIcon from "@/components/ui/AppIcon.vue";
 
 const route = useRoute();
 const { isDark, toggleDarkMode } = useTheme();
 const { overallPercent } = useProgress();
 const { open } = useCommandPalette();
+const { username, logout } = useUser();
 
 const mobileOpen = ref(false);
 watch(() => route.fullPath, () => (mobileOpen.value = false));
@@ -65,6 +67,17 @@ const links = [
           <span class="h-1.5 w-1.5" style="background-color: rgb(var(--track))" />
           {{ overallPercent }}% done
         </RouterLink>
+
+        <button
+          v-if="username"
+          type="button"
+          class="hidden items-center gap-1.5 border border-line px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted transition-colors hover:border-line-strong hover:text-ink sm:flex"
+          :aria-label="`Signed in as ${username}. Click to switch users.`"
+          @click="logout()"
+        >
+          <AppIcon name="user" :size="12" />
+          {{ username }}
+        </button>
 
         <button
           type="button"

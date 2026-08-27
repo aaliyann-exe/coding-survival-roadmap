@@ -52,6 +52,7 @@ const paths: Record<string, string> = {
   compass: "M12 21a9 9 0 100-18 9 9 0 000 18zm3-12l-2 5-5 2 2-5 5-2z",
   route: "M6 4v10a4 4 0 004 4h4m0 0l-3-3m3 3l-3 3M6 4h.01",
   target: "M12 21a9 9 0 100-18 9 9 0 000 18zm0-4a5 5 0 100-10 5 5 0 000 10zm0-4a1 1 0 100-2 1 1 0 000 2z",
+  user: "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z",
 };
 
 const d = (): string => paths[props.name] ?? paths.dot;

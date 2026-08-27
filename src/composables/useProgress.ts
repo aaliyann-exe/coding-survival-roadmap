@@ -2,11 +2,13 @@ import { computed, reactive, watch } from "vue";
 import type { NodeStatus, RoadmapId, RoadmapNode } from "@/data/types";
 import { allNodes, nodeIndex, roadmaps } from "@/data/roadmaps";
 import projects from "@/data/projects";
+import { useUser } from "@/composables/useUser";
+import { fetchProgress, pushProjectStatus, pushTaskStatus } from "@/lib/api";
 
 const STORAGE_KEY = "roadmap-progress-v2";
 const LEGACY_KEY = "roadmap-completed-steps";
 
-type TopicState = "in-progress" | "completed" | "mastered";
+export type TopicState = "in-progress" | "completed" | "mastered";
 
 interface ProgressState {
   topics: Record<string, TopicState>;
@@ -59,6 +61,29 @@ function load() {
     },
     { deep: true },
   );
+
+  // The backend, when reachable, is the source of truth for "whose progress
+  // is this" — sync in on login/switch, and go blank on logout so the next
+  // user's data can't leak into what's shown while the login modal is up.
+  const { username, onUserChange } = useUser();
+  if (username.value) void hydrateFromServer(username.value);
+  onUserChange((next) => {
+    if (next) void hydrateFromServer(next);
+    else {
+      state.topics = {};
+      state.projects = {};
+    }
+  });
+}
+
+/** Overwrites local progress with whatever the backend has for this user.
+ * A failed fetch (offline, backend down) leaves local state untouched —
+ * the site keeps working from localStorage either way. */
+async function hydrateFromServer(username: string) {
+  const remote = await fetchProgress(username);
+  if (!remote) return;
+  state.topics = { ...remote.tasks };
+  state.projects = Object.fromEntries(remote.projects.map((id) => [id, true as const]));
 }
 
 /**
@@ -234,6 +259,20 @@ function setTopic(id: string, next: TopicState | null) {
   if (next === null) delete state.topics[id];
   else state.topics[id] = next;
   touchToday();
+  syncTopic(id, next);
+}
+
+/** Best-effort push to the backend. No-ops silently with no username set
+ * or no server reachable — local state (already updated) is what's shown
+ * either way. */
+function syncTopic(id: string, next: TopicState | null) {
+  const { username } = useUser();
+  if (username.value) void pushTaskStatus(username.value, id, next);
+}
+
+function syncProject(id: string, completed: boolean) {
+  const { username } = useUser();
+  if (username.value) void pushProjectStatus(username.value, id, completed);
 }
 
 function startTopic(id: string) {
@@ -261,9 +300,11 @@ function cycleTopic(id: string) {
 }
 
 function toggleProject(id: string) {
-  if (state.projects[id]) delete state.projects[id];
-  else state.projects[id] = true;
+  const nowDone = !state.projects[id];
+  if (nowDone) state.projects[id] = true;
+  else delete state.projects[id];
   touchToday();
+  syncProject(id, nowDone);
 }
 
 function isProjectDone(id: string) {

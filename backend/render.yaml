@@ -1,0 +1,22 @@
+# Render "Blueprint" for the Go API. Deploy by connecting this repo on
+# Render and pointing it at this file (New > Blueprint), or by creating a
+# single Web Service manually and pointing it at backend/Dockerfile — either
+# way works, this file just saves re-entering the same settings by hand.
+#
+# DATABASE_URL and ALLOW_ORIGIN are marked sync: false because they're
+# secrets/environment-specific — set their real values in the Render
+# dashboard after the service exists rather than committing them here.
+# See ../DEPLOYMENT.md for the full walkthrough.
+services:
+  - type: web
+    name: roadmap-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOW_ORIGIN
+        sync: false

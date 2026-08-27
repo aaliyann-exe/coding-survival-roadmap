@@ -50,19 +50,54 @@ const currentRoadmap = computed(() => {
   return top && top.completed + top.inProgress > 0 ? top : null;
 });
 
-/** Last 20 weeks of activity, GitHub-graph style but honest about scale. */
+const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const WINDOW_DAYS = 140;
+
+interface Cell {
+  key: string;
+  iso: string | null;
+  active: boolean;
+}
+
+/** Last 20 weeks of activity, GitHub-graph style but honest about scale.
+ * Columns are padded at the front so every column is a real Mon–Sun week
+ * and the day labels down the side actually mean something. */
 const activityGrid = computed(() => {
   const days = new Set(state.activeDays);
-  const cells: { date: string; active: boolean }[] = [];
+  const cells: Cell[] = [];
   const now = new Date();
-  for (let i = 139; i >= 0; i--) {
+
+  const start = new Date(now);
+  start.setDate(now.getDate() - (WINDOW_DAYS - 1));
+  const lead = (start.getDay() + 6) % 7; // 0 = Monday
+  for (let i = 0; i < lead; i++) {
+    cells.push({ key: `pad-${i}`, iso: null, active: false });
+  }
+
+  for (let i = WINDOW_DAYS - 1; i >= 0; i--) {
     const d = new Date(now);
     d.setDate(now.getDate() - i);
     const iso = d.toISOString().slice(0, 10);
-    cells.push({ date: iso, active: days.has(iso) });
+    cells.push({ key: iso, iso, active: days.has(iso) });
   }
   return cells;
 });
+
+const activeDaysInWindow = computed(
+  () => activityGrid.value.filter((c) => c.active).length,
+);
+
+const dateFormat = new Intl.DateTimeFormat(undefined, {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+});
+
+function cellTitle(cell: Cell) {
+  if (!cell.iso) return undefined;
+  const label = dateFormat.format(new Date(`${cell.iso}T00:00:00Z`));
+  return `${label} — ${cell.active ? "active" : "nothing marked"}`;
+}
 
 function openNode(id: string) {
   const owner = roadmapForNode(id);
@@ -149,27 +184,59 @@ function doReset() {
 
     <!-- activity -->
     <section class="mb-14">
-      <h2 class="rule-heading mb-5">Last 20 weeks</h2>
-      <div class="overflow-x-auto pb-2">
-        <div
-          class="grid w-max grid-flow-col grid-rows-7 gap-1"
-          role="img"
-          aria-label="Activity over the last 20 weeks"
-        >
-          <span
-            v-for="cell in activityGrid"
-            :key="cell.date"
-            class="h-2.5 w-2.5"
-            :class="cell.active ? '' : 'bg-sunken'"
-            :style="cell.active ? { backgroundColor: 'rgb(var(--track))' } : undefined"
-            :title="cell.date"
-          />
+      <div class="mb-5 flex items-center gap-3">
+        <h2 class="font-mono text-[11px] uppercase tracking-widest text-muted">
+          Last 20 weeks
+        </h2>
+        <span class="h-px flex-1 bg-line" />
+        <span class="font-mono text-[10px] tabular-nums text-faint">
+          {{ activeDaysInWindow }} active day{{ activeDaysInWindow === 1 ? "" : "s" }}
+        </span>
+      </div>
+
+      <div class="custom-scrollbar overflow-x-auto pb-2">
+        <div class="flex w-max items-start gap-2">
+          <!-- Weekday gutter. Only alternate rows are labelled, same as the
+               graph this is imitating — seven labels is noise at this size. -->
+          <div class="grid grid-rows-7 gap-1 pt-px">
+            <span
+              v-for="(day, index) in DAY_LABELS"
+              :key="day"
+              class="flex h-2.5 items-center font-mono text-[9px] leading-none text-faint"
+            >
+              {{ index % 2 === 0 ? day : "" }}
+            </span>
+          </div>
+
+          <div
+            class="grid w-max grid-flow-col grid-rows-7 gap-1"
+            role="img"
+            :aria-label="`${activeDaysInWindow} active days over the last 20 weeks`"
+          >
+            <span
+              v-for="cell in activityGrid"
+              :key="cell.key"
+              class="h-2.5 w-2.5"
+              :class="!cell.iso ? '' : cell.active ? '' : 'bg-sunken'"
+              :style="cell.active ? { backgroundColor: 'rgb(var(--track))' } : undefined"
+              :title="cellTitle(cell)"
+            />
+          </div>
         </div>
       </div>
-      <p class="mt-3 text-2xs text-faint">
-        A square lights up on any day you mark something. Missing a day is fine — the
-        graph is a nudge, not a judge.
-      </p>
+
+      <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <p class="text-2xs text-faint">
+          A square lights up on any day you mark something. Missing a day is fine — the
+          graph is a nudge, not a judge.
+        </p>
+        <span class="ml-auto flex shrink-0 items-center gap-1.5 text-2xs text-faint">
+          Quiet
+          <span class="h-2.5 w-2.5 bg-sunken" />
+          <span class="h-2.5 w-2.5" style="background-color: rgb(var(--track))" />
+          Active
+        </span>
+      </div>
     </section>
 
     <!-- per roadmap -->

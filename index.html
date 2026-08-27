@@ -2,13 +2,83 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Coding Survival Roadmap</title>
-    <meta name="description" content="A no-bs interactive roadmap for learning frontend, Go backend and Python / AI. What to learn, in what order, why it matters, and what to build." />
+    <meta
+      name="description"
+      content="A no-bs interactive roadmap for learning frontend, Go backend and Python / AI. What to learn, in what order, why it matters, and what to build."
+    />
+    <meta name="author" content="Aaliyan" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+
+    <!-- Canvas colour per theme, so the browser chrome on mobile stops
+         flashing white over the dark theme. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fbfbfa" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0c0d" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Coding Survival Roadmap" />
+    <meta
+      property="og:description"
+      content="6-7 months of coding, mapped out. What to learn, in what order, why it matters, roughly how long it takes, and what to build so you actually remember it."
+    />
+    <meta property="og:image" content="/favicon.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Coding Survival Roadmap" />
+    <meta
+      name="twitter:description"
+      content="6-7 months of coding, mapped out. Three paths, 90+ topics, 50+ projects, and the reasoning behind every step."
+    />
+
+    <!-- The font stylesheet is @imported from style.css, which the browser
+         only discovers after the CSS lands. Warming the connections here
+         shaves a round trip off first paint. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!--
+      Theme must be resolved before first paint. useTheme() runs when Vue
+      mounts, which is one bundle-download too late: dark-mode users would
+      get a full-screen white flash first. This mirrors the logic in
+      src/composables/useTheme.ts — keep the two in sync.
+    -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          var dark =
+            saved === "dark" ||
+            (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.classList.add("dark");
+        } catch (e) {
+          /* private mode / storage blocked — just render light. */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>
+    <noscript>
+      <div
+        style="
+          max-width: 40rem;
+          margin: 4rem auto;
+          padding: 0 1.5rem;
+          font-family: system-ui, sans-serif;
+          line-height: 1.6;
+        "
+      >
+        <h1 style="font-weight: 400">This roadmap needs JavaScript</h1>
+        <p>
+          The whole thing is one interactive graph, so there's nothing to show
+          without it. Turn JavaScript on for this page and reload.
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

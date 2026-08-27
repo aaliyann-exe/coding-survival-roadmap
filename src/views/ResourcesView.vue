@@ -1,0 +1,189 @@
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import type { ResourceType } from "@/data/types";
+import {
+  allResources,
+  resourceTypeLabels,
+  resourceTypeOrder,
+} from "@/data/resources";
+import { roadmaps } from "@/data/roadmaps";
+import ResourceCard from "@/components/resources/ResourceCard.vue";
+import AppIcon from "@/components/ui/AppIcon.vue";
+
+const search = ref("");
+const activeType = ref<ResourceType | "all">("all");
+const activeTrack = ref<string>("all");
+const freeOnly = ref(false);
+
+const filtered = computed(() =>
+  allResources.filter((r) => {
+    if (activeType.value !== "all" && r.type !== activeType.value) return false;
+    if (activeTrack.value !== "all" && r.roadmapId !== activeTrack.value) return false;
+    if (freeOnly.value && r.free === false) return false;
+    const q = search.value.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      r.title.toLowerCase().includes(q) ||
+      r.description.toLowerCase().includes(q) ||
+      (r.nodeTitle ?? "").toLowerCase().includes(q)
+    );
+  }),
+);
+
+const grouped = computed(() =>
+  resourceTypeOrder
+    .map((type) => ({
+      type,
+      items: filtered.value.filter((r) => r.type === type),
+    }))
+    .filter((g) => g.items.length > 0),
+);
+
+function reset() {
+  search.value = "";
+  activeType.value = "all";
+  activeTrack.value = "all";
+  freeOnly.value = false;
+}
+</script>
+
+<template>
+  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+    <header class="mb-10">
+      <p class="label-mono mb-3">{{ allResources.length }} links, no SEO slop</p>
+      <h1 class="text-3xl font-light leading-tight tracking-tight text-ink md:text-4xl">
+        Resources
+      </h1>
+      <p class="mt-4 max-w-2xl text-base font-light leading-relaxed text-muted">
+        Official documentation first, because it's written by the people who built the
+        thing and it doesn't go stale in six months. Courses and videos are here where
+        they're genuinely good, not to pad the list.
+      </p>
+    </header>
+
+    <!-- filters -->
+    <div class="mb-10 space-y-4 border border-line bg-raised/50 p-4 sm:p-5">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span class="label-mono w-14 shrink-0">Type</span>
+        <button
+          type="button"
+          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
+          :class="
+            activeType === 'all'
+              ? 'border-line-strong text-ink'
+              : 'border-line text-faint hover:text-ink'
+          "
+          @click="activeType = 'all'"
+        >
+          All
+        </button>
+        <button
+          v-for="type in resourceTypeOrder"
+          :key="type"
+          type="button"
+          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
+          :class="
+            activeType === type
+              ? 'border-line-strong text-ink'
+              : 'border-line text-faint hover:text-ink'
+          "
+          @click="activeType = type"
+        >
+          {{ resourceTypeLabels[type] }}
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span class="label-mono w-14 shrink-0">Track</span>
+        <button
+          type="button"
+          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
+          :class="
+            activeTrack === 'all'
+              ? 'border-line-strong text-ink'
+              : 'border-line text-faint hover:text-ink'
+          "
+          @click="activeTrack = 'all'"
+        >
+          All
+        </button>
+        <button
+          v-for="r in roadmaps"
+          :key="r.id"
+          type="button"
+          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
+          :class="[
+            r.trackClass,
+            activeTrack === r.id
+              ? 'border-[rgb(var(--track))] text-ink'
+              : 'border-line text-faint hover:text-ink',
+          ]"
+          @click="activeTrack = r.id"
+        >
+          {{ r.short }}
+        </button>
+
+        <button
+          type="button"
+          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
+          :class="
+            freeOnly
+              ? 'border-line-strong text-ink'
+              : 'border-line text-faint hover:text-ink'
+          "
+          :aria-pressed="freeOnly"
+          @click="freeOnly = !freeOnly"
+        >
+          Free only
+        </button>
+
+        <label
+          class="ml-auto flex min-w-[180px] flex-1 items-center gap-2 border border-line bg-surface px-3 sm:max-w-xs"
+        >
+          <AppIcon name="search" :size="13" class="text-faint" />
+          <input
+            v-model="search"
+            type="search"
+            placeholder="Search resources…"
+            class="w-full bg-transparent py-2 text-[13px] text-ink outline-none placeholder:text-faint"
+            aria-label="Search resources"
+          />
+        </label>
+      </div>
+    </div>
+
+    <div v-if="filtered.length === 0" class="border border-line bg-raised p-12 text-center">
+      <p class="mb-4 text-sm text-muted">
+        Nothing found. Either you discovered a new technology or you typed it wrong.
+      </p>
+      <button type="button" class="btn" @click="reset">
+        <AppIcon name="reset" :size="12" /> Clear filters
+      </button>
+    </div>
+
+    <div v-else class="space-y-14">
+      <section v-for="group in grouped" :key="group.type">
+        <div class="mb-5 flex items-center gap-3">
+          <h2 class="font-mono text-[11px] uppercase tracking-widest text-muted">
+            {{ resourceTypeLabels[group.type] }}
+          </h2>
+          <span class="h-px flex-1 bg-line" />
+          <span class="font-mono text-[10px] text-faint">{{ group.items.length }}</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <ResourceCard
+            v-for="resource in group.items"
+            :key="resource.url"
+            :resource="resource"
+            :show-breadcrumb="
+              resource.nodeTitle
+                ? `${resource.roadmapTitle} → ${resource.nodeTitle}`
+                : undefined
+            "
+          />
+        </div>
+      </section>
+    </div>
+  </div>
+</template>

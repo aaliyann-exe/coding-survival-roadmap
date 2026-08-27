@@ -1,10 +1,70 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------------------
+   Design tokens.
+   Surfaces are layered: canvas -> surface -> raised -> sunken.
+   `--track` is the accent of whichever roadmap you are currently looking at,
+   set per-scope with the .track-* classes below.
+--------------------------------------------------------------------------- */
 @layer base {
+  :root {
+    --canvas: 251 251 250;
+    --surface: 255 255 255;
+    --raised: 250 250 249;
+    --sunken: 244 244 245;
+    --line: 228 228 231;
+    --line-strong: 212 212 216;
+    --ink: 24 24 27;
+    --muted: 113 113 122;
+    --faint: 161 161 170;
+    --track: 20 92 122;
+    --grid: 0 0 0;
+    --grid-alpha: 0.045;
+  }
+
+  .dark {
+    --canvas: 12 12 13;
+    --surface: 18 18 20;
+    --raised: 24 24 27;
+    --sunken: 9 9 10;
+    --line: 39 39 42;
+    --line-strong: 63 63 70;
+    --ink: 244 244 245;
+    --muted: 161 161 170;
+    --faint: 113 113 122;
+    --track: 103 202 235;
+    --grid: 255 255 255;
+    --grid-alpha: 0.05;
+  }
+
+  /* Per-roadmap accents. Applied on a wrapper, inherited by children. */
+  .track-frontend {
+    --track: 20 108 140;
+  }
+  .dark .track-frontend {
+    --track: 103 202 235;
+  }
+  .track-backend {
+    --track: 22 116 88;
+  }
+  .dark .track-backend {
+    --track: 94 216 168;
+  }
+  .track-python {
+    --track: 124 74 178;
+  }
+  .dark .track-python {
+    --track: 190 152 255;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   html,
   body {
     margin: 0;
@@ -17,31 +77,153 @@
   }
 
   body {
-    @apply bg-[#fbfbfa] text-zinc-800 dark:bg-[#0c0c0d] dark:text-zinc-100 transition-colors duration-300 antialiased;
+    /* No colour transition here: only body would animate while every other
+       surface swaps instantly, which reads as a broken half-themed flash. */
+    @apply bg-canvas text-ink antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgb(var(--track) / 0.22);
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--track) / 0.85);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 }
 
-/* Custom scrollbar style */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgb(212 212 216 / 0.5); /* zinc-300 */
-  border-radius: 3px;
-}
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgb(63 63 70 / 0.5); /* zinc-700 */
+/* ---------------------------------------------------------------------------
+   Component primitives
+--------------------------------------------------------------------------- */
+@layer components {
+  .label-mono {
+    @apply font-mono text-[10px] uppercase tracking-widest text-faint;
+  }
+
+  .rule-heading {
+    @apply flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-muted;
+  }
+  .rule-heading::after {
+    content: "";
+    @apply h-px flex-1 bg-line;
+  }
+
+  .panel {
+    @apply border border-line bg-surface;
+  }
+
+  .panel-raised {
+    @apply border border-line bg-raised;
+  }
+
+  .hairline {
+    @apply border-line;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 border border-line bg-surface px-3.5 py-2 font-mono text-[11px] uppercase tracking-widest text-muted transition-colors duration-200;
+  }
+  .btn:hover {
+    @apply border-line-strong text-ink;
+  }
+
+  .btn-primary {
+    border-color: rgb(var(--track) / 0.45);
+    background-color: rgb(var(--track) / 0.1);
+    color: rgb(var(--track));
+  }
+  .btn-primary:hover {
+    border-color: rgb(var(--track) / 0.8);
+    background-color: rgb(var(--track) / 0.16);
+    color: rgb(var(--track));
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 border border-line bg-sunken px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted;
+  }
+
+  .prose-note p {
+    @apply mb-6 text-base font-light leading-relaxed text-muted md:text-[17px];
+  }
+  .prose-note p:last-child {
+    @apply mb-0;
+  }
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-/* Hide scrollbar for IE, Edge and Firefox */
-.no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+/* ---------------------------------------------------------------------------
+   Utilities
+--------------------------------------------------------------------------- */
+@layer utilities {
+  .grid-paper {
+    background-image:
+      linear-gradient(
+        to right,
+        rgb(var(--grid) / var(--grid-alpha)) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        rgb(var(--grid) / var(--grid-alpha)) 1px,
+        transparent 1px
+      );
+    background-size: 32px 32px;
+  }
+
+  .track-text {
+    color: rgb(var(--track));
+  }
+  .track-bg-soft {
+    background-color: rgb(var(--track) / 0.1);
+  }
+  .track-border {
+    border-color: rgb(var(--track) / 0.45);
+  }
+
+  .fade-edges-y {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      black 40px,
+      black calc(100% - 40px),
+      transparent
+    );
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--line-strong) / 0.6);
+    border-radius: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--line-strong));
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

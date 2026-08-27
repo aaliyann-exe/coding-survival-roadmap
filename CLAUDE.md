@@ -15,6 +15,7 @@ Before changing anything:
 7. You are allowed to completely redesign the UI, component structure, animations, layout, navigation, etc. if doing so makes the website substantially better.
 8. Do not sacrifice functionality or readability just to make the website flashy.
 9. Do not ask me to manually describe things that you can discover by inspecting the existing project.
+10. Feel free to switch between any models and any thinking level, whether it's sonnet, opus, fable, etc. depending on the use. I.e, use the model on auto according to the current task at hand.
 
 The final result should feel like a **premium interactive developer learning platform**, not a generic "developer roadmap" template.
 

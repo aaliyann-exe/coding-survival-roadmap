@@ -163,8 +163,8 @@ watch(
           :stroke="
             edge.done ? 'rgb(var(--track))' : 'rgb(var(--line-strong))'
           "
-          :stroke-width="edge.done ? 1.5 : 1"
-          :stroke-opacity="edge.done ? 0.75 : 0.55"
+          :stroke-width="edge.done ? 1.75 : 1.25"
+          :stroke-opacity="edge.done ? 0.9 : 0.75"
           :stroke-dasharray="edge.live && !prefersReducedMotion ? '4 6' : undefined"
           :class="edge.live && !prefersReducedMotion ? 'animate-dash' : ''"
         />
@@ -203,17 +203,19 @@ watch(
           "
         >
           <div
-            v-for="node in group.nodes"
+            v-for="(node, nodeIndex) in group.nodes"
             :key="node.id"
             :ref="(el) => setCardRef(node.id, el as Element | null)"
-            :style="
-              isWide
+            class="animate-fade-in"
+            :style="{
+              animationDelay: `${Math.min(nodeIndex * 60, 240)}ms`,
+              ...(isWide
                 ? {
                     gridColumn: String(node.col + 1),
                     gridRow: String(localRow(group.stage.id, node)),
                   }
-                : undefined
-            "
+                : {}),
+            }"
           >
             <RoadmapNodeCard
               :node="node"

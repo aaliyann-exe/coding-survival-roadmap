@@ -51,9 +51,12 @@ const shell = computed(() => {
   >
     <span
       v-if="status === 'in-progress'"
-      class="absolute -right-px -top-px h-1.5 w-1.5 bg-amber-500"
+      class="absolute -right-px -top-px flex h-1.5 w-1.5"
       aria-hidden="true"
-    />
+    >
+      <span class="absolute inline-flex h-full w-full animate-pulse-ring bg-amber-500" />
+      <span class="relative inline-flex h-1.5 w-1.5 bg-amber-500" />
+    </span>
 
     <span class="flex w-full items-center justify-between gap-2">
       <span class="flex min-w-0 items-center gap-2">

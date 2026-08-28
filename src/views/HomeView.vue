@@ -177,10 +177,13 @@ function openNext() {
     <!-- ================================================== DOCS / THE YAP -->
     <section class="border-y border-line bg-raised/40">
       <div class="max-w-6xl px-4 mx-auto py-14 sm:px-6 sm:py-20">
-        <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-16">
-          <div>
-            <h2 class="mb-8 rule-heading">Read this first</h2>
+        <h2 class="mb-8 rule-heading">Read this first</h2>
 
+        <!-- A two-page spread: the long read on the left leaf, the short
+             version on the right, a spine crease between them. Below `lg`
+             there's no room for two pages, so it collapses to one. -->
+        <div class="grid lg:grid-cols-[minmax(0,1fr)_10px_260px]">
+          <div class="page-leaf p-6 sm:p-8 lg:border-r-0 lg:p-10">
             <!-- Original writing. Preserved exactly. Typography comes from
                  `.prose-note` in style.css so the wall of text stays one
                  consistent measure. -->
@@ -270,9 +273,11 @@ function openNext() {
             </div>
           </div>
 
+          <div class="book-spine hidden lg:block" aria-hidden="true" />
+
           <!-- sticky mini-nav for the long read -->
           <aside class="hidden lg:block">
-            <div class="sticky p-5 border top-24 border-line bg-surface">
+            <div class="page-leaf sticky top-24 p-5 lg:border-l-0">
               <p class="mb-4 label-mono">The short version</p>
               <ol
                 class="space-y-3 text-[13px] font-light leading-relaxed text-muted"

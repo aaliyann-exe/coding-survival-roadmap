@@ -102,23 +102,26 @@ onUnmounted(() => {
         :aria-label="title"
         class="page-edge fixed inset-x-0 bottom-0 top-10 z-[95] flex flex-col border-2 border-line bg-surface shadow-lift outline-none sm:inset-y-0 sm:left-auto sm:right-0 sm:top-0 sm:w-[min(560px,100vw)] sm:border-y-0 sm:border-r-0"
       >
-        <header
-          class="flex items-start justify-between gap-4 border-b border-line bg-raised px-5 py-4 sm:px-7 sm:py-5"
-        >
-          <div class="min-w-0">
-            <p v-if="eyebrow" class="label-mono mb-1.5">{{ eyebrow }}</p>
-            <h2 class="text-lg font-medium leading-tight text-ink sm:text-xl">
-              {{ title }}
-            </h2>
+        <header class="ink-rule bg-raised px-5 pt-4 sm:px-7 sm:pt-5">
+          <div class="flex items-start justify-between gap-4">
+            <div class="min-w-0">
+              <p v-if="eyebrow" class="label-mono mb-1.5 flex items-center gap-1.5">
+                <span class="text-[10px] text-faint" aria-hidden="true">◆</span>
+                {{ eyebrow }}
+              </p>
+              <h2 class="text-lg font-medium leading-tight text-ink sm:text-xl">
+                {{ title }}
+              </h2>
+            </div>
+            <button
+              type="button"
+              class="-mr-1 -mt-1 flex h-8 w-8 shrink-0 items-center justify-center border border-line text-faint transition-colors hover:border-line-strong hover:text-ink"
+              aria-label="Close"
+              @click="emit('close')"
+            >
+              <AppIcon name="close" :size="16" />
+            </button>
           </div>
-          <button
-            type="button"
-            class="-mr-1 -mt-1 shrink-0 p-2 text-faint transition-colors hover:text-ink"
-            aria-label="Close"
-            @click="emit('close')"
-          >
-            <AppIcon name="close" :size="18" />
-          </button>
         </header>
 
         <div class="custom-scrollbar flex-1 overflow-y-auto overscroll-contain">

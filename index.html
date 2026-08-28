@@ -34,11 +34,11 @@
       content="6-7 months of coding, mapped out. Three paths, 90+ topics, 50+ projects, and the reasoning behind every step."
     />
 
-    <!-- The font stylesheet is @imported from style.css, which the browser
-         only discovers after the CSS lands. Warming the connections here
-         shaves a round trip off first paint. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Display faces are self-hosted (src/style.css @font-face, files in
+         public/fonts) so first paint doesn't depend on reaching Google's
+         CDN — preload the two used above the fold. -->
+    <link rel="preload" href="/fonts/cinzel-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/eb-garamond-variable.woff2" as="font" type="font/woff2" crossorigin />
 
     <!--
       Theme must be resolved before first paint. useTheme() runs when Vue

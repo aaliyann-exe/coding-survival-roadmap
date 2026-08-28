@@ -10,15 +10,15 @@ defineProps<{ achievement: Achievement; unlocked: boolean }>();
     class="flex items-start gap-3 border p-4 transition-colors"
     :class="
       unlocked
-        ? 'border-emerald-500/35 bg-emerald-500/[0.04]'
-        : 'border-line bg-raised'
+        ? 'corner-frame border-emerald-600/50 bg-emerald-500/[0.05]'
+        : 'border-line border-dashed bg-raised opacity-80'
     "
   >
     <span
-      class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center border"
+      class="wax-seal mt-0.5 shrink-0"
       :class="
         unlocked
-          ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+          ? 'border-emerald-600/60 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
           : 'border-line text-faint'
       "
     >

@@ -70,9 +70,18 @@ const difficultyLabel = {
     </p>
 
     <!-- why should I care -->
-    <section class="mb-8 border-l-2 pl-4" style="border-color: rgb(var(--track) / 0.5)">
+    <section
+      class="relative mb-8 border-l-4 bg-sunken/40 py-3 pl-5 pr-4"
+      style="border-color: rgb(var(--track) / 0.6)"
+    >
+      <span
+        class="absolute right-3 top-1 font-serif text-4xl leading-none text-track opacity-20"
+        style="font-family: 'Cinzel', Georgia, serif"
+        aria-hidden="true"
+        >”</span
+      >
       <h3 class="label-mono mb-2">Why should I care?</h3>
-      <p class="text-[15px] font-light leading-relaxed text-ink/90">{{ node.why }}</p>
+      <p class="relative text-[15px] font-light leading-relaxed text-ink/90">{{ node.why }}</p>
     </section>
 
     <!-- time -->

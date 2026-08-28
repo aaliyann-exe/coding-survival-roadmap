@@ -23,13 +23,13 @@ const statusMeta: Record<
 };
 
 const meta = computed(() => statusMeta[props.status]);
+const sealed = computed(() => props.status === "completed" || props.status === "mastered");
 
 const shell = computed(() => {
   switch (props.status) {
     case "completed":
     case "mastered":
-      // Stamped with the wax seal: a true double border.
-      return "border-4 border-double border-emerald-600/70 bg-emerald-500/[0.06] hover:border-emerald-600";
+      return "border-2 border-emerald-600/70 bg-emerald-500/[0.06] hover:border-emerald-600";
     case "in-progress":
       return "border-2 border-amber-600/60 bg-amber-500/[0.06] hover:border-amber-600";
     case "locked":
@@ -45,18 +45,28 @@ const shell = computed(() => {
 <template>
   <button
     type="button"
-    class="group relative flex w-full flex-col items-start gap-2 border p-4 text-left transition-all duration-200 ease-out hover:-translate-y-0.5 focus-visible:-translate-y-0.5 sm:p-5"
+    class="corner-frame tablet-cut group relative flex w-full flex-col items-stretch text-left transition-all duration-200 ease-out hover:-translate-y-0.5 focus-visible:-translate-y-0.5"
     :class="[shell, active ? 'ring-1 ring-[rgb(var(--track))]' : '']"
     :aria-label="`${node.title} — ${meta.label}`"
     @click="$emit('select', node)"
   >
     <span
       v-if="status === 'in-progress'"
-      class="absolute -right-1 -top-1 h-2 w-2 animate-flicker bg-amber-500"
+      class="absolute right-1.5 top-1.5 h-2 w-2 animate-flicker bg-amber-500"
       aria-hidden="true"
     />
+    <span
+      v-if="sealed"
+      class="wax-seal absolute -right-2.5 -top-2.5 border-emerald-600/80 bg-canvas text-emerald-600"
+      aria-hidden="true"
+    >
+      <AppIcon :name="status === 'mastered' ? 'trophy' : 'check'" :size="11" />
+    </span>
 
-    <span class="flex w-full items-center justify-between gap-2">
+    <!-- header strip: status + optional tag, closed off with an ink rule -->
+    <span
+      class="flex w-full items-center justify-between gap-2 border-b border-line/50 px-4 py-2.5 sm:px-5"
+    >
       <span class="flex min-w-0 items-center gap-2">
         <AppIcon v-if="status === 'locked'" name="lock" :size="10" class="text-faint" />
         <span v-else class="h-1.5 w-1.5 shrink-0" :class="meta.dot" />
@@ -69,18 +79,24 @@ const shell = computed(() => {
       >
     </span>
 
+    <!-- body -->
+    <span class="flex flex-1 flex-col gap-2 px-4 py-3 sm:px-5">
+      <span
+        class="text-[15px] font-medium leading-snug text-ink transition-colors sm:text-base"
+        :class="status === 'available' ? 'group-hover:text-[rgb(var(--track))]' : ''"
+      >
+        {{ node.title }}
+      </span>
+
+      <span class="line-clamp-2 text-[13px] font-light leading-relaxed text-muted">
+        {{ node.tagline }}
+      </span>
+    </span>
+
+    <!-- footer strip -->
     <span
-      class="text-[15px] font-medium leading-snug text-ink transition-colors sm:text-base"
-      :class="status === 'available' ? 'group-hover:text-[rgb(var(--track))]' : ''"
+      class="mt-auto flex w-full items-center justify-between gap-2 border-t border-line/50 px-4 py-2 sm:px-5"
     >
-      {{ node.title }}
-    </span>
-
-    <span class="line-clamp-2 text-[13px] font-light leading-relaxed text-muted">
-      {{ node.tagline }}
-    </span>
-
-    <span class="mt-1 flex w-full items-center justify-between gap-2 pt-1">
       <span class="flex items-center gap-1.5 font-mono text-[10px] text-faint">
         <AppIcon name="clock" :size="11" />
         {{ node.time.basics }}

@@ -60,7 +60,7 @@ function dismiss() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="login-modal-title"
-        class="page-edge fixed left-1/2 top-1/2 z-[160] w-[min(360px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 border-2 border-line bg-surface p-6 shadow-lift"
+        class="page-edge corner-frame fixed left-1/2 top-1/2 z-[160] w-[min(360px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 border-2 border-line bg-surface p-6 shadow-lift"
         @keydown.escape="dismiss"
       >
         <span
@@ -70,7 +70,7 @@ function dismiss() {
           <AppIcon name="user" :size="16" />
         </span>
 
-        <h2 id="login-modal-title" class="mb-1.5 text-lg font-medium text-ink">
+        <h2 id="login-modal-title" class="ink-rule mb-4 text-lg font-medium text-ink">
           What's your username?
         </h2>
         <p class="mb-5 text-[13px] font-light leading-relaxed text-muted">

@@ -163,18 +163,24 @@ watch(
       aria-hidden="true"
     >
       <g fill="none" stroke-linecap="round">
-        <path
-          v-for="edge in edges"
-          :key="edge.id"
-          :d="edge.d"
-          :stroke="
-            edge.done ? 'rgb(var(--track))' : 'rgb(var(--line-strong))'
-          "
-          :stroke-width="edge.done ? 1.75 : 1.25"
-          :stroke-opacity="edge.done ? 0.9 : 0.75"
-          :stroke-dasharray="edge.live && !prefersReducedMotion ? '4 6' : undefined"
-          :class="edge.live && !prefersReducedMotion ? 'animate-dash' : ''"
-        />
+        <!-- Drawn as a carved road: a heavy outer stroke, then a thinner
+             canvas-coloured groove on top, so it reads as an etched path on
+             a map rather than a thin UI connector line. -->
+        <template v-for="edge in edges" :key="edge.id">
+          <path
+            :d="edge.d"
+            :stroke="edge.done ? 'rgb(var(--track))' : 'rgb(var(--line))'"
+            :stroke-width="edge.done ? 5 : 4"
+            :stroke-opacity="edge.done ? 0.95 : 0.6"
+          />
+          <path
+            :d="edge.d"
+            stroke="rgb(var(--canvas))"
+            :stroke-width="edge.done ? 2 : 1.75"
+            :stroke-dasharray="edge.live && !prefersReducedMotion ? '3 7' : undefined"
+            :class="edge.live && !prefersReducedMotion ? 'animate-dash' : ''"
+          />
+        </template>
       </g>
     </svg>
 
@@ -184,8 +190,11 @@ watch(
         :key="group.stage.id"
         :aria-label="group.stage.title"
       >
-        <header class="mb-5 md:mb-7">
-          <div class="flex items-center gap-3">
+        <header class="relative mb-5 overflow-hidden md:mb-7">
+          <span class="chapter-numeral" aria-hidden="true">{{
+            String(groupIndex + 1).padStart(2, "0")
+          }}</span>
+          <div class="relative z-10 flex items-center gap-3">
             <span
               class="bg-canvas pr-3 font-mono text-[11px] uppercase tracking-widest text-muted"
             >
@@ -206,13 +215,16 @@ watch(
               {{ stageProgress(group.nodes).done }}/{{ group.nodes.length }}
             </span>
           </div>
-          <p class="mt-2 max-w-2xl text-[13px] font-light leading-relaxed text-muted">
+          <p
+            class="relative z-10 mt-2 max-w-2xl text-[13px] font-light leading-relaxed text-muted"
+          >
             {{ group.stage.blurb }}
           </p>
         </header>
 
         <div
           class="grid grid-cols-1 gap-4 md:gap-x-6 md:gap-y-8"
+          :class="!isWide ? 'quest-chain' : ''"
           :style="
             isWide
               ? { gridTemplateColumns: `repeat(${roadmap.lanes}, minmax(0, 1fr))` }

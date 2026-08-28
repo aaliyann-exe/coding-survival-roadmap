@@ -44,6 +44,13 @@ const stagesWithNodes = computed(() =>
     .filter((s) => s.nodes.length > 0),
 );
 
+/** How much of one stage is cleared. Shown in the stage header so you can
+ * see where you are without opening the progress page. */
+function stageProgress(nodes: RoadmapNode[]) {
+  const done = nodes.filter((n) => completedNodeIds.value.has(n.id)).length;
+  return { done, total: nodes.length, percent: (done / nodes.length) * 100 };
+}
+
 /** Row numbers are global across the roadmap; make them local per stage. */
 function localRow(stageId: string, node: RoadmapNode) {
   const group = stagesWithNodes.value.find((s) => s.stage.id === stageId);
@@ -188,6 +195,16 @@ watch(
               {{ group.stage.title }}
             </span>
             <span class="h-px flex-1 bg-line" />
+            <span
+              class="shrink-0 font-mono text-[10px] tabular-nums"
+              :class="
+                stageProgress(group.nodes).done === group.nodes.length
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : 'text-faint'
+              "
+            >
+              {{ stageProgress(group.nodes).done }}/{{ group.nodes.length }}
+            </span>
           </div>
           <p class="mt-2 max-w-2xl text-[13px] font-light leading-relaxed text-muted">
             {{ group.stage.blurb }}

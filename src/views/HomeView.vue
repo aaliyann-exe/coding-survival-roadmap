@@ -181,11 +181,11 @@ function openNext() {
           <div>
             <h2 class="mb-8 rule-heading">Read this first</h2>
 
-            <!-- Original writing. Preserved exactly. -->
-            <div class="max-w-2xl">
-              <p
-                class="mb-6 text-base font-light leading-relaxed text-muted md:text-[17px]"
-              >
+            <!-- Original writing. Preserved exactly. Typography comes from
+                 `.prose-note` in style.css so the wall of text stays one
+                 consistent measure. -->
+            <div class="prose-note max-w-2xl">
+              <p>
                 Okay so, consider this para as the "docs" (documentation) of the
                 roadmap. There is litchy so much in this field that I can't
                 remember from the top of my head, however I will update the
@@ -197,9 +197,7 @@ function openNext() {
               >
                 Sooo, what's the roadmap about?
               </h3>
-              <p
-                class="mb-6 text-base font-light leading-relaxed text-muted md:text-[17px]"
-              >
+              <p>
                 I've made this site such that it has all the 3 areas I learned,
                 i.e Frontend, Backend, AI / ML. Kinza told me ke you wanna learn
                 AI, but I still added the other stuff just in case you wanna
@@ -207,18 +205,14 @@ function openNext() {
                 learn and what to learn, and a list of projects to build to
                 truly know if you've grasped the concepts.
               </p>
-              <p
-                class="mb-6 text-base font-light leading-relaxed text-muted md:text-[17px]"
-              >
+              <p>
                 In the roadmap, there are clickable nodes. Most nodes have a
                 description and a list of resources to learn from, and some
                 other miscellaneous info. The roadmap is designed to be followed
                 in order, but you can also jump around if you want to focus on a
                 specific area.
               </p>
-              <p
-                class="mb-6 text-base font-light leading-relaxed text-muted md:text-[17px]"
-              >
+              <p>
                 DO THE PROJECTS LAZMI !!! They are the best way to learn and
                 retain the concepts. The projects might be difficult at first,
                 but remember, our brains learn the most when we're struggling so
@@ -235,9 +229,7 @@ function openNext() {
                 the foods you ate into the program and it tracks your daily
                 macros, ykwim? Like fun stuff.
               </p>
-              <p
-                class="mb-6 text-base font-light leading-relaxed text-muted md:text-[17px]"
-              >
+              <p>
                 This will sound like unc advice and it's annoying af but do NAWT
                 use AI for coding. Stay away from vibe coding like it's an O
                 level paper leaker on discord. When I was first learning coding,
@@ -252,34 +244,26 @@ function openNext() {
                 concepts to you and YOU should solve the problem yourself, even
                 if it takes multiple days.
               </p>
-              <p
-                class="mb-6 text-base font-light leading-relaxed text-muted md:text-[17px]"
-              >
+              <p>
                 Btw, your screen WILL light up with multiple red errors
                 constantly. That doesn't mean you're failing, that's just what
                 coding is 90% of the time 🙁🥀. The debugging is actually one of
                 the funnest parts about coding and problem solving (or maybe I'm
                 a masochist...)
               </p>
-              <p
-                class="mb-6 text-base font-light leading-relaxed text-muted md:text-[17px]"
-              >
+              <p>
                 VERY VERY IMP FINAL TIP: Try to read the docs (documentation)
                 for any language/framework/library/tool you want to learn/use
                 instead of just watching tutorials. I know docs are the most
                 annoying and head bashing part, but they are genuinely the best
                 way to learn about the thing you're learning.
               </p>
-              <p
-                class="mb-6 text-base font-light leading-relaxed text-muted md:text-[17px]"
-              >
+              <p>
                 TLDR: read docs >>> watch tutorials (consult ai IF and only if
                 needed) >>> build projects >>> get 194883 bugs >>> fix project
                 >>> learn new topic >>> repeat
               </p>
-              <p
-                class="text-base font-light leading-relaxed text-muted md:text-[17px]"
-              >
+              <p>
                 Anws, enough with the yappucino, let's get to the programmucino
                 😋
               </p>

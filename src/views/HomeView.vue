@@ -491,7 +491,8 @@ function openNext() {
         <p
           class="max-w-xl mx-auto text-sm italic font-light leading-relaxed text-faint"
         >
-          "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra
+          "Smart people in our industry are the ones who learn how to learn,
+          unlearn, and relearn" - Shafiqa Iqbal
         </p>
       </div>
     </section>

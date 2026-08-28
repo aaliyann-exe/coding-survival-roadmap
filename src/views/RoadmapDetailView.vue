@@ -23,6 +23,15 @@ const stats = computed(() =>
   perRoadmap.value.find((entry) => entry.roadmap.id === roadmap.value?.id),
 );
 
+/** Mirrors the status colours in RoadmapNodeCard so the map is readable
+ * before you've clicked anything. */
+const legend = [
+  { label: "Available", dot: "bg-faint" },
+  { label: "In progress", dot: "bg-amber-500" },
+  { label: "Done", dot: "bg-emerald-500" },
+  { label: "Needs prereqs", dot: "border border-dashed border-faint/70" },
+] as const;
+
 const activeNodeId = computed(() => (route.query.node as string) || null);
 const activeNode = computed(() =>
   activeNodeId.value ? (nodeById(activeNodeId.value) ?? null) : null,
@@ -135,10 +144,33 @@ watch(
 
     <!-- graph -->
     <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-      <p class="mb-8 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-faint">
-        <AppIcon name="route" :size="12" />
-        Click any node for the full brief
-      </p>
+      <div
+        class="mb-8 flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-line pb-4"
+      >
+        <p
+          class="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-faint"
+        >
+          <AppIcon name="route" :size="12" />
+          Click any node for the full brief
+        </p>
+
+        <ul
+          class="flex flex-wrap items-center gap-x-4 gap-y-2 sm:ml-auto"
+          aria-label="What the node colours mean"
+        >
+          <li
+            v-for="item in legend"
+            :key="item.label"
+            class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint"
+          >
+            <span
+              class="h-1.5 w-1.5 shrink-0 rounded-full"
+              :class="item.dot"
+            />
+            {{ item.label }}
+          </li>
+        </ul>
+      </div>
 
       <RoadmapGraph
         :roadmap="roadmap"

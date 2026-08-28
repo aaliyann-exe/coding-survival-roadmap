@@ -24,6 +24,10 @@
     --track: 20 92 122;
     --grid: 0 0 0;
     --grid-alpha: 0.045;
+
+    /* Tells the browser to render native chrome — scrollbars, form controls,
+       autofill — in the matching theme instead of always-light. */
+    color-scheme: light;
   }
 
   .dark {
@@ -39,6 +43,7 @@
     --track: 103 202 235;
     --grid: 255 255 255;
     --grid-alpha: 0.05;
+    color-scheme: dark;
   }
 
   /* Per-roadmap accents. Applied on a wrapper, inherited by children. */
@@ -83,6 +88,14 @@
     overflow-x: hidden;
   }
 
+  /* Headings are short and set in a light weight; balancing stops the last
+     line from dropping a single orphan word. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
   ::selection {
     background-color: rgb(var(--track) / 0.22);
   }
@@ -91,6 +104,24 @@
     outline: 2px solid rgb(var(--track) / 0.85);
     outline-offset: 2px;
     border-radius: 2px;
+  }
+
+  /* Match the page scrollbar to the surface palette instead of leaving a
+     bright system-grey stripe down the side of the dark theme. */
+  ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: rgb(var(--canvas));
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--line-strong));
+    border: 3px solid rgb(var(--canvas));
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--faint));
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -111,12 +142,15 @@
    Component primitives
 --------------------------------------------------------------------------- */
 @layer components {
+  /* Eyebrow / stat labels. These sit *above* the value they describe, so they
+     have to stay smaller than it — at 18px they out-shouted every number on
+     the page and broke truncation inside the node cards. */
   .label-mono {
-    @apply font-mono text-[18px] tracking-widest text-faint;
+    @apply font-mono text-[11px] uppercase tracking-widest text-faint;
   }
 
   .rule-heading {
-    @apply items-center flex gap-3 font-mono text-[16px] uppercase tracking-widest text-muted;
+    @apply flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-muted;
   }
 
   .rule-heading::before,

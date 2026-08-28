@@ -109,7 +109,7 @@ const difficultyLabel = {
             @click="emit('openNode', p.id)"
           >
             <span
-              class="h-1.5 w-1.5 shrink-0 rounded-full"
+              class="h-1.5 w-1.5 shrink-0"
               :class="
                 statusOf(p) === 'completed' || statusOf(p) === 'mastered'
                   ? 'bg-emerald-500'

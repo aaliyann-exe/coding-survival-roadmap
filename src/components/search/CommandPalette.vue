@@ -117,7 +117,7 @@ onUnmounted(() => {
     >
       <div
         v-if="isOpen"
-        class="fixed inset-0 z-[110] bg-black/40 backdrop-blur-[2px] dark:bg-black/70"
+        class="fixed inset-0 z-[110] bg-black/55 dark:bg-black/75"
         @click="close()"
       />
     </Transition>
@@ -130,7 +130,7 @@ onUnmounted(() => {
     >
       <div
         v-if="isOpen"
-        class="fixed left-1/2 top-[8vh] z-[120] w-[min(640px,calc(100vw-2rem))] -translate-x-1/2 border border-line bg-surface shadow-lift"
+        class="page-edge fixed left-1/2 top-[8vh] z-[120] w-[min(640px,calc(100vw-2rem))] -translate-x-1/2 border-2 border-line bg-surface shadow-lift"
         role="dialog"
         aria-modal="true"
         aria-label="Search topics, projects and resources"

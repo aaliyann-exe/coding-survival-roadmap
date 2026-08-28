@@ -28,15 +28,16 @@ const shell = computed(() => {
   switch (props.status) {
     case "completed":
     case "mastered":
-      return "border-emerald-500/40 bg-emerald-500/[0.04] hover:border-emerald-500/70";
+      // Stamped with the wax seal: a true double border.
+      return "border-4 border-double border-emerald-600/70 bg-emerald-500/[0.06] hover:border-emerald-600";
     case "in-progress":
-      return "border-amber-500/50 bg-amber-500/[0.05] hover:border-amber-500/80";
+      return "border-2 border-amber-600/60 bg-amber-500/[0.06] hover:border-amber-600";
     case "locked":
       // Dimming the whole card makes the map look broken at 0%. Keep it
       // readable and let the status chip carry the information.
-      return "border-line border-dashed bg-transparent hover:border-line-strong hover:border-solid";
+      return "border border-dashed border-line/70 bg-transparent opacity-70 hover:border-line-strong hover:border-solid hover:opacity-100";
     default:
-      return "border-line bg-surface hover:border-[rgb(var(--track))]";
+      return "border-2 border-line bg-surface hover:border-[rgb(var(--track))]";
   }
 });
 </script>
@@ -51,17 +52,14 @@ const shell = computed(() => {
   >
     <span
       v-if="status === 'in-progress'"
-      class="absolute -right-px -top-px flex h-1.5 w-1.5"
+      class="absolute -right-1 -top-1 h-2 w-2 animate-flicker bg-amber-500"
       aria-hidden="true"
-    >
-      <span class="absolute inline-flex h-full w-full animate-pulse-ring bg-amber-500" />
-      <span class="relative inline-flex h-1.5 w-1.5 bg-amber-500" />
-    </span>
+    />
 
     <span class="flex w-full items-center justify-between gap-2">
       <span class="flex min-w-0 items-center gap-2">
         <AppIcon v-if="status === 'locked'" name="lock" :size="10" class="text-faint" />
-        <span v-else class="h-1.5 w-1.5 shrink-0 rounded-full" :class="meta.dot" />
+        <span v-else class="h-1.5 w-1.5 shrink-0" :class="meta.dot" />
         <span class="label-mono truncate">{{ meta.label }}</span>
       </span>
       <span

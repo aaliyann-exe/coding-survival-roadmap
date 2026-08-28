@@ -82,7 +82,7 @@ onUnmounted(() => {
     >
       <div
         v-if="open"
-        class="fixed inset-0 z-[90] bg-black/40 backdrop-blur-[2px] dark:bg-black/70"
+        class="fixed inset-0 z-[90] bg-black/55 dark:bg-black/75"
         @click="emit('close')"
       />
     </Transition>
@@ -100,7 +100,7 @@ onUnmounted(() => {
         role="dialog"
         aria-modal="true"
         :aria-label="title"
-        class="fixed inset-x-0 bottom-0 top-10 z-[95] flex flex-col border border-line bg-surface shadow-lift outline-none sm:inset-y-0 sm:left-auto sm:right-0 sm:top-0 sm:w-[min(560px,100vw)] sm:border-y-0 sm:border-r-0"
+        class="page-edge fixed inset-x-0 bottom-0 top-10 z-[95] flex flex-col border-2 border-line bg-surface shadow-lift outline-none sm:inset-y-0 sm:left-auto sm:right-0 sm:top-0 sm:w-[min(560px,100vw)] sm:border-y-0 sm:border-r-0"
       >
         <header
           class="flex items-start justify-between gap-4 border-b border-line bg-raised px-5 py-4 sm:px-7 sm:py-5"

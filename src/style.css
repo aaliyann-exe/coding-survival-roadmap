@@ -1,29 +1,30 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
-   Design tokens.
-   Surfaces are layered: canvas -> surface -> raised -> sunken.
+   Design tokens — the "Ancient Tome" palette.
+   Surfaces are layered: canvas -> surface -> raised -> sunken, same as
+   before, just re-inked as parchment, aged paper and stamped leather.
    `--track` is the accent of whichever roadmap you are currently looking at,
    set per-scope with the .track-* classes below.
 --------------------------------------------------------------------------- */
 @layer base {
   :root {
-    --canvas: 251 251 250;
-    --surface: 255 255 255;
-    --raised: 250 250 249;
-    --sunken: 244 244 245;
-    --line: 228 228 231;
-    --line-strong: 212 212 216;
-    --ink: 24 24 27;
-    --muted: 113 113 122;
-    --faint: 161 161 170;
-    --track: 20 92 122;
-    --grid: 0 0 0;
-    --grid-alpha: 0.045;
+    --canvas: 244 239 230; /* #F4EFE6 parchment */
+    --surface: 234 224 200; /* #EAE0C8 aged parchment (cards) */
+    --raised: 226 213 184; /* header/footer bars, one shade deeper */
+    --sunken: 208 192 152; /* insets: tracks, code, empty progress */
+    --line: 74 59 44; /* #4A3B2C heavy ink — default borders */
+    --line-strong: 198 166 100; /* #C6A664 aged gold — hover / emphasis */
+    --ink: 44 36 27; /* #2C241B deep brown, not pure black */
+    --muted: 91 72 51;
+    --faint: 138 115 87;
+    --track: 168 122 42; /* brass, default accent outside any roadmap scope */
+    --grid: 74 59 44;
+    --grid-alpha: 0.06;
 
     /* Tells the browser to render native chrome — scrollbars, form controls,
        autofill — in the matching theme instead of always-light. */
@@ -31,39 +32,39 @@
   }
 
   .dark {
-    --canvas: 12 12 13;
-    --surface: 18 18 20;
-    --raised: 24 24 27;
-    --sunken: 9 9 10;
-    --line: 39 39 42;
-    --line-strong: 63 63 70;
-    --ink: 244 244 245;
-    --muted: 161 161 170;
-    --faint: 113 113 122;
-    --track: 103 202 235;
-    --grid: 255 255 255;
+    --canvas: 26 21 20; /* #1A1514 dark leather / charcoal */
+    --surface: 34 27 25;
+    --raised: 42 33 30;
+    --sunken: 18 14 13;
+    --line: 90 70 40; /* dim bronze */
+    --line-strong: 138 107 50; /* #8A6B32 tarnished gold */
+    --ink: 212 201 185; /* #D4C9B9 faded silver/parchment */
+    --muted: 173 156 130;
+    --faint: 130 113 92;
+    --track: 198 166 100;
+    --grid: 198 166 100;
     --grid-alpha: 0.05;
     color-scheme: dark;
   }
 
   /* Per-roadmap accents. Applied on a wrapper, inherited by children. */
   .track-frontend {
-    --track: 20 108 140;
+    --track: 61 90 122; /* steel-blue ink */
   }
   .dark .track-frontend {
-    --track: 103 202 235;
+    --track: 130 168 204;
   }
   .track-backend {
-    --track: 22 116 88;
+    --track: 46 84 58; /* forest green */
   }
   .dark .track-backend {
-    --track: 94 216 168;
+    --track: 110 176 132;
   }
   .track-python {
-    --track: 124 74 178;
+    --track: 106 61 145; /* arcane violet */
   }
   .dark .track-python {
-    --track: 190 152 255;
+    --track: 180 140 220;
   }
 
   html {
@@ -75,10 +76,10 @@
     margin: 0;
     padding: 0;
     font-family:
-      "Inter",
-      system-ui,
-      -apple-system,
-      sans-serif;
+      "EB Garamond",
+      "Iowan Old Style",
+      Georgia,
+      serif;
   }
 
   body {
@@ -88,29 +89,40 @@
     overflow-x: hidden;
   }
 
-  /* Headings are short and set in a light weight; balancing stops the last
-     line from dropping a single orphan word. */
+  /* Headers get the epic engraved look; balancing stops the last line from
+     dropping a single orphan word. */
   h1,
   h2,
   h3 {
+    font-family: "Cinzel", Georgia, serif;
     text-wrap: balance;
   }
 
+  kbd {
+    font-family:
+      "Fira Code",
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      monospace;
+    background-color: rgb(var(--sunken));
+    color: rgb(var(--muted));
+  }
+
   ::selection {
-    background-color: rgb(var(--track) / 0.22);
+    background-color: rgb(var(--track) / 0.28);
   }
 
   :focus-visible {
     outline: 2px solid rgb(var(--track) / 0.85);
     outline-offset: 2px;
-    border-radius: 2px;
   }
 
   /* Match the page scrollbar to the surface palette instead of leaving a
      bright system-grey stripe down the side of the dark theme. */
   ::-webkit-scrollbar {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
   }
   ::-webkit-scrollbar-track {
     background-color: rgb(var(--canvas));
@@ -118,10 +130,9 @@
   ::-webkit-scrollbar-thumb {
     background-color: rgb(var(--line-strong));
     border: 3px solid rgb(var(--canvas));
-    border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(var(--faint));
+    background-color: rgb(var(--track));
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -171,24 +182,27 @@
     @apply border-line;
   }
 
+  /* Heavy inked stamp / leather tab. */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 border border-line bg-surface px-3.5 py-2 font-mono text-[11px] uppercase tracking-widest text-muted transition-colors duration-200;
+    @apply inline-flex items-center justify-center gap-2 border-2 border-line bg-surface px-3.5 py-2 font-mono text-[11px] uppercase tracking-widest text-muted transition-colors duration-150;
   }
   .btn:hover {
-    @apply border-line-strong text-ink;
+    @apply border-line-strong bg-line text-canvas;
   }
 
   .btn-primary {
-    border-color: rgb(var(--track) / 0.45);
-    background-color: rgb(var(--track) / 0.1);
+    border-width: 2px;
+    border-color: rgb(var(--track) / 0.7);
+    background-color: rgb(var(--track) / 0.12);
     color: rgb(var(--track));
   }
   .btn-primary:hover {
-    border-color: rgb(var(--track) / 0.8);
-    background-color: rgb(var(--track) / 0.16);
-    color: rgb(var(--track));
+    border-color: rgb(var(--track));
+    background-color: rgb(var(--track));
+    color: rgb(var(--canvas));
   }
 
+  /* Brass plaque. */
   .chip {
     @apply inline-flex items-center gap-1.5 border border-line bg-sunken px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted;
   }
@@ -230,6 +244,12 @@
     border-color: rgb(var(--track) / 0.45);
   }
 
+  /* A second, inset border line — the edge of a page inside its cover.
+     Use on modals / drawers instead of soft blurred shadows. */
+  .page-edge {
+    box-shadow: inset 0 0 0 4px rgb(var(--canvas)), inset 0 0 0 5px rgb(var(--line) / 0.5);
+  }
+
   .fade-edges-y {
     mask-image: linear-gradient(
       to bottom,
@@ -249,7 +269,6 @@
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background-color: rgb(var(--line-strong) / 0.6);
-    border-radius: 3px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: rgb(var(--line-strong));

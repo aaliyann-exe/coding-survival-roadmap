@@ -26,7 +26,7 @@ const links = [
 
 <template>
   <header
-    class="sticky top-0 z-50 border-b border-line bg-canvas/85 backdrop-blur-md"
+    class="sticky top-0 z-50 border-b-2 border-line bg-canvas"
   >
     <div
       class="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:h-16 sm:px-6"

@@ -164,7 +164,7 @@ watch(
             class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint"
           >
             <span
-              class="h-1.5 w-1.5 shrink-0 rounded-full"
+              class="h-1.5 w-1.5 shrink-0"
               :class="item.dot"
             />
             {{ item.label }}

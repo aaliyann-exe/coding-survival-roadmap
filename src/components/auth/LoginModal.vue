@@ -44,7 +44,7 @@ function dismiss() {
     >
       <div
         v-if="showLoginModal"
-        class="fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px] dark:bg-black/70"
+        class="fixed inset-0 z-[150] bg-black/55 dark:bg-black/75"
         @click="dismiss"
       />
     </Transition>
@@ -60,7 +60,7 @@ function dismiss() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="login-modal-title"
-        class="fixed left-1/2 top-1/2 z-[160] w-[min(360px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 border border-line bg-surface p-6 shadow-lift"
+        class="page-edge fixed left-1/2 top-1/2 z-[160] w-[min(360px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 border-2 border-line bg-surface p-6 shadow-lift"
         @keydown.escape="dismiss"
       >
         <span

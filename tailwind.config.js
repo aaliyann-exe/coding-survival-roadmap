@@ -5,8 +5,13 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "Roboto", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        // Body text: the "book" font. This is the default cascade for
+        // everything that doesn't explicitly ask for the display face.
+        sans: ["EB Garamond", "Iowan Old Style", "Georgia", "serif"],
+        // Roadmap stage titles, the site brand, and modal headers.
+        display: ["Cinzel", "Georgia", "serif"],
+        // Stamped mechanical text: labels, stats, chips, code-ish bits.
+        mono: ["Fira Code", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       colors: {
         canvas: "rgb(var(--canvas) / <alpha-value>)",
@@ -19,11 +24,31 @@ export default {
         muted: "rgb(var(--muted) / <alpha-value>)",
         faint: "rgb(var(--faint) / <alpha-value>)",
         track: "rgb(var(--track) / <alpha-value>)",
+        // Re-skinned status colours: druid green for mastered/success,
+        // aged gold for in-progress, crimson wax for danger/reset.
+        emerald: {
+          400: "#4C8A63",
+          500: "#2F6E45",
+          600: "#215E39",
+          700: "#173F27",
+        },
+        amber: {
+          400: "#D9B872",
+          500: "#C6A664",
+          600: "#A8873F",
+        },
+        red: {
+          400: "#C25050",
+          500: "#A11616",
+          600: "#8B0000",
+        },
       },
       borderRadius: {
-        DEFAULT: "2px",
-        md: "3px",
-        lg: "4px",
+        DEFAULT: "0px",
+        sm: "0px",
+        md: "0px",
+        lg: "0px",
+        xl: "0px",
       },
       fontSize: {
         "2xs": ["0.6875rem", { lineHeight: "1rem" }],
@@ -32,9 +57,10 @@ export default {
         widest: "0.18em",
       },
       boxShadow: {
-        panel: "0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px -12px rgb(0 0 0 / 0.12)",
-        lift: "0 1px 2px rgb(0 0 0 / 0.05), 0 20px 48px -16px rgb(0 0 0 / 0.22)",
-        glow: "0 0 0 1px rgb(var(--track) / 0.35), 0 0 28px -6px rgb(var(--track) / 0.5)",
+        // Harsh, dark, offset — a page sitting on a desk, not a soft glow.
+        panel: "3px 3px 0 0 rgb(var(--line) / 0.5)",
+        lift: "5px 5px 0 0 rgb(var(--line) / 0.6), 10px 10px 0 0 rgb(var(--line) / 0.25)",
+        seal: "0 0 0 1px rgb(var(--canvas)), 0 0 0 3px rgb(var(--track) / 0.7)",
       },
       transitionTimingFunction: {
         out: "cubic-bezier(0.16, 1, 0.3, 1)",
@@ -59,14 +85,9 @@ export default {
         dash: {
           to: { "stroke-dashoffset": "-24" },
         },
-        sweep: {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(200%)" },
-        },
-        "pulse-ring": {
-          "0%": { opacity: "0.55", transform: "scale(1)" },
-          "70%": { opacity: "0", transform: "scale(1.9)" },
-          "100%": { opacity: "0", transform: "scale(1.9)" },
+        flicker: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.45" },
         },
       },
       animation: {
@@ -75,8 +96,7 @@ export default {
         "scale-in": "scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both",
         "toast-in": "toast-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both",
         dash: "dash 1s linear infinite",
-        sweep: "sweep 2.4s ease-in-out infinite",
-        "pulse-ring": "pulse-ring 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite",
+        flicker: "flicker 1.8s ease-in-out infinite",
       },
     },
   },

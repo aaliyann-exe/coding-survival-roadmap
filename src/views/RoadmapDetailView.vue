@@ -5,11 +5,11 @@ import type { RoadmapId, RoadmapNode } from "@/data/types";
 import { roadmapById, nodeById } from "@/data/roadmaps";
 import projectList from "@/data/projects";
 import { useProgress } from "@/composables/useProgress";
-import RoadmapGraph from "@/components/roadmap/RoadmapGraph.vue";
+import SkillTree from "@/components/roadmap/SkillTree.vue";
 import NodeDetail from "@/components/roadmap/NodeDetail.vue";
 import NodeProgressControls from "@/components/roadmap/NodeProgressControls.vue";
 import ProjectDetail from "@/components/projects/ProjectDetail.vue";
-import BaseDrawer from "@/components/ui/BaseDrawer.vue";
+import ManuscriptModal from "@/components/ui/ManuscriptModal.vue";
 import ProgressBar from "@/components/ui/ProgressBar.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
 
@@ -23,13 +23,14 @@ const stats = computed(() =>
   perRoadmap.value.find((entry) => entry.roadmap.id === roadmap.value?.id),
 );
 
-/** Mirrors the status colours in RoadmapNodeCard so the map is readable
- * before you've clicked anything. */
+/** Mirrors the node states in SkillNode so the tree is readable before you've
+ * clicked anything. Each entry carries a rune as well as a colour, because
+ * state must never depend on hue alone. */
 const legend = [
-  { label: "Available", dot: "bg-faint" },
-  { label: "In progress", dot: "bg-amber-500" },
-  { label: "Done", dot: "bg-emerald-500" },
-  { label: "Needs prereqs", dot: "border border-dashed border-faint/70" },
+  { label: "Available", rune: "◆", tone: "text-track" },
+  { label: "In progress", rune: "◈", tone: "text-gild" },
+  { label: "Done", rune: "❖", tone: "text-seal" },
+  { label: "Needs prereqs", rune: "✦", tone: "text-faint/70" },
 ] as const;
 
 const activeNodeId = computed(() => (route.query.node as string) || null);
@@ -87,54 +88,86 @@ watch(
 
 <template>
   <div v-if="roadmap" :class="roadmap.trackClass">
-    <!-- header -->
-    <header class="border-b border-line bg-raised/40">
+    <!-- Discipline title page: an illuminated opening spread for the school,
+         with the register of standing down the outer margin. -->
+    <header class="relative border-b-2 border-line bg-raised/50">
       <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
         <RouterLink
           to="/roadmaps"
-          class="mb-6 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
+          class="mb-8 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
         >
           <AppIcon name="arrow-left" :size="11" /> All roadmaps
         </RouterLink>
 
-        <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-14">
-          <div>
-            <div class="mb-4 flex items-center gap-3">
-              <span class="h-1.5 w-8" style="background-color: rgb(var(--track))" />
-              <h1
-                class="text-3xl font-light leading-tight tracking-tight text-ink md:text-4xl"
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-16">
+          <div class="relative">
+            <!-- discipline insignia: a struck plate carrying the school mark -->
+            <div class="mb-6 flex items-center gap-4">
+              <span
+                class="flex h-12 w-12 shrink-0 items-center justify-center border-2 text-lg"
+                style="
+                  border-color: rgb(var(--track));
+                  color: rgb(var(--track));
+                  box-shadow: inset 0 0 0 3px rgb(var(--canvas));
+                "
+                aria-hidden="true"
+                >❖</span
               >
-                {{ roadmap.title }}
-              </h1>
+              <div class="min-w-0">
+                <p
+                  class="mb-1 font-mono text-[10px] uppercase tracking-[0.3em] text-faint"
+                >
+                  Discipline
+                </p>
+                <h1
+                  class="text-3xl leading-none text-ink md:text-[2.6rem]"
+                  style="font-family: 'Cinzel', Georgia, serif"
+                >
+                  {{ roadmap.title }}
+                </h1>
+              </div>
             </div>
-            <p class="mb-5 max-w-2xl text-[15px] font-light leading-relaxed text-ink/85">
+
+            <div class="ink-rule mb-6 max-w-2xl" aria-hidden="true" />
+
+            <p class="mb-5 max-w-2xl text-[16px] leading-relaxed text-ink/85">
               {{ roadmap.tagline }}
             </p>
-            <p class="max-w-2xl text-[14px] font-light leading-relaxed text-muted">
+            <p class="max-w-2xl text-[15px] leading-relaxed text-muted">
               {{ roadmap.intro }}
             </p>
           </div>
 
-          <div v-if="stats" class="flex flex-col justify-center gap-4">
-            <ProgressBar
-              :percent="stats.percent"
-              :label="`${stats.completed} of ${stats.total} topics`"
-            />
-            <dl class="grid grid-cols-2 gap-px border border-line bg-line">
-              <div class="bg-surface p-3">
-                <dt class="label-mono mb-1">In progress</dt>
-                <dd class="font-mono text-base tabular-nums text-ink">
-                  {{ stats.inProgress }}
-                </dd>
-              </div>
-              <div class="bg-surface p-3">
-                <dt class="label-mono mb-1">Projects</dt>
-                <dd class="font-mono text-base tabular-nums text-ink">
-                  {{ stats.projectsCompleted }}/{{ stats.projectsTotal }}
-                </dd>
-              </div>
-            </dl>
-            <p class="font-mono text-[10px] uppercase tracking-widest text-faint">
+          <!-- register of standing, ruled like a ledger margin -->
+          <div v-if="stats" class="lg:border-l-2 lg:border-line/40 lg:pl-6">
+            <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+              Standing
+            </p>
+            <div class="ledger-row">
+              <span class="ledger-label">Cleared</span>
+              <span class="ledger-rule" aria-hidden="true" />
+              <span class="ledger-value text-[13px]"
+                >{{ stats.completed }}/{{ stats.total }}</span
+              >
+            </div>
+            <div class="ledger-row">
+              <span class="ledger-label">In progress</span>
+              <span class="ledger-rule" aria-hidden="true" />
+              <span class="ledger-value text-[13px]">{{ stats.inProgress }}</span>
+            </div>
+            <div class="ledger-row">
+              <span class="ledger-label">Trials built</span>
+              <span class="ledger-rule" aria-hidden="true" />
+              <span class="ledger-value text-[13px]"
+                >{{ stats.projectsCompleted }}/{{ stats.projectsTotal }}</span
+              >
+            </div>
+            <div class="mt-4">
+              <ProgressBar :percent="stats.percent" :show-value="true" />
+            </div>
+            <p
+              class="mt-4 font-mono text-[10px] uppercase tracking-widest leading-relaxed text-faint"
+            >
               {{ roadmap.totalTime }}
             </p>
           </div>
@@ -156,23 +189,22 @@ watch(
 
         <ul
           class="flex flex-wrap items-center gap-x-4 gap-y-2 sm:ml-auto"
-          aria-label="What the node colours mean"
+          aria-label="What the node states mean"
         >
           <li
             v-for="item in legend"
             :key="item.label"
             class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint"
           >
-            <span
-              class="h-1.5 w-1.5 shrink-0"
-              :class="item.dot"
-            />
+            <span class="shrink-0 text-[11px] leading-none" :class="item.tone">{{
+              item.rune
+            }}</span>
             {{ item.label }}
           </li>
         </ul>
       </div>
 
-      <RoadmapGraph
+      <SkillTree
         :roadmap="roadmap"
         :active-id="activeNodeId"
         @select="openNode"
@@ -180,7 +212,7 @@ watch(
     </div>
 
     <!-- node drawer -->
-    <BaseDrawer
+    <ManuscriptModal
       :open="Boolean(activeNode)"
       :title="activeNode?.title ?? ''"
       :eyebrow="roadmap.title"
@@ -195,10 +227,10 @@ watch(
       <template #footer>
         <NodeProgressControls v-if="activeNode" :node="activeNode" />
       </template>
-    </BaseDrawer>
+    </ManuscriptModal>
 
     <!-- project drawer -->
-    <BaseDrawer
+    <ManuscriptModal
       :open="Boolean(activeProject)"
       :title="activeProject?.title ?? ''"
       eyebrow="Project brief"
@@ -209,6 +241,6 @@ watch(
         :project="activeProject"
         @open-node="openNode"
       />
-    </BaseDrawer>
+    </ManuscriptModal>
   </div>
 </template>

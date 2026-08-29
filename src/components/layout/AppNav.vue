@@ -1,5 +1,16 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+/**
+ * Navigation as index tabs cut into the edge of the codex.
+ *
+ * Replaces the previous logo-left / links-centre / icons-right sticky header,
+ * which was the single most recognisable "generic web app" signature on the
+ * page. The active tab drops its bottom border so it reads as physically
+ * continuous with the page beneath it.
+ *
+ * On narrow screens the tabs become a horizontally scrollable strip of the
+ * same plates — the same object, smaller — rather than collapsing into a
+ * hamburger drawer, so the metaphor survives the breakpoint.
+ */
 import { useRoute } from "vue-router";
 import { useTheme } from "@/composables/useTheme";
 import { useProgress } from "@/composables/useProgress";
@@ -13,9 +24,6 @@ const { overallPercent } = useProgress();
 const { open } = useCommandPalette();
 const { username, logout } = useUser();
 
-const mobileOpen = ref(false);
-watch(() => route.fullPath, () => (mobileOpen.value = false));
-
 const links = [
   { to: "/roadmaps", label: "Roadmaps" },
   { to: "/projects", label: "Projects" },
@@ -25,112 +33,85 @@ const links = [
 </script>
 
 <template>
-  <header
-    class="sticky top-0 z-50 border-b-2 border-line bg-canvas"
-  >
-    <div
-      class="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:h-16 sm:px-6"
-    >
-      <RouterLink
-        to="/"
-        class="flex shrink-0 items-center gap-2.5 font-mono text-[13px] uppercase tracking-widest text-ink"
+  <header class="sticky top-0 z-50">
+    <!-- Colophon bar: the spine label stamped along the top of the book. -->
+    <div class="on-board border-b border-line/40 bg-board">
+      <div
+        class="mx-auto flex h-9 max-w-[1400px] items-center gap-3 px-3 sm:px-6 lg:px-10"
       >
-        <span
-          class="flex h-6 w-6 items-center justify-center border border-line-strong text-[10px]"
-          aria-hidden="true"
-          >/&gt;</span
-        >
-        <span class="hidden sm:inline">Survival Roadmap</span>
-      </RouterLink>
-
-      <nav class="ml-2 hidden items-center gap-1 md:flex" aria-label="Main">
         <RouterLink
-          v-for="link in links"
-          :key="link.to"
-          :to="link.to"
-          class="border-b-2 border-transparent px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest transition-colors"
-          :class="
-            route.path.startsWith(link.to)
-              ? 'border-[rgb(var(--track))] text-ink'
-              : 'text-faint hover:text-ink'
-          "
+          to="/"
+          class="flex shrink-0 items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.28em] opacity-90 transition-opacity hover:opacity-100"
         >
-          {{ link.label }}
-        </RouterLink>
-      </nav>
-
-      <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
-        <RouterLink
-          to="/progress"
-          class="hidden items-center gap-2 border border-line px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted transition-colors hover:border-line-strong hover:text-ink sm:flex"
-        >
-          <span class="h-1.5 w-1.5" style="background-color: rgb(var(--track))" />
-          {{ overallPercent }}% done
+          <span
+            class="flex h-5 w-5 items-center justify-center border border-line-strong/70 text-[9px] text-line-strong"
+            aria-hidden="true"
+            >/&gt;</span
+          >
+          <span class="hidden sm:inline">Survival Roadmap</span>
         </RouterLink>
 
-        <button
-          v-if="username"
-          type="button"
-          class="hidden items-center gap-1.5 border border-line px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted transition-colors hover:border-line-strong hover:text-ink sm:flex"
-          :aria-label="`Signed in as ${username}. Click to switch users.`"
-          @click="logout()"
-        >
-          <AppIcon name="user" :size="12" />
-          {{ username }}
-        </button>
+        <span class="ml-auto flex items-center gap-1.5 sm:gap-2">
+          <RouterLink
+            to="/progress"
+            class="hidden items-center gap-2 border border-line-strong/50 px-2 py-1 font-mono text-[10px] uppercase tracking-widest opacity-75 transition-all hover:border-line-strong hover:opacity-100 sm:flex"
+          >
+            <span class="h-1.5 w-1.5 bg-line-strong" aria-hidden="true" />
+            {{ overallPercent }}% done
+          </RouterLink>
 
-        <button
-          type="button"
-          class="flex items-center gap-2 border border-line px-2.5 py-1.5 text-faint transition-colors hover:border-line-strong hover:text-ink"
-          aria-label="Search (Ctrl + K)"
-          @click="open()"
-        >
-          <AppIcon name="search" :size="14" />
-          <kbd class="hidden font-mono text-[10px] lg:inline">⌘K</kbd>
-        </button>
+          <button
+            v-if="username"
+            type="button"
+            class="hidden items-center gap-1.5 border border-line-strong/50 px-2 py-1 font-mono text-[10px] uppercase tracking-widest opacity-75 transition-all hover:border-line-strong hover:opacity-100 sm:flex"
+            :aria-label="`Signed in as ${username}. Click to switch users.`"
+            @click="logout()"
+          >
+            <AppIcon name="user" :size="11" />
+            {{ username }}
+          </button>
 
-        <button
-          type="button"
-          class="border border-line p-1.5 text-faint transition-colors hover:border-line-strong hover:text-ink"
-          :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-          @click="toggleDarkMode()"
-        >
-          <AppIcon :name="isDark ? 'sun' : 'moon'" :size="15" />
-        </button>
+          <button
+            type="button"
+            class="flex items-center gap-1.5 border border-line-strong/50 px-2 py-1 opacity-75 transition-all hover:border-line-strong hover:opacity-100"
+            aria-label="Search (Ctrl + K)"
+            @click="open()"
+          >
+            <AppIcon name="search" :size="13" />
+            <kbd
+              class="hidden bg-transparent font-mono text-[10px] opacity-75 lg:inline"
+              >⌘K</kbd
+            >
+          </button>
 
-        <button
-          type="button"
-          class="border border-line p-1.5 text-faint transition-colors hover:text-ink md:hidden"
-          :aria-expanded="mobileOpen"
-          aria-label="Toggle navigation"
-          @click="mobileOpen = !mobileOpen"
-        >
-          <AppIcon :name="mobileOpen ? 'close' : 'menu'" :size="15" />
-        </button>
+          <button
+            type="button"
+            class="border border-line-strong/50 p-1 opacity-75 transition-all hover:border-line-strong hover:opacity-100"
+            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="toggleDarkMode()"
+          >
+            <AppIcon :name="isDark ? 'sun' : 'moon'" :size="14" />
+          </button>
+        </span>
       </div>
     </div>
 
-    <Transition
-      enter-active-class="transition duration-200 ease-out"
-      enter-from-class="opacity-0 -translate-y-1"
-      leave-active-class="transition duration-150 ease-in"
-      leave-to-class="opacity-0 -translate-y-1"
-    >
-      <nav
-        v-if="mobileOpen"
-        class="border-t border-line bg-surface md:hidden"
-        aria-label="Mobile"
-      >
-        <RouterLink
-          v-for="link in links"
-          :key="link.to"
-          :to="link.to"
-          class="block border-b border-line px-5 py-3.5 font-mono text-[12px] uppercase tracking-widest"
-          :class="route.path.startsWith(link.to) ? 'text-ink' : 'text-muted'"
-        >
-          {{ link.label }}
-        </RouterLink>
-      </nav>
-    </Transition>
+    <!-- Index tabs. Scrollable on narrow screens; never a hamburger. -->
+    <nav class="bg-board" aria-label="Main">
+      <div class="mx-auto max-w-[1400px] px-3 sm:px-6 lg:px-10">
+        <div class="no-scrollbar flex items-end gap-1 overflow-x-auto pt-1.5">
+          <RouterLink
+            v-for="link in links"
+            :key="link.to"
+            :to="link.to"
+            class="index-tab"
+            :data-active="route.path.startsWith(link.to) ? 'true' : 'false'"
+            :aria-current="route.path.startsWith(link.to) ? 'page' : undefined"
+          >
+            {{ link.label }}
+          </RouterLink>
+        </div>
+      </div>
+    </nav>
   </header>
 </template>

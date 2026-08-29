@@ -8,6 +8,7 @@ import { useAchievements } from "@/composables/useAchievements";
 import ProgressRing from "@/components/ui/ProgressRing.vue";
 import ProgressBar from "@/components/ui/ProgressBar.vue";
 import AchievementCard from "@/components/achievements/AchievementCard.vue";
+import LedgerGrid from "@/components/progress/LedgerGrid.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
 
 const router = useRouter();
@@ -50,55 +51,6 @@ const currentRoadmap = computed(() => {
   return top && top.completed + top.inProgress > 0 ? top : null;
 });
 
-const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const WINDOW_DAYS = 140;
-
-interface Cell {
-  key: string;
-  iso: string | null;
-  active: boolean;
-}
-
-/** Last 20 weeks of activity, GitHub-graph style but honest about scale.
- * Columns are padded at the front so every column is a real Mon–Sun week
- * and the day labels down the side actually mean something. */
-const activityGrid = computed(() => {
-  const days = new Set(state.activeDays);
-  const cells: Cell[] = [];
-  const now = new Date();
-
-  const start = new Date(now);
-  start.setDate(now.getDate() - (WINDOW_DAYS - 1));
-  const lead = (start.getDay() + 6) % 7; // 0 = Monday
-  for (let i = 0; i < lead; i++) {
-    cells.push({ key: `pad-${i}`, iso: null, active: false });
-  }
-
-  for (let i = WINDOW_DAYS - 1; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(now.getDate() - i);
-    const iso = d.toISOString().slice(0, 10);
-    cells.push({ key: iso, iso, active: days.has(iso) });
-  }
-  return cells;
-});
-
-const activeDaysInWindow = computed(
-  () => activityGrid.value.filter((c) => c.active).length,
-);
-
-const dateFormat = new Intl.DateTimeFormat(undefined, {
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-});
-
-function cellTitle(cell: Cell) {
-  if (!cell.iso) return undefined;
-  const label = dateFormat.format(new Date(`${cell.iso}T00:00:00Z`));
-  return `${label} — ${cell.active ? "active" : "nothing marked"}`;
-}
-
 function openNode(id: string) {
   const owner = roadmapForNode(id);
   router.push({ path: `/roadmaps/${owner?.id}`, query: { node: id } });
@@ -112,131 +64,106 @@ function doReset() {
 
 <template>
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-    <header class="mb-12">
-      <p class="label-mono mb-3">Local to this browser, no account, no tracking</p>
-      <h1 class="text-3xl font-light leading-tight tracking-tight text-ink md:text-4xl">
+    <!-- Ledger frontispiece: the register's title block. -->
+    <header class="mb-10">
+      <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.3em] text-faint">
+        Local to this browser, no account, no tracking
+      </p>
+      <h1
+        class="text-3xl leading-none text-ink md:text-[2.6rem]"
+        style="font-family: 'Cinzel', Georgia, serif"
+      >
         Progress
       </h1>
+      <div class="ink-rule mt-5 max-w-3xl" aria-hidden="true" />
     </header>
 
-    <!-- top stats -->
-    <section
-      class="mb-14 grid gap-8 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-center lg:gap-14"
-    >
-      <div class="flex items-center gap-8">
+    <!-- Standing: the seal on the left, the register of figures on the right.
+         Numbers are right-aligned against leader rules like a real ledger,
+         instead of sitting in a grid of stat tiles. -->
+    <section class="mb-12 grid gap-10 lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-16">
+      <div class="flex items-center gap-7">
         <ProgressRing :percent="overallPercent" label="Overall" :size="150" />
         <div>
-          <p class="label-mono mb-1.5">Current skill level</p>
-          <p class="mb-6 text-lg font-normal text-ink">{{ skillLevel }}</p>
-          <p class="label-mono mb-1.5">Current roadmap</p>
-          <p class="text-lg font-normal text-ink">
+          <p class="mb-1.5 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+            Current skill level
+          </p>
+          <p
+            class="mb-6 text-lg leading-tight text-ink"
+            style="font-family: 'Cinzel', Georgia, serif"
+          >
+            {{ skillLevel }}
+          </p>
+          <p class="mb-1.5 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+            Current roadmap
+          </p>
+          <p
+            class="text-lg leading-tight text-ink"
+            style="font-family: 'Cinzel', Georgia, serif"
+          >
             {{ currentRoadmap?.roadmap.title ?? "Not started yet" }}
           </p>
         </div>
       </div>
 
-      <dl class="grid grid-cols-2 gap-px border border-line bg-line sm:grid-cols-3">
-        <div class="bg-surface p-4">
-          <dt class="label-mono mb-1.5">Topics done</dt>
-          <dd class="font-mono text-2xl tabular-nums text-ink">
-            {{ completedNodeIds.size }}
-            <span class="text-xs text-faint">/ {{ allNodes.length }}</span>
-          </dd>
-        </div>
-        <div class="bg-surface p-4">
-          <dt class="label-mono mb-1.5">Projects built</dt>
-          <dd class="font-mono text-2xl tabular-nums text-ink">
-            {{ completedProjectIds.size }}
-            <span class="text-xs text-faint">/ {{ projectList.length }}</span>
-          </dd>
-        </div>
-        <div class="bg-surface p-4">
-          <dt class="label-mono mb-1.5">In progress</dt>
-          <dd class="font-mono text-2xl tabular-nums text-ink">
-            {{ startedNodeIds.size }}
-          </dd>
-        </div>
-        <div class="bg-surface p-4">
-          <dt class="label-mono mb-1.5">Current streak</dt>
-          <dd class="font-mono text-2xl tabular-nums text-ink">
-            {{ streak }} <span class="text-xs text-faint">days</span>
-          </dd>
-        </div>
-        <div class="bg-surface p-4">
-          <dt class="label-mono mb-1.5">Longest streak</dt>
-          <dd class="font-mono text-2xl tabular-nums text-ink">
-            {{ longestStreak }} <span class="text-xs text-faint">days</span>
-          </dd>
-        </div>
-        <div class="bg-surface p-4">
-          <dt class="label-mono mb-1.5">Est. study hours</dt>
-          <dd class="font-mono text-2xl tabular-nums text-ink">
-            ~{{ totalEstimatedHours }}
-          </dd>
-        </div>
-      </dl>
+      <div class="border-2 border-line bg-surface p-5 sm:p-6">
+        <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+          Register of standing
+        </p>
+        <dl>
+          <div class="ledger-row">
+            <dt class="ledger-label">Topics done</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-base">
+              {{ completedNodeIds.size }}<span class="text-xs text-faint"
+                >/{{ allNodes.length }}</span
+              >
+            </dd>
+          </div>
+          <div class="ledger-row">
+            <dt class="ledger-label">Projects built</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-base">
+              {{ completedProjectIds.size }}<span class="text-xs text-faint"
+                >/{{ projectList.length }}</span
+              >
+            </dd>
+          </div>
+          <div class="ledger-row">
+            <dt class="ledger-label">In progress</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-base">{{ startedNodeIds.size }}</dd>
+          </div>
+          <div class="ledger-row">
+            <dt class="ledger-label">Current streak</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-base">
+              {{ streak }} <span class="text-xs text-faint">days</span>
+            </dd>
+          </div>
+          <div class="ledger-row">
+            <dt class="ledger-label">Longest streak</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-base">
+              {{ longestStreak }} <span class="text-xs text-faint">days</span>
+            </dd>
+          </div>
+          <div class="ledger-row border-b-0">
+            <dt class="ledger-label">Est. study hours</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-base">~{{ totalEstimatedHours }}</dd>
+          </div>
+        </dl>
+        <p class="mt-4 text-[13px] leading-relaxed text-faint">
+          Study hours are an estimate derived from the time ranges on each completed
+          topic, not a stopwatch. Treat it as a vibe, not a timesheet.
+        </p>
+      </div>
     </section>
 
-    <p class="-mt-10 mb-14 text-2xs leading-relaxed text-faint">
-      Study hours are an estimate derived from the time ranges on each completed
-      topic, not a stopwatch. Treat it as a vibe, not a timesheet.
-    </p>
-
-    <!-- activity -->
-    <section class="mb-14">
-      <div class="mb-5 flex items-center gap-3">
-        <h2 class="font-mono text-[11px] uppercase tracking-widest text-muted">
-          Last 20 weeks
-        </h2>
-        <span class="h-px flex-1 bg-line" />
-        <span class="font-mono text-[10px] tabular-nums text-faint">
-          {{ activeDaysInWindow }} active day{{ activeDaysInWindow === 1 ? "" : "s" }}
-        </span>
-      </div>
-
-      <div class="custom-scrollbar overflow-x-auto pb-2">
-        <div class="flex w-max items-start gap-2">
-          <!-- Weekday gutter. Only alternate rows are labelled, same as the
-               graph this is imitating — seven labels is noise at this size. -->
-          <div class="grid grid-rows-7 gap-1 pt-px">
-            <span
-              v-for="(day, index) in DAY_LABELS"
-              :key="day"
-              class="flex h-2.5 items-center font-mono text-[9px] leading-none text-faint"
-            >
-              {{ index % 2 === 0 ? day : "" }}
-            </span>
-          </div>
-
-          <div
-            class="grid w-max grid-flow-col grid-rows-7 gap-1"
-            role="img"
-            :aria-label="`${activeDaysInWindow} active days over the last 20 weeks`"
-          >
-            <span
-              v-for="cell in activityGrid"
-              :key="cell.key"
-              class="h-2.5 w-2.5"
-              :class="!cell.iso ? '' : cell.active ? '' : 'bg-sunken'"
-              :style="cell.active ? { backgroundColor: 'rgb(var(--track))' } : undefined"
-              :title="cellTitle(cell)"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <p class="text-2xs text-faint">
-          A square lights up on any day you mark something. Missing a day is fine — the
-          graph is a nudge, not a judge.
-        </p>
-        <span class="ml-auto flex shrink-0 items-center gap-1.5 text-2xs text-faint">
-          Quiet
-          <span class="h-2.5 w-2.5 bg-sunken" />
-          <span class="h-2.5 w-2.5" style="background-color: rgb(var(--track))" />
-          Active
-        </span>
-      </div>
+    <!-- practice record -->
+    <section class="mb-12">
+      <LedgerGrid :active-days="state.activeDays" />
     </section>
 
     <!-- per roadmap -->

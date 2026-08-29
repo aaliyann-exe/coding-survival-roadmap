@@ -7,7 +7,7 @@ import { roadmaps, nodeById } from "@/data/roadmaps";
 import { useProgress } from "@/composables/useProgress";
 import ProjectCard from "@/components/projects/ProjectCard.vue";
 import ProjectDetail from "@/components/projects/ProjectDetail.vue";
-import BaseDrawer from "@/components/ui/BaseDrawer.vue";
+import ManuscriptModal from "@/components/ui/ManuscriptModal.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
 
 const route = useRoute();
@@ -230,7 +230,7 @@ function resetFilters() {
       </section>
     </div>
 
-    <BaseDrawer
+    <ManuscriptModal
       :open="Boolean(activeProject)"
       :title="activeProject?.title ?? ''"
       eyebrow="Project brief"
@@ -241,6 +241,6 @@ function resetFilters() {
         :project="activeProject"
         @open-node="openNode"
       />
-    </BaseDrawer>
+    </ManuscriptModal>
   </div>
 </template>

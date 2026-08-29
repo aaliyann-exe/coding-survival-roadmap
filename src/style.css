@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
-   Self-hosted fonts. Previously pulled from Google Fonts via @import, which
-   silently falls back to system serif for anyone whose network/extensions
-   block fonts.googleapis.com — the fonts were "on" but invisible. Bundling
-   the woff2 files means they always render, offline dev included.
+   Self-hosted fonts. Google Fonts is also linked from index.html as a
+   fallback, but these local woff2 files are the primary source: the CDN can
+   be blocked by a network or extension, and when it is, an @import-only
+   setup silently falls back to a system serif with no visible error.
 --------------------------------------------------------------------------- */
 @font-face {
   font-family: "Cinzel";
@@ -38,66 +38,75 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Design tokens — the "Ancient Tome" palette.
-   Surfaces are layered: canvas -> surface -> raised -> sunken, same as
-   before, just re-inked as parchment, aged paper and stamped leather.
-   `--track` is the accent of whichever roadmap you are currently looking at,
-   set per-scope with the .track-* classes below.
+   MATERIAL TOKENS
+   Two artifacts, one object: the Ancient Tome (light) and the same book after
+   fire and age, the Cursed Grimoire (dark). Surfaces layer
+   board -> canvas -> surface -> raised -> sunken, from the outer cover inward
+   to an inset well. `--track` is the discipline accent, scoped per roadmap.
 --------------------------------------------------------------------------- */
 @layer base {
   :root {
+    --board: 60 45 33; /* the leather cover the pages sit on */
     --canvas: 244 239 230; /* #F4EFE6 parchment */
-    --surface: 234 224 200; /* #EAE0C8 aged parchment (cards) */
-    --raised: 226 213 184; /* header/footer bars, one shade deeper */
-    --sunken: 208 192 152; /* insets: tracks, code, empty progress */
-    --line: 74 59 44; /* #4A3B2C heavy ink — default borders */
-    --line-strong: 198 166 100; /* #C6A664 aged gold — hover / emphasis */
-    --ink: 44 36 27; /* #2C241B deep brown, not pure black */
+    --surface: 234 224 200; /* #EAE0C8 aged page */
+    --raised: 226 213 184; /* plates, tabs, header bands */
+    --sunken: 208 192 152; /* inset wells: rules, code, empty meters */
+    --line: 74 59 44; /* #4A3B2C heavy ink */
+    --line-strong: 198 166 100; /* #C6A664 brass */
+    --ink: 44 36 27; /* #2C241B deep brown, never pure black */
     --muted: 91 72 51;
     --faint: 138 115 87;
-    --track: 168 122 42; /* brass, default accent outside any roadmap scope */
-    --grid: 74 59 44;
-    --grid-alpha: 0.06;
+    --track: 168 122 42;
+    --gild: 198 166 100; /* in-progress: aged gold catching light */
+    --seal: 33 94 57; /* #215E39 druid green: mastered */
+    --wax: 139 0 0; /* #8B0000 crimson wax: danger */
+    --grain: 74 59 44;
+    --grain-alpha: 0.055;
+    --edge-shadow: 0.18;
 
-    /* Tells the browser to render native chrome — scrollbars, form controls,
-       autofill — in the matching theme instead of always-light. */
     color-scheme: light;
   }
 
   .dark {
-    --canvas: 26 21 20; /* #1A1514 dark leather / charcoal */
+    --board: 12 9 8;
+    --canvas: 26 21 20; /* #1A1514 charred leather */
     --surface: 34 27 25;
-    --raised: 42 33 30;
+    --raised: 43 34 30;
     --sunken: 18 14 13;
-    --line: 90 70 40; /* dim bronze */
+    --line: 92 71 41;
     --line-strong: 138 107 50; /* #8A6B32 tarnished gold */
-    --ink: 212 201 185; /* #D4C9B9 faded silver/parchment */
-    --muted: 173 156 130;
-    --faint: 130 113 92;
+    --ink: 212 201 185; /* #D4C9B9 faded silver */
+    --muted: 174 157 131;
+    --faint: 132 115 94;
     --track: 198 166 100;
-    --grid: 198 166 100;
-    --grid-alpha: 0.05;
+    --gild: 198 166 100;
+    --seal: 106 168 126; /* green has to lift off charcoal to stay legible */
+    --wax: 176 58 58;
+    --grain: 198 166 100;
+    --grain-alpha: 0.04;
+    --edge-shadow: 0.6;
+
     color-scheme: dark;
   }
 
-  /* Per-roadmap accents. Applied on a wrapper, inherited by children. */
+  /* Discipline accents. Set on a wrapper via `trackClass`, inherited below. */
   .track-frontend {
-    --track: 61 90 122; /* steel-blue ink */
+    --track: 61 90 122;
   }
   .dark .track-frontend {
-    --track: 130 168 204;
+    --track: 132 170 206;
   }
   .track-backend {
-    --track: 46 84 58; /* forest green */
+    --track: 46 84 58;
   }
   .dark .track-backend {
-    --track: 110 176 132;
+    --track: 112 178 134;
   }
   .track-python {
-    --track: 106 61 145; /* arcane violet */
+    --track: 106 61 145;
   }
   .dark .track-python {
-    --track: 180 140 220;
+    --track: 182 142 222;
   }
 
   html {
@@ -108,22 +117,15 @@
   body {
     margin: 0;
     padding: 0;
-    font-family:
-      "EB Garamond",
-      "Iowan Old Style",
-      Georgia,
-      serif;
+    font-family: "EB Garamond", "Iowan Old Style", Georgia, serif;
   }
 
   body {
-    /* No colour transition here: only body would animate while every other
-       surface swaps instantly, which reads as a broken half-themed flash. */
-    @apply antialiased bg-canvas text-ink;
+    @apply antialiased text-ink;
+    background-color: rgb(var(--board));
     overflow-x: hidden;
   }
 
-  /* Headers get the epic engraved look; balancing stops the last line from
-     dropping a single orphan word. */
   h1,
   h2,
   h3 {
@@ -134,12 +136,7 @@
   }
 
   kbd {
-    font-family:
-      "Fira Code",
-      ui-monospace,
-      SFMono-Regular,
-      Menlo,
-      monospace;
+    font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
     background-color: rgb(var(--sunken));
     color: rgb(var(--muted));
   }
@@ -149,22 +146,20 @@
   }
 
   :focus-visible {
-    outline: 2px solid rgb(var(--track) / 0.85);
+    outline: 2px solid rgb(var(--track));
     outline-offset: 2px;
   }
 
-  /* Match the page scrollbar to the surface palette instead of leaving a
-     bright system-grey stripe down the side of the dark theme. */
   ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 13px;
+    height: 13px;
   }
   ::-webkit-scrollbar-track {
-    background-color: rgb(var(--canvas));
+    background-color: rgb(var(--sunken));
   }
   ::-webkit-scrollbar-thumb {
     background-color: rgb(var(--line-strong));
-    border: 3px solid rgb(var(--canvas));
+    border: 3px solid rgb(var(--sunken));
   }
   ::-webkit-scrollbar-thumb:hover {
     background-color: rgb(var(--track));
@@ -185,20 +180,18 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Component primitives
+   COMPONENT PRIMITIVES
 --------------------------------------------------------------------------- */
 @layer components {
-  /* Eyebrow / stat labels. These sit *above* the value they describe, so they
-     have to stay smaller than it — at 18px they out-shouted every number on
-     the page and broke truncation inside the node cards. */
+  /* Stamped technical label. Small, mechanical, always Fira Code. */
   .label-mono {
     @apply font-mono text-[11px] uppercase tracking-widest text-faint;
   }
 
+  /* A ceremonial heading flanked by rules — a chapter mark. */
   .rule-heading {
     @apply flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-muted;
   }
-
   .rule-heading::before,
   .rule-heading::after {
     content: "";
@@ -208,26 +201,23 @@
   .panel {
     @apply border border-line bg-surface;
   }
-
   .panel-raised {
     @apply border border-line bg-raised;
   }
-
   .hairline {
     @apply border-line;
   }
 
-  /* Heavy inked stamp / leather tab. */
+  /* Brass plaque. Hover presses it into the page (inverted ink). */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 border-2 border-line bg-surface px-3.5 py-2 font-mono text-[11px] uppercase tracking-widest text-muted transition-colors duration-150;
+    @apply inline-flex items-center justify-center gap-2 border-2 border-line bg-raised px-3.5 py-2 font-mono text-[11px] uppercase tracking-widest text-muted transition-colors duration-150;
   }
   .btn:hover {
-    @apply border-line-strong bg-line text-canvas;
+    @apply border-line bg-line text-canvas;
   }
 
   .btn-primary {
-    border-width: 2px;
-    border-color: rgb(var(--track) / 0.7);
+    border-color: rgb(var(--track) / 0.75);
     background-color: rgb(var(--track) / 0.12);
     color: rgb(var(--track));
   }
@@ -237,22 +227,267 @@
     color: rgb(var(--canvas));
   }
 
-  /* Brass plaque. */
   .chip {
     @apply inline-flex items-center gap-1.5 border border-line bg-sunken px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted;
   }
 
   .prose-note p {
-    @apply mb-6 text-base font-light leading-relaxed text-muted md:text-[17px];
+    @apply mb-6 text-base leading-relaxed text-muted md:text-[17px];
   }
   .prose-note p:last-child {
     @apply mb-0;
   }
 
-  /* ---- Ornamental language: the bits that make this a tome, not a card grid. ---- */
+  /* ---------------- The artifact shell ---------------- */
 
-  /* Corner brackets floating just outside an element's own border, like the
-     metal corners on a book cover. Parent needs `relative` (this sets it). */
+  /* A page of the codex: parchment, ruled edge, sitting on the cover board. */
+  .leaf {
+    position: relative;
+    background-color: rgb(var(--canvas));
+    border-left: 1px solid rgb(var(--line) / 0.45);
+    border-right: 1px solid rgb(var(--line) / 0.45);
+  }
+
+  /* The stack of pages showing under the top one, along the outer edge.
+     Only drawn from `sm` up: below that the shell runs flush to the viewport
+     edge, so an outward-protruding decoration would force a horizontal
+     scrollbar on every page. */
+  @media (min-width: 640px) {
+    .leaf-stack::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      right: -5px;
+      width: 5px;
+      background: repeating-linear-gradient(
+        to right,
+        rgb(var(--line) / 0.32) 0 1px,
+        transparent 1px 3px
+      );
+      pointer-events: none;
+    }
+  }
+
+  /* Text stamped directly onto the cover board.
+     `--canvas` cannot be used for this: in the light tome it is parchment
+     (legible on dark leather), but in the dark grimoire it is charcoal
+     sitting on an even darker board, which renders the colophon invisible.
+     This resolves to whichever of the two is actually light. */
+  .on-board {
+    color: rgb(var(--canvas));
+  }
+  .dark .on-board {
+    color: rgb(var(--ink));
+  }
+
+  /* The binding: a dark channel with stitch marks and a gilt seam. */
+  .binding {
+    background-color: rgb(var(--board));
+    background-image:
+      linear-gradient(
+        to right,
+        rgb(0 0 0 / 0.45),
+        transparent 35%,
+        transparent 65%,
+        rgb(0 0 0 / 0.45)
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 18px,
+        rgb(var(--line-strong) / 0.5) 18px 30px
+      );
+    box-shadow:
+      inset 2px 0 0 rgb(var(--line-strong) / 0.35),
+      inset -2px 0 0 rgb(var(--line-strong) / 0.35);
+  }
+
+  /* Index tab cut into the edge of the book. The active tab loses its bottom
+     border so it reads as physically continuous with the page. */
+  .index-tab {
+    @apply relative inline-flex shrink-0 items-center gap-2 border-2 border-b-0 border-line bg-raised px-3.5 pb-2.5 pt-2 font-mono text-[10px] uppercase tracking-widest text-muted transition-colors duration-150;
+    clip-path: polygon(9px 0, 100% 0, 100% 100%, 0 100%, 0 9px);
+  }
+  .index-tab:hover {
+    color: rgb(var(--ink));
+    background-color: rgb(var(--canvas));
+  }
+  .index-tab[data-active="true"] {
+    background-color: rgb(var(--canvas));
+    color: rgb(var(--ink));
+    box-shadow: inset 0 3px 0 rgb(var(--track));
+  }
+
+  /* ---------------- Skill tree ---------------- */
+
+  /* An engraved plaque. Nodes are plates bolted to the page, not cards. */
+  .plaque {
+    position: relative;
+    background-color: rgb(var(--surface));
+    border: 2px solid rgb(var(--line));
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--canvas) / 0.55),
+      3px 3px 0 -1px rgb(var(--line) / var(--edge-shadow));
+    transition:
+      transform 0.16s cubic-bezier(0.2, 0.8, 0.3, 1),
+      box-shadow 0.16s ease,
+      border-color 0.16s ease;
+  }
+  /* Rivets at the top corners — the plate is fixed to the page. */
+  .plaque::before,
+  .plaque::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    width: 4px;
+    height: 4px;
+    background-color: rgb(var(--line) / 0.55);
+    box-shadow: inset 0 0 0 1px rgb(var(--canvas) / 0.5);
+    pointer-events: none;
+  }
+  .plaque::before {
+    left: 6px;
+  }
+  .plaque::after {
+    right: 6px;
+  }
+  .plaque:hover {
+    transform: translate(-1px, -1px);
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--canvas) / 0.55),
+      5px 5px 0 -1px rgb(var(--line) / var(--edge-shadow));
+  }
+
+  /* Locked: dormant stone, not a disabled button. */
+  .plaque-locked {
+    background-color: rgb(var(--surface) / 0.4);
+    border-style: dashed;
+    border-color: rgb(var(--line) / 0.5);
+    box-shadow: none;
+  }
+  .plaque-locked:hover {
+    transform: none;
+    border-color: rgb(var(--line) / 0.75);
+    box-shadow: none;
+  }
+
+  /* In progress: an inscription catching light along its top edge. */
+  .plaque-active {
+    border-color: rgb(var(--gild));
+    box-shadow:
+      inset 0 2px 0 rgb(var(--gild)),
+      inset 0 0 0 1px rgb(var(--canvas) / 0.5),
+      3px 3px 0 -1px rgb(var(--line) / var(--edge-shadow));
+  }
+
+  /* Mastered: struck through with the guild seal. */
+  .plaque-sealed {
+    border-color: rgb(var(--seal) / 0.8);
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--canvas) / 0.5),
+      3px 3px 0 -1px rgb(var(--seal) / 0.3);
+  }
+
+  /* The rune column on the left of every node: a glyph well. */
+  .rune-well {
+    @apply flex shrink-0 items-center justify-center border-r-2 border-line;
+    width: 2.5rem;
+    background-color: rgb(var(--sunken) / 0.7);
+  }
+
+  /* ---------------- Manuscript sheet (modal) ---------------- */
+
+  /* A loose sheet set down on the open book. Deckled top and bottom edges,
+     heavy frame, hard offset shadow — paper on a desk, not floating glass. */
+  .manuscript {
+    position: relative;
+    background-color: rgb(var(--canvas));
+    border: 2px solid rgb(var(--line));
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--line-strong) / 0.35),
+      8px 8px 0 -2px rgb(0 0 0 / 0.35);
+  }
+  .manuscript::before,
+  .manuscript::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgb(var(--line)) 0 5px,
+      transparent 5px 9px
+    );
+    pointer-events: none;
+  }
+  .manuscript::before {
+    top: -1px;
+  }
+  .manuscript::after {
+    bottom: -1px;
+  }
+
+  /* ---------------- Ledger ---------------- */
+
+  /* A ruled register row: label left, figure right, leader rule between. */
+  .ledger-row {
+    @apply flex items-baseline gap-3 border-b border-dotted border-line/45 py-2;
+  }
+  .ledger-row > .ledger-label {
+    @apply shrink-0 font-mono text-[10px] uppercase tracking-widest text-faint;
+  }
+  .ledger-row > .ledger-rule {
+    @apply h-px flex-1;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgb(var(--line) / 0.3) 0 2px,
+      transparent 2px 5px
+    );
+  }
+  .ledger-row > .ledger-value {
+    @apply shrink-0 font-mono tabular-nums text-ink;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   ORNAMENT + UTILITIES
+--------------------------------------------------------------------------- */
+@layer utilities {
+  /* Paper grain. Two hairline gratings — cheap, no image, no blur filter. */
+  .grain {
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgb(var(--grain) / var(--grain-alpha)) 0 1px,
+        transparent 1px 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgb(var(--grain) / calc(var(--grain-alpha) * 0.6)) 0 1px,
+        transparent 1px 6px
+      );
+  }
+
+  /* Cartographer's grid, for map-like surfaces. */
+  .grid-paper {
+    background-image:
+      linear-gradient(to right, rgb(var(--grain) / var(--grain-alpha)) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--grain) / var(--grain-alpha)) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .track-text {
+    color: rgb(var(--track));
+  }
+  .track-bg-soft {
+    background-color: rgb(var(--track) / 0.1);
+  }
+  .track-border {
+    border-color: rgb(var(--track) / 0.45);
+  }
+
+  /* Corner registration marks, floating just outside the element's border. */
   .corner-frame {
     position: relative;
   }
@@ -278,8 +513,7 @@
     border-right: 2px solid;
   }
 
-  /* A heavy ink rule with a thinner gold line trailing beneath — the way a
-     ledger closes off a header block before the entries start. */
+  /* Heavy ink rule with a shorter gilt line trailing under it. */
   .ink-rule {
     position: relative;
     border-bottom: 3px solid rgb(var(--line));
@@ -295,27 +529,7 @@
     background: rgb(var(--line-strong) / 0.8);
   }
 
-  /* One leaf of a two-page spread. */
-  .page-leaf {
-    @apply relative border border-line bg-surface;
-  }
-
-  /* The crease down the middle of a book spread: a soft shadow with a
-     hairline gold seam. Give it a width (e.g. w-6) and full height. */
-  .book-spine {
-    position: relative;
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgb(var(--ink) / 0.14) 42%,
-      rgb(var(--line-strong) / 0.65) 50%,
-      rgb(var(--ink) / 0.14) 58%,
-      transparent
-    );
-  }
-
-  /* A large, faded numeral behind a heading — the chapter-number look of an
-     illuminated manuscript. Pair with `relative` + `z-10` on the heading. */
+  /* Oversized faded chapter numeral behind a heading. */
   .chapter-numeral {
     position: absolute;
     top: -0.35em;
@@ -324,24 +538,22 @@
     font-weight: 600;
     font-size: 5em;
     line-height: 1;
-    color: rgb(var(--line) / 0.14);
+    color: rgb(var(--line) / 0.13);
     pointer-events: none;
     user-select: none;
     z-index: 0;
   }
 
-  /* Small wax-seal badge — used to stamp completed/mastered status. */
+  /* Struck wax seal. */
   .wax-seal {
-    @apply flex items-center justify-center border-2;
+    @apply flex items-center justify-center;
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 9999px;
-    border-style: double;
-    border-width: 4px;
+    border: 4px double currentColor;
   }
 
-  /* The connecting spine for a stacked (mobile) node list: a vertical ink
-     line with waypoint dots, so it reads as a trail even with one column. */
+  /* Vertical trail with waypoint marks — the narrow-screen tree fallback. */
   .quest-chain {
     position: relative;
   }
@@ -354,10 +566,8 @@
     width: 2px;
     background: repeating-linear-gradient(
       to bottom,
-      rgb(var(--line) / 0.55) 0,
-      rgb(var(--line) / 0.55) 6px,
-      transparent 6px,
-      transparent 11px
+      rgb(var(--line) / 0.55) 0 6px,
+      transparent 6px 11px
     );
   }
   .quest-chain > * {
@@ -376,9 +586,6 @@
     z-index: 1;
   }
 
-  /* Cut-corner tablet: an etched brass plate silhouette instead of a
-     rectangle. Border is clipped along with it, so a plain `border` still
-     traces the shape. */
   .tablet-cut {
     clip-path: polygon(
       14px 0,
@@ -388,42 +595,6 @@
       0 100%,
       0 14px
     );
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   Utilities
---------------------------------------------------------------------------- */
-@layer utilities {
-  .grid-paper {
-    background-image:
-      linear-gradient(
-        to right,
-        rgb(var(--grid) / var(--grid-alpha)) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        rgb(var(--grid) / var(--grid-alpha)) 1px,
-        transparent 1px
-      );
-    background-size: 32px 32px;
-  }
-
-  .track-text {
-    color: rgb(var(--track));
-  }
-  .track-bg-soft {
-    background-color: rgb(var(--track) / 0.1);
-  }
-  .track-border {
-    border-color: rgb(var(--track) / 0.45);
-  }
-
-  /* A second, inset border line — the edge of a page inside its cover.
-     Use on modals / drawers instead of soft blurred shadows. */
-  .page-edge {
-    box-shadow: inset 0 0 0 4px rgb(var(--canvas)), inset 0 0 0 5px rgb(var(--line) / 0.5);
   }
 
   .fade-edges-y {

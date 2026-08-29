@@ -71,19 +71,20 @@ function openNext() {
 
 <template>
   <div>
-    <!-- ============================================================ HERO -->
-    <section class="relative overflow-hidden border-b border-line">
-      <div
-        class="absolute inset-0 pointer-events-none grid-paper opacity-70"
-        aria-hidden="true"
-      />
-      <div
-        class="absolute inset-x-0 bottom-0 h-32 pointer-events-none bg-gradient-to-t from-canvas to-transparent"
-        aria-hidden="true"
-      />
+    <!-- ==================================================== TITLE PAGE -->
+    <!-- The frontispiece of the codex: a ruled title block with the census
+         of contents set as a register, not a hero with stat tiles. -->
+    <section class="relative overflow-hidden border-b-2 border-line">
+      <div class="pointer-events-none absolute inset-0 grid-paper opacity-60" aria-hidden="true" />
 
-      <div class="relative max-w-6xl px-4 py-16 mx-auto sm:px-6 sm:py-24">
-        <p class="mb-6 label-mono seesaw-text">
+      <div class="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+        <!-- double rule above the title, the way a printed frontispiece opens -->
+        <div class="mb-8 max-w-4xl" aria-hidden="true">
+          <div class="h-0.5 bg-line" />
+          <div class="mt-1 h-px bg-line/50" />
+        </div>
+
+        <p class="seesaw-text mb-7 font-mono text-[10px] uppercase tracking-[0.32em] text-faint">
           <span class="seesaw-num num-6">6</span>-<span class="seesaw-num num-7"
             >7</span
           >
@@ -91,20 +92,24 @@ function openNext() {
         </p>
 
         <h1
-          class="max-w-4xl text-3xl font-light leading-[1.15] tracking-tight text-ink md:text-5xl lg:text-[3.4rem]"
+          class="max-w-4xl text-[2rem] leading-[1.12] text-ink md:text-5xl lg:text-[3.4rem]"
+          style="font-family: 'Cinzel', Georgia, serif"
         >
           A no bs guide/roadmap to what I have learned in 6 months
         </h1>
 
-        <p
-          class="max-w-2xl mt-6 text-base font-light leading-relaxed text-muted md:text-lg"
-        >
+        <div class="mt-8 max-w-4xl" aria-hidden="true">
+          <div class="h-px bg-line/50" />
+          <div class="mt-1 h-0.5 bg-line" />
+        </div>
+
+        <p class="mt-8 max-w-2xl text-[17px] leading-relaxed text-muted">
           Not another list of technologies. This one tells you what to learn, in
           what order, why it matters, roughly how long it takes, and what to
           build so you actually remember it.
         </p>
 
-        <div class="flex flex-wrap items-center gap-3 mt-9">
+        <div class="mt-9 flex flex-wrap items-center gap-3">
           <RouterLink to="/roadmaps" class="btn btn-primary px-5 py-2.5">
             Start learning <AppIcon name="arrow-right" :size="13" />
           </RouterLink>
@@ -113,62 +118,77 @@ function openNext() {
           </RouterLink>
         </div>
 
-        <dl
-          class="grid max-w-3xl grid-cols-2 gap-px border mt-14 border-line bg-line sm:grid-cols-4"
-        >
-          <div class="p-4 bg-canvas">
-            <dt class="label-mono mb-1.5">Topics</dt>
-            <dd class="font-mono text-xl tabular-nums text-ink">
-              {{ totalTopics }}
-            </dd>
+        <!-- census of contents, ruled like a colophon -->
+        <dl class="mt-14 max-w-md">
+          <div class="ledger-row">
+            <dt class="ledger-label">Topics</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-lg">{{ totalTopics }}</dd>
           </div>
-          <div class="p-4 bg-canvas">
-            <dt class="label-mono mb-1.5">Projects</dt>
-            <dd class="font-mono text-xl tabular-nums text-ink">
-              {{ projectList.length }}
-            </dd>
+          <div class="ledger-row">
+            <dt class="ledger-label">Projects</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-lg">{{ projectList.length }}</dd>
           </div>
-          <div class="p-4 bg-canvas">
-            <dt class="label-mono mb-1.5">Resources</dt>
-            <dd class="font-mono text-xl tabular-nums text-ink">
-              {{ allResources.length }}
-            </dd>
+          <div class="ledger-row">
+            <dt class="ledger-label">Resources</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-lg">{{ allResources.length }}</dd>
           </div>
-          <div class="p-4 bg-canvas">
-            <dt class="label-mono mb-1.5">Paths</dt>
-            <dd class="font-mono text-xl tabular-nums text-ink">
-              {{ roadmaps.length }}
-            </dd>
+          <div class="ledger-row border-b-0">
+            <dt class="ledger-label">Paths</dt>
+            <span class="ledger-rule" aria-hidden="true" />
+            <dd class="ledger-value text-lg">{{ roadmaps.length }}</dd>
           </div>
         </dl>
       </div>
     </section>
 
     <!-- ===================================================== QUICK START -->
-    <section class="max-w-6xl px-4 mx-auto py-14 sm:px-6 sm:py-20">
-      <h2 class="mb-6 rule-heading">Pick a lane</h2>
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <!-- The three disciplines, struck as school plates rather than cards. -->
+    <section class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+      <h2 class="mb-8 rule-heading">Pick a lane</h2>
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
         <RouterLink
           v-for="choice in quickStart"
           :key="choice.id"
           :to="choice.to"
-          class="group border border-line bg-surface p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-[rgb(var(--track))]"
+          class="plaque group flex flex-col"
           :class="choice.track"
         >
+          <!-- insignia band -->
           <span
-            class="block w-8 h-1 mb-4 transition-all duration-200 group-hover:w-14"
-            style="background-color: rgb(var(--track))"
-          />
-          <h3 class="text-lg font-normal leading-snug text-ink">
-            {{ choice.prompt }}
-          </h3>
-          <p class="mt-2 text-[13px] font-light leading-relaxed text-muted">
-            {{ choice.detail }}
-          </p>
-          <span
-            class="mt-5 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors group-hover:text-[rgb(var(--track))]"
+            class="flex items-center gap-3 border-b-2 border-line px-5 py-3"
+            style="background-color: rgb(var(--track) / 0.1)"
           >
-            Open roadmap <AppIcon name="arrow-right" :size="11" />
+            <span
+              class="flex h-8 w-8 shrink-0 items-center justify-center border-2 text-[13px]"
+              style="border-color: rgb(var(--track)); color: rgb(var(--track))"
+              aria-hidden="true"
+              >❖</span
+            >
+            <span
+              class="font-mono text-[10px] uppercase tracking-[0.25em]"
+              style="color: rgb(var(--track))"
+              >Discipline</span
+            >
+          </span>
+
+          <span class="flex flex-1 flex-col px-5 py-5">
+            <h3
+              class="text-[17px] leading-snug text-ink"
+              style="font-family: 'Cinzel', Georgia, serif"
+            >
+              {{ choice.prompt }}
+            </h3>
+            <p class="mt-2.5 text-[14px] leading-relaxed text-muted">
+              {{ choice.detail }}
+            </p>
+            <span
+              class="mt-auto flex items-center gap-1.5 pt-5 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors group-hover:text-[rgb(var(--track))]"
+            >
+              Open roadmap <AppIcon name="arrow-right" :size="11" />
+            </span>
           </span>
         </RouterLink>
       </div>

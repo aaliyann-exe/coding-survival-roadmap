@@ -409,3 +409,368 @@ compiled cleanly throughout.
 Commit authorship uses the account's GitHub noreply address, because this
 repository's account has email-privacy protection enabled and rejects pushes
 carrying the locally configured address.
+
+---
+
+# THE GRIMOIRE REBIRTH — Second Pass
+
+## Rebirth Summary
+
+Pass one was rejected: it replaced components and paint while preserving the
+spatial model of a scrolling web page. This pass replaces the spatial model.
+
+The viewport now contains a **book on a desk** rather than a page. Navigation
+is **ribbon bookmarks** pushed into the top of the page block. Changing chapter
+**turns a leaf** about the gutter while an **arcane seal** is cast on the
+exposed page. Every view is authored as a **two-page spread** with a real verso
+and recto separated by a stitched gutter. The roadmap is no longer drawn on the
+parchment at all — it is an **aperture cut through the page** onto a celestial
+realm, with the skill tree floating in a star field.
+
+Two worlds now exist and contrast deliberately: the tome (warm, physical,
+inked) and the arcane realm (cold, deep, star-lit), and the roadmap is where
+the reader crosses between them.
+
+## Why the Previous Overhaul Failed
+
+Recorded honestly, and in full, in `Analysis.md` under *Why Pass One Failed*.
+In brief:
+
+1. **The book was a claim, not an object.** "Cover board with a leaf surface"
+   was, in the browser, a `max-w-[1400px]` div with a 1px border. No desk, no
+   thickness, no covers, no facing pages — so nothing read as physical.
+2. **Navigation was still a navbar.** Clipping a corner off a link does not
+   change the mental model of a horizontal row pinned to the top of the window.
+3. **There was no transition model.** Chapter changes were a 200ms opacity
+   fade — the most generic route transition that exists.
+4. **The skill tree had no world separation.** Merging the stage grids fixed
+   the *information* problem, but it was still beige rectangles on parchment:
+   a dependency diagram, not a progression screen.
+5. **Every page had the same internal layout** — stacked full-width sections
+   in a centred container.
+6. **The mystical dimension was absent.** One warm palette end to end, so
+   nothing felt magical, only old.
+
+## New Book Architecture
+
+Layer order, outermost first:
+
+    desk → cover boards → page edges → page block → facing pages → turn layer
+
+- **Desk** (`.desk`) — the room the book sits in: dark leather with an overhead
+  pool of light (radial gradient) and a fine grain. Visible on all four sides;
+  this is what makes the book read as an object rather than as the page.
+- **Cover boards** (`.tome-cover`) — leather showing as a margin around the
+  whole block, with a gilt inner rule, an inset dark bevel and a deep contact
+  shadow onto the desk.
+- **Page edges** (`.page-edges`) — the paper stack along both outer sides,
+  drawn as repeating hairlines. Thickness comes from stacked material edges,
+  not from one large blur.
+- **Page block** — carries `perspective: 2600px`, which is what allows the
+  turning leaf to hinge in 3D. Has a `min-h-[68vh]` floor (see *Problems
+  Found* — without it the book collapsed mid-turn).
+- **Facing pages** (`.page` + `.page-left` / `.page-right`) — each takes an
+  inset shadow falling *away from the gutter*, which is the detail that makes
+  two columns read as two pages.
+- **Gutter** (`.gutter`) — a binding channel with a dark core, a gilt seam and
+  repeating stitch marks.
+
+`BookSpread.vue` is the component every view is authored through: a `#left`
+apparatus slot (folio, eyebrow, chapter title, ornamental divider, context,
+`#left-foot` marginalia) and a default slot for the recto body. A `full` prop
+drops the verso for pages that want the whole block (the 404).
+
+## Bookmark Navigation
+
+`BookmarkRail.vue` + the `.ribbon` primitive. Ribbons are anchored behind the
+top edge of the block and protrude upward, with a notched (cut) tail.
+
+**Physical irregularity is the point.** Each ribbon has its own insertion depth
+(0–14px) and lean (−1.1°…+1.2°) from a fixed table, so the set reads as
+something inserted over time. Even spacing and equal heights are exactly what
+kept pass one's "index tabs" reading as a tab bar. Values are fixed rather than
+random so the book looks the same on every visit.
+
+States: inactive sits shallower and quieter; hover pushes the ribbon a little
+further into the book and brightens it; active is taller, brighter, ringed in
+gilt, and drops a short tongue down into the page it marks. `aria-current="page"`
+carries the same information non-visually.
+
+Responsive: the rail is a horizontally scrollable strip of the same ribbons —
+the same object with less room, never a hamburger.
+
+## Page-Turn System
+
+`useBookTurn.ts` + the turn layer in `TomeShell.vue`.
+
+**The router is never blocked.** An earlier design held navigation in a
+`beforeEach` guard until the animation finished; that breaks browser
+back/forward and makes direct URLs feel broken. Instead the route changes
+immediately and the *visual* turn is layered over the block, so history, deep
+links and the back button behave exactly as before.
+
+Sequence: chapter change detected → turn layer raised → `.turn-leaf` rotates
+about the gutter (`transform-origin: left center`, `rotateY(0 → −168deg)`,
+620ms) → the seal ignites mid-turn → content swaps behind the leaf (150ms
+opacity handoff) → leaf completes, seal fades, spread settles. Total ~760ms.
+
+Only **chapter** changes turn a page: the trigger keys off the first path
+segment, so opening a node (`?node=` on the same route) does not flip the book.
+Because it watches the resolved route rather than click handlers, browser
+back/forward triggers the identical sequence — verified.
+
+## Arcane Loading / Magic Circle
+
+`ArcaneSeal.vue` — entirely original SVG geometry: concentric rules, a rune
+ring of 24 ticks turning slowly, counter-rotating inscribed hexagram in astral
+and arcane inks, an inner sanctum, the four elemental sigils at the cardinal
+points, and a central arcane sigil. A soft radial wash underneath represents
+the page catching the light of the spell.
+
+It is explicitly not a spinner — nothing here is a single arc chasing its tail
+— and it is not a full-screen overlay: it is drawn inside the page block, so
+the browser never stops reading as a book.
+
+## Frontispiece
+
+`HomeView` is now the opening spread. Verso: the seesaw `6-7` eyebrow, the
+Cinzel title, ornamental divider, the intro paragraph, the two actions, and the
+**census of contents** as a ruled register. `#left-foot` carries the Shafiqa
+Iqbal quotation as marginalia. Recto: the three disciplines as struck plates
+with insignia bands, then the full essay with its sticky short-version
+sidenotes. All prose moved verbatim.
+
+## Skill Tree Portal
+
+`SkillTree.vue` was rewritten. The page now carries an **aperture**: scribed
+corner marks in the parchment, then `.portal` — an engraved gilt lip, a
+parchment step, an ink rule, and then the material falling away into the void
+through layered inset shadows. The portal is a hole in the page, not a card on
+it.
+
+Structure is still driven entirely by the data (`col` lane, `row`), with stage
+rows compacted onto consecutive grid rows and stage bands sharing the single
+row axis so branches cross them without a seam.
+
+## Celestial Star Field
+
+`CelestialField.vue`. Six stacked layers, not one gradient:
+
+1. the void; 2. three nebula regions (arcane, astral, ember radial washes);
+3. faint orbital geometry; 4. four charted constellations; 5. three depth bands
+of stars — 190 far / 75 mid / 24 near, with size and opacity ranges per band;
+6. a vignette closing the dark in at the aperture edge.
+
+Stars come from a **seeded mulberry32 PRNG**: a fixed seed means the sky is
+identical on every render (an unseeded random would reshuffle the heavens on
+every reactive update), and ~290 static SVG circles cost far less than the
+equivalent animated DOM. Twinkle periods are spread 3–12s so the field never
+pulses in unison, which would read as a loading state rather than a sky.
+
+## Arcane Symbol System
+
+`ArcaneSigil.vue` + `sigils.ts`. Nine original sigils — fire, water, earth,
+air, arcane, celestial, void, nature, knowledge — each built from geometric
+primitives (triangles, chords, rings, bars), not from Unicode glyphs.
+
+Assignment is deterministic: `sigilFor(id)` hashes the node/stage id with
+FNV-1a, so the same content always draws the same sigil and the symbol layer
+never flickers between renders. They are **visual metadata only** — no content
+was renamed or reordered to accommodate them.
+
+## Mystical Skill Nodes
+
+`SkillNode.vue` was rewritten as `.astral-plate`: a translucent plate floating
+in the void with a thin astral border, an inner starlight highlight and a faint
+internal glow, so the star field stays visible around it.
+
+**Legibility is the governing constraint** — the plate is dark enough
+(`--void-deep` at 82%) to carry text over stars, because "beautiful screenshot
+nobody can read" is the failure mode of this idea. Each node has a sigil well,
+the status label, a Cinzel title, the tagline and the time estimate.
+
+States: locked is veiled and dashed with no glow but still discoverable;
+available is clear astral; in-progress gathers ember light along the edge and
+the sigil drifts; sealed carries druid-green energy plus a struck completion
+mark over the sigil. State is always carried by material **and** sigil **and**
+text label, never colour alone.
+
+## Magical Connectors
+
+Each pathway is drawn twice: a broad low-opacity halo in the state's ink, then
+a bright thin filament over it — so the connector reads as light rather than as
+a stroke. Sealed routes burn druid-green, walkable routes astral, dormant
+routes are barely charted (2/8 dash at 0.22 opacity). Live paths animate their
+dash only when motion is allowed.
+
+## Projects Page
+
+Recomposed as a spread: verso carries the brief, the "I'm bored" action and a
+live shown/total count; recto carries the filters and the tiered project
+records. Titles, blurbs, tiers and briefs untouched.
+
+## Resources Page
+
+Spread: verso carries the archive statement and the shown/total count; recto
+carries the filters and the grouped folios. All 234 URLs untouched.
+
+## Progress Ledger
+
+Spread: verso carries the seal (progress ring), current skill level and current
+roadmap; recto carries the register of standing as ruled ledger rows, the
+`LedgerGrid` record of practice, per-roadmap standing, pick-back-up, recently
+cleared, achievements and the reset block. All figures and captions unchanged.
+
+## Manuscript Modals
+
+`ManuscriptModal.vue` was re-evaluated and kept: a loose sheet with deckled
+top/bottom edges, corner registration marks, a heavy ink rule under the header
+and a hard offset shadow, entering with `set-down` (a short fall, hard stop and
+one settle). It already reads as a physical sheet placed on the book, and its
+focus-trap/escape/scroll-lock contract is depended on by both call sites.
+
+## Responsive Design
+
+Desktop ≥`lg`: full spread, verso + gutter + recto, ribbons along the top.
+Below `lg`: a single page — the apparatus stacks above the body, the gutter is
+withdrawn, margins condense — while the desk, covers, page edges and ribbons
+all persist, so it still reads as a page in a book. The portal keeps its full
+celestial treatment on mobile; only the tree layout falls back to a single
+column.
+
+`min-w-0` on both pages is load-bearing (see *Problems Found*).
+
+## Accessibility
+
+- Semantic `nav` (`aria-label="Chapters"`), `main`, `button`, `a`; skip link
+  retained.
+- The entire turn layer is `aria-hidden` + `pointer-events-none` — scenery,
+  never content; focus can never land inside the leaf.
+- `aria-current="page"` on the active ribbon; `aria-current` on the active node.
+- Node state is carried by material **and** sigil **and** visible text label,
+  so it never depends on hue — important now that nodes sit on a dark field.
+- Reduced motion: `useBookTurn` takes a separate branch that skips the leaf
+  entirely (`motion-reduce:hidden`) and runs a short seal + crossfade, keeping
+  the conceptual beat without rotating a large surface. Star twinkle, sigil
+  drift and connector dashes are all `motion-safe:`-gated.
+- Modal focus trap, escape, focus restore and scroll-lock preserved unchanged.
+
+## Performance
+
+- Stars are generated once as data and rendered as static SVG circles; no
+  per-frame JS, no thousands of DOM nodes.
+- The turn animates `transform` and `opacity` only.
+- The rAF-throttled, `ResizeObserver`-driven graph measurement was preserved
+  rather than rewritten.
+- All ornament is CSS/SVG; no raster textures were added.
+
+## Content Integrity Verification
+
+`md5sum` of every file in `src/data/` re-checked against the baseline captured
+before the first overhaul — all nine byte-identical:
+
+    achievements.ts OK   advice.ts OK   backend.ts OK   frontend.ts OK
+    projects.ts OK       python.ts OK   resources.ts OK roadmaps.ts OK
+    types.ts OK
+
+That covers 93 topics, 58 projects, 234 resources and their URLs, 20
+achievements, and every prerequisite, stage, description and time estimate.
+
+Template prose grepped and confirmed present after being moved between files:
+`yappucino`, `programmucino`, `DO THE PROJECTS LAZMI`, `Kidhar phuss gaya`,
+`Top secret`, `crumbl`, `Shafiqa Iqbal`, `no SEO slop`.
+
+Status labels, navigation labels, progress semantics, storage keys and the
+`?node=` / `?project=` query model are unchanged. The one new label introduced
+is the "Frontispiece" ribbon for `/` — an added chapter name for a route that
+previously had no nav entry, not a rename of an existing one.
+
+## Browser Verification
+
+Headless Chromium. Asserted no `pageerror`, no `console.error`, and
+`body.scrollWidth <= clientWidth` on every combination.
+
+- **Routes (9):** `/`, `/roadmaps`, `/roadmaps/frontend`, `/roadmaps/backend`,
+  `/roadmaps/python`, `/projects`, `/resources`, `/progress`, 404.
+- **Themes:** light and dark, every route.
+- **Widths:** 1400×1000 and 390×844.
+- **Interactions:** ribbon click → turn layer and seal present mid-flight, then
+  removed after settle; **browser back → turn fires again** and the URL is
+  correct; node click → modal opens with `?node=`; start → complete transitions
+  update the tree; Escape closes, clears the query, restores focus and unlocks
+  body scroll; `Ctrl+K` opens the palette; project brief opens from `/projects`.
+
+Result: `ALL CHECKS PASSED`.
+
+## Problems Found
+
+| # | Problem | How it showed up |
+| --- | --- | --- |
+| 1 | Ribbon labels clipped ("FRONTISPIECE" cut off) | fixed 5.25rem ribbon width could not hold the longest label |
+| 2 | Ribbons floated above the book instead of being inserted into it | rail had no negative offset into the block |
+| 3 | Star field too faint to read as a night sky | initial densities/opacities were too conservative |
+| 4 | **The book collapsed to a strip mid-turn, and the seal vanished with it** | `mode="out-in"` unmounts the outgoing view before the incoming one mounts, so the block had no in-flow content and zero height; the absolutely-positioned turn layer collapsed with it |
+| 5 | 4px horizontal overflow on mobile `/progress` | grid items default to `min-width: auto`, so a page's min-content pushed the spread (424px) wider than the 390px viewport |
+
+## Fixes Applied
+
+1. Ribbon switched to `min-width` + horizontal padding with `whitespace-nowrap`
+   and a slightly smaller tracking.
+2. Rail given `-mb-2` and top padding so ribbons tuck behind the block's edge.
+3. Star bands raised to 190/75/24 with brighter opacity ranges; vignette eased
+   from 0.92 to 0.8 so the outer sky is not swallowed.
+4. `min-h-[68vh]` on both the page block and `main`, plus `bg-canvas` on the
+   block so the paper is continuous during the swap.
+5. `min-w-0` on both facing pages and `w-full` on the spread grid.
+
+Problems 1–5 were only findable by reading rendered screenshots; the build was
+clean throughout.
+
+## Files Added
+
+| File | Purpose |
+| --- | --- |
+| `src/components/book/TomeShell.vue` | The tome: desk, covers, page edges, block, colophon, turn layer |
+| `src/components/book/BookSpread.vue` | The two-page spread every view is authored through |
+| `src/components/book/BookmarkRail.vue` | Ribbon bookmarks |
+| `src/components/arcane/ArcaneSeal.vue` | The casting seal / loading state |
+| `src/components/arcane/ArcaneSigil.vue` | The nine-sigil arcane alphabet |
+| `src/components/arcane/sigils.ts` | Sigil vocabulary + deterministic id→sigil hash |
+| `src/components/arcane/CelestialField.vue` | The layered night sky |
+| `src/composables/useBookTurn.ts` | Non-blocking page-turn coordinator |
+
+## Files Modified
+
+`src/App.vue` (now just the tome + routed spread), `src/style.css` (desk /
+cover / page / gutter / ribbon / portal / astral-plate / turn-leaf primitives
+and the world-two token set), `tailwind.config.js` (`leaf-turn`, `seal-cast`,
+`rune-spin`, `twinkle`, `drift` + desk/ribbon/void/star/astral/arcane/ember
+colours), `src/components/roadmap/SkillTree.vue` (rewritten as the portal),
+`src/components/roadmap/SkillNode.vue` (rewritten as an astral plate),
+`src/components/layout/AppFooter.vue` (now sits on the desk, so its inks were
+re-toned for leather), and all seven views re-authored as spreads.
+
+## Files Removed
+
+`src/components/layout/AppNav.vue` — the sticky header. Its functions moved to
+`TomeShell` (colophon: brand, progress, user, search, theme) and
+`BookmarkRail` (chapters). References were grepped before deletion; none
+remained.
+
+## Git History
+
+- Branch: `fantasy-revamp`, starting from `f05ee8e`.
+- Pre-existing work preserved: an editor auto-format of
+  `RoadmapDetailView.vue` in the working tree, and the user's own commit
+  `28c7842`. Neither was reverted or overwritten.
+- One commit containing the rebirth plus both documentation updates.
+- Pushed to `origin/fantasy-revamp`; `main` verified non-divergent via
+  `git merge-base` before integrating; fast-forwarded and pushed to
+  `origin/main`; returned to `fantasy-revamp`.
+- No force-push, no reset, no branch deletion, no history rewrite.
+
+## Final State
+
+Checked out on `fantasy-revamp`, working tree clean, `fantasy-revamp` and
+`main` both at the rebirth commit. Build clean (`vue-tsc --noEmit` + Vite).
+Browser verification passing across all routes, themes and widths.

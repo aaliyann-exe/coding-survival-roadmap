@@ -111,6 +111,32 @@ export default {
           from: { "stroke-dashoffset": "var(--len, 400)" },
           to: { "stroke-dashoffset": "0" },
         },
+        // A leaf swinging about the gutter. Eased so it accelerates off the
+        // spine and lands, rather than moving linearly like a slide.
+        "leaf-turn": {
+          from: { transform: "rotateY(0deg)", opacity: "1" },
+          "60%": { opacity: "1" },
+          to: { transform: "rotateY(-168deg)", opacity: "0" },
+        },
+        // The seal igniting on the exposed page and fading back into it.
+        "seal-cast": {
+          "0%": { opacity: "0", transform: "scale(0.82)" },
+          "35%": { opacity: "1", transform: "scale(1)" },
+          "70%": { opacity: "1", transform: "scale(1)" },
+          "100%": { opacity: "0", transform: "scale(1.06)" },
+        },
+        "rune-spin": { to: { transform: "rotate(360deg)" } },
+        "rune-spin-rev": { to: { transform: "rotate(-360deg)" } },
+        // Stars breathing, at wildly different rates so it never pulses in
+        // unison (which reads as a loading state rather than a sky).
+        twinkle: {
+          "0%, 100%": { opacity: "var(--o, 0.85)" },
+          "50%": { opacity: "calc(var(--o, 0.85) * 0.35)" },
+        },
+        drift: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both",
@@ -121,6 +147,12 @@ export default {
         flicker: "flicker 1.8s ease-in-out infinite",
         "set-down": "set-down 0.32s cubic-bezier(0.3, 1.2, 0.5, 1) both",
         "ink-in": "ink-in 0.7s ease-out both",
+        "leaf-turn": "leaf-turn 0.62s cubic-bezier(0.55, 0.02, 0.35, 1) forwards",
+        "seal-cast": "seal-cast 0.78s ease-out forwards",
+        "rune-spin": "rune-spin 14s linear infinite",
+        "rune-spin-rev": "rune-spin-rev 22s linear infinite",
+        twinkle: "twinkle var(--d, 5s) ease-in-out infinite",
+        drift: "drift 9s ease-in-out infinite",
       },
     },
   },

@@ -9,6 +9,7 @@ import {
 import { roadmaps } from "@/data/roadmaps";
 import ResourceCard from "@/components/resources/ResourceCard.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
+import BookSpread from "@/components/book/BookSpread.vue";
 
 const search = ref("");
 const activeType = ref<ResourceType | "all">("all");
@@ -48,18 +49,21 @@ function reset() {
 </script>
 
 <template>
-  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-    <header class="mb-10">
-      <p class="label-mono mb-3">{{ allResources.length }} links, no SEO slop</p>
-      <h1 class="text-3xl font-light leading-tight tracking-tight text-ink md:text-4xl">
-        Resources
-      </h1>
-      <p class="mt-4 max-w-2xl text-base font-light leading-relaxed text-muted">
+  <BookSpread
+    :eyebrow="`${allResources.length} links, no SEO slop`"
+    title="Resources"
+    folio="Folio IV — The Archive"
+  >
+    <template #left>
+      <p class="text-[15px] leading-relaxed text-muted">
         Official documentation first, because it's written by the people who built the
         thing and it doesn't go stale in six months. Courses and videos are here where
         they're genuinely good, not to pad the list.
       </p>
-    </header>
+      <p class="mt-6 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+        {{ filtered.length }} of {{ allResources.length }} shown
+      </p>
+    </template>
 
     <!-- filters -->
     <div class="mb-10 space-y-4 border border-line bg-raised/50 p-4 sm:p-5">
@@ -185,5 +189,6 @@ function reset() {
         </div>
       </section>
     </div>
-  </div>
+    <p class="folio mt-10 text-right">Folio IV</p>
+  </BookSpread>
 </template>

@@ -4,6 +4,7 @@ import projectList from "@/data/projects";
 import { useProgress } from "@/composables/useProgress";
 import ProgressBar from "@/components/ui/ProgressBar.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
+import BookSpread from "@/components/book/BookSpread.vue";
 
 const { perRoadmap } = useProgress();
 
@@ -32,18 +33,18 @@ function projectCount(id: string) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-    <header class="mb-10">
-      <p class="label-mono mb-3">Three paths</p>
-      <h1 class="text-3xl font-light leading-tight tracking-tight text-ink md:text-4xl">
-        Pick one. Finish it. Then pick another.
-      </h1>
-      <p class="mt-4 max-w-2xl text-base font-light leading-relaxed text-muted">
+  <BookSpread
+    eyebrow="Three paths"
+    title="Pick one. Finish it. Then pick another."
+    folio="Folio II — The Disciplines"
+  >
+    <template #left>
+      <p class="text-[15px] leading-relaxed text-muted">
         Each path is a dependency graph, not a list — you can see what a topic needs
         before it, what it unlocks after it, and how long it realistically takes. Jump
         around if you want, the order is a suggestion with reasons attached.
       </p>
-    </header>
+    </template>
 
     <div class="mb-8 flex flex-wrap items-center gap-2">
       <span class="label-mono mr-1">Filter</span>
@@ -149,5 +150,6 @@ function projectCount(id: string) {
         </div>
       </article>
     </div>
-  </div>
+    <p class="folio mt-10 text-right">Folio II</p>
+  </BookSpread>
 </template>

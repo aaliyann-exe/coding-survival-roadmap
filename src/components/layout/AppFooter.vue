@@ -17,13 +17,13 @@ function toTop() {
 </script>
 
 <template>
-  <footer class="mt-auto border-t border-line bg-canvas/60">
-    <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+  <footer class="on-board mt-auto">
+    <div class="mx-auto max-w-[1560px] px-5 pb-10 pt-2 sm:px-10">
       <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_auto_auto]">
         <!-- what this is -->
         <div class="max-w-sm">
           <p
-            class="flex items-center gap-2.5 font-mono text-[13px] uppercase tracking-widest text-ink"
+            class="flex items-center gap-2.5 font-mono text-[13px] uppercase tracking-widest"
           >
             <span
               class="flex h-6 w-6 items-center justify-center border border-line-strong text-[10px]"
@@ -32,11 +32,11 @@ function toTop() {
             >
             Survival Roadmap
           </p>
-          <p class="mt-3 text-[13px] font-light leading-relaxed text-muted">
+          <p class="mt-3 text-[13px] font-light leading-relaxed opacity-70">
             Six-ish months of learning, written down while it was still fresh.
             Read the docs, build the projects, don't let AI do it for you.
           </p>
-          <p class="mt-4 font-mono text-[10px] uppercase tracking-widest text-faint">
+          <p class="mt-4 font-mono text-[10px] uppercase tracking-widest opacity-55">
             {{ totalTopics }} topics · {{ projects.length }} projects ·
             {{ allResources.length }} resources
           </p>
@@ -44,12 +44,12 @@ function toTop() {
 
         <!-- site -->
         <nav aria-label="Footer">
-          <p class="label-mono mb-3">The site</p>
+          <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-55">The site</p>
           <ul class="space-y-2">
             <li v-for="link in siteLinks" :key="link.to">
               <RouterLink
                 :to="link.to"
-                class="text-[13px] font-light text-muted transition-colors hover:text-ink"
+                class="text-[13px] font-light opacity-70 transition-opacity hover:opacity-100"
                 >{{ link.label }}</RouterLink
               >
             </li>
@@ -58,12 +58,12 @@ function toTop() {
 
         <!-- paths -->
         <nav aria-label="Roadmaps">
-          <p class="label-mono mb-3">The paths</p>
+          <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-55">The paths</p>
           <ul class="space-y-2">
             <li v-for="r in roadmaps" :key="r.id" :class="r.trackClass">
               <RouterLink
                 :to="`/roadmaps/${r.id}`"
-                class="group flex items-center gap-2 text-[13px] font-light text-muted transition-colors hover:text-ink"
+                class="group flex items-center gap-2 text-[13px] font-light opacity-70 transition-opacity hover:opacity-100"
               >
                 <span
                   class="h-1.5 w-1.5 shrink-0"
@@ -77,24 +77,24 @@ function toTop() {
       </div>
 
       <div
-        class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-6"
+        class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line-strong/25 pt-5"
       >
-        <p class="font-mono text-[10px] uppercase tracking-widest text-faint">
+        <p class="font-mono text-[10px] uppercase tracking-widest opacity-55">
           Progress is stored on this device first · Press
-          <kbd class="border border-line px-1 py-px">Ctrl / ⌘ + K</kbd> to search
+          <kbd class="border border-line-strong/40 bg-transparent px-1 py-px">Ctrl / ⌘ + K</kbd> to search
         </p>
 
         <a
           href="https://youtu.be/QDia3e12czc"
           target="_blank"
           rel="noopener noreferrer"
-          class="font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
+          class="font-mono text-[10px] uppercase tracking-widest opacity-55 transition-opacity hover:opacity-100"
           >Top secret 🤓👉</a
         >
 
         <button
           type="button"
-          class="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
+          class="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest opacity-55 transition-colors hover:text-ink"
           @click="toTop"
         >
           Back to top <AppIcon name="arrow-right" :size="11" class="-rotate-90" />

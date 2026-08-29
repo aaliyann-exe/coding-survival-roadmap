@@ -9,6 +9,7 @@ import ProjectCard from "@/components/projects/ProjectCard.vue";
 import ProjectDetail from "@/components/projects/ProjectDetail.vue";
 import ManuscriptModal from "@/components/ui/ManuscriptModal.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
+import BookSpread from "@/components/book/BookSpread.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -86,21 +87,24 @@ function resetFilters() {
 </script>
 
 <template>
-  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-    <header class="mb-10">
-      <p class="label-mono mb-3">The library</p>
-      <h1 class="text-3xl font-light leading-tight tracking-tight text-ink md:text-4xl">
-        DO THE PROJECTS LAZMI
-      </h1>
-      <p class="mt-4 max-w-2xl text-base font-light leading-relaxed text-muted">
+  <BookSpread
+    eyebrow="The library"
+    title="DO THE PROJECTS LAZMI"
+    folio="Folio III — Quest Records"
+  >
+    <template #left>
+      <p class="mb-6 text-[15px] leading-relaxed text-muted">
         {{ projectList.length }} briefs, ordered by how much they'll hurt. Each one
         lists what to build, what it exercises, and stretch goals for when the basic
         version stops being interesting. Pick one you'd actually use.
       </p>
-      <button type="button" class="btn mt-6" @click="surpriseMe">
+      <button type="button" class="btn w-full justify-center py-2.5" @click="surpriseMe">
         <AppIcon name="spark" :size="12" /> I'm bored, give me something to build
       </button>
-    </header>
+      <p class="mt-6 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+        {{ filtered.length }} of {{ projectList.length }} shown
+      </p>
+    </template>
 
     <!-- filters -->
     <div class="mb-10 space-y-4 border border-line bg-raised/50 p-4 sm:p-5">
@@ -242,5 +246,6 @@ function resetFilters() {
         @open-node="openNode"
       />
     </ManuscriptModal>
-  </div>
+    <p class="folio mt-10 text-right">Folio III</p>
+  </BookSpread>
 </template>

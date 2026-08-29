@@ -10,6 +10,7 @@ import ProgressBar from "@/components/ui/ProgressBar.vue";
 import AchievementCard from "@/components/achievements/AchievementCard.vue";
 import LedgerGrid from "@/components/progress/LedgerGrid.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
+import BookSpread from "@/components/book/BookSpread.vue";
 
 const router = useRouter();
 const {
@@ -63,33 +64,20 @@ function doReset() {
 </script>
 
 <template>
-  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-    <!-- Ledger frontispiece: the register's title block. -->
-    <header class="mb-10">
-      <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.3em] text-faint">
-        Local to this browser, no account, no tracking
-      </p>
-      <h1
-        class="text-3xl leading-none text-ink md:text-[2.6rem]"
-        style="font-family: 'Cinzel', Georgia, serif"
-      >
-        Progress
-      </h1>
-      <div class="ink-rule mt-5 max-w-3xl" aria-hidden="true" />
-    </header>
-
-    <!-- Standing: the seal on the left, the register of figures on the right.
-         Numbers are right-aligned against leader rules like a real ledger,
-         instead of sitting in a grid of stat tiles. -->
-    <section class="mb-12 grid gap-10 lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-16">
-      <div class="flex items-center gap-7">
-        <ProgressRing :percent="overallPercent" label="Overall" :size="150" />
+  <BookSpread
+    eyebrow="Local to this browser, no account, no tracking"
+    title="Progress"
+    folio="Folio V — The Apprentice's Record"
+  >
+    <template #left>
+      <div class="flex flex-col items-start gap-6">
+        <ProgressRing :percent="overallPercent" label="Overall" :size="140" />
         <div>
           <p class="mb-1.5 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
             Current skill level
           </p>
           <p
-            class="mb-6 text-lg leading-tight text-ink"
+            class="mb-5 text-lg leading-tight text-ink"
             style="font-family: 'Cinzel', Georgia, serif"
           >
             {{ skillLevel }}
@@ -105,7 +93,15 @@ function doReset() {
           </p>
         </div>
       </div>
+    </template>
 
+    <!-- Standing: the seal on the left, the register of figures on the right.
+         Numbers are right-aligned against leader rules like a real ledger,
+         instead of sitting in a grid of stat tiles. -->
+    <!-- The register of figures. Numbers are right-aligned against leader
+         rules like a real ledger, instead of sitting in a grid of stat tiles.
+         (The seal and skill level now live on the facing page.) -->
+    <section class="mb-12">
       <div class="border-2 border-line bg-surface p-5 sm:p-6">
         <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
           Register of standing
@@ -306,5 +302,6 @@ function doReset() {
         </button>
       </div>
     </section>
-  </div>
+    <p class="folio mt-10 text-right">Folio V</p>
+  </BookSpread>
 </template>

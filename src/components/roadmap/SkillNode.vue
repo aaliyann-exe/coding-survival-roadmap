@@ -1,137 +1,156 @@
 <script setup lang="ts">
 /**
- * One node of the skill tree, rendered as an engraved plaque bolted to the
- * page rather than a card. State is carried by material (dashed dormant
- * stone / inked plate / gilded inscription / sealed record) and always
- * doubled by a glyph and a text label, so it never depends on colour alone.
+ * A node inside the arcane portal.
+ *
+ * A translucent plate floating in the void — the star field stays visible
+ * around and behind it. Legibility is the constraint that shapes everything:
+ * the plate is dark enough to carry text over stars, because "beautiful
+ * screenshot nobody can read" is the failure mode here.
+ *
+ * State is carried by material, by an arcane sigil, and by a text label, so
+ * it never depends on colour alone.
  */
 import { computed } from "vue";
 import type { NodeStatus, RoadmapNode } from "@/data/types";
+import ArcaneSigil from "@/components/arcane/ArcaneSigil.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
 
 const props = defineProps<{
   node: RoadmapNode;
   status: NodeStatus;
   active?: boolean;
-  /** Milestone nodes — ones that unlock a lot — are struck larger. */
+  /** Milestone nodes gate several branches and are struck larger. */
   major?: boolean;
 }>();
 
 defineEmits<{ select: [node: RoadmapNode] }>();
 
-// Labels are the product's own status terminology and are left exactly as
-// they were — the fantasy is carried by the material and the rune, not by
-// renaming the states.
-const statusMeta: Record<
-  NodeStatus,
-  { label: string; glyph: string; rune: string }
-> = {
-  locked: { label: "Locked", glyph: "lock", rune: "✦" },
-  available: { label: "Available", glyph: "play", rune: "◆" },
-  "in-progress": { label: "In progress", glyph: "clock", rune: "◈" },
-  completed: { label: "Completed", glyph: "check", rune: "❖" },
-  mastered: { label: "Mastered", glyph: "trophy", rune: "❖" },
+// Labels are the product's own status terminology, unchanged.
+const statusMeta: Record<NodeStatus, { label: string }> = {
+  locked: { label: "Locked" },
+  available: { label: "Available" },
+  "in-progress": { label: "In progress" },
+  completed: { label: "Completed" },
+  mastered: { label: "Mastered" },
 };
 
 const meta = computed(() => statusMeta[props.status]);
-
-const sealed = computed(
-  () => props.status === "completed" || props.status === "mastered",
-);
 
 const plate = computed(() => {
   switch (props.status) {
     case "completed":
     case "mastered":
-      return "plaque plaque-sealed";
+      return "astral-plate astral-sealed";
     case "in-progress":
-      return "plaque plaque-active";
+      return "astral-plate astral-active";
     case "locked":
-      return "plaque plaque-locked";
+      return "astral-plate astral-locked";
     default:
-      return "plaque";
+      return "astral-plate";
   }
 });
 
-/** Ink weight for the rune well, matched to the plate's material. */
-const runeTone = computed(() => {
+/** Ink for the sigil well, matched to the plate's energy. */
+const tone = computed(() => {
   switch (props.status) {
     case "completed":
     case "mastered":
-      return "text-seal";
+      return "text-[rgb(var(--seal))]";
     case "in-progress":
-      return "text-gild";
+      return "text-[rgb(var(--ember))]";
     case "locked":
-      return "text-faint/70";
+      return "text-[rgb(var(--astral))]/45";
     default:
-      return "text-track";
+      return "text-[rgb(var(--astral))]";
   }
 });
+
+const titleTone = computed(() =>
+  props.status === "locked"
+    ? "text-[rgb(var(--star))]/55"
+    : "text-[rgb(var(--star))]",
+);
 </script>
 
 <template>
   <button
     type="button"
-    class="group flex w-full items-stretch text-left"
-    :class="[plate, active ? 'outline outline-2 outline-offset-2 outline-[rgb(var(--track))]' : '']"
+    class="group relative flex w-full items-stretch gap-0 text-left"
+    :class="[
+      plate,
+      active ? 'outline outline-2 outline-offset-2 outline-[rgb(var(--ember))]' : '',
+    ]"
     :aria-label="`${node.title} — ${meta.label}`"
     :aria-current="active ? 'true' : undefined"
     @click="$emit('select', node)"
   >
-    <!-- rune well: the glyph that carries state without colour -->
-    <span class="rune-well" :class="runeTone" aria-hidden="true">
-      <span v-if="status === 'locked'" class="text-[13px] leading-none opacity-70">
-        <AppIcon name="lock" :size="13" />
-      </span>
+    <!-- sigil well -->
+    <span
+      class="relative flex w-11 shrink-0 items-center justify-center border-r"
+      :class="tone"
+      style="border-color: rgb(var(--astral) / 0.25)"
+      aria-hidden="true"
+    >
+      <ArcaneSigil
+        :seed="node.id"
+        :size="major ? 21 : 18"
+        :class="status === 'in-progress' ? 'motion-safe:animate-drift' : ''"
+      />
+      <!-- sealed nodes carry a small completion mark over the sigil -->
       <span
-        v-else-if="sealed"
-        class="wax-seal text-[10px] leading-none"
-        :class="status === 'mastered' ? 'border-double' : 'border-solid'"
+        v-if="status === 'completed' || status === 'mastered'"
+        class="absolute -bottom-px -right-px flex h-3.5 w-3.5 items-center justify-center bg-[rgb(var(--void-deep))] text-[rgb(var(--seal))]"
       >
-        <AppIcon :name="status === 'mastered' ? 'trophy' : 'check'" :size="11" />
+        <AppIcon :name="status === 'mastered' ? 'trophy' : 'check'" :size="9" />
       </span>
-      <span
-        v-else
-        class="text-[15px] leading-none"
-        :class="status === 'in-progress' ? 'animate-flicker' : ''"
-        >{{ meta.rune }}</span
-      >
     </span>
 
-    <!-- engraved body -->
-    <span class="flex min-w-0 flex-1 flex-col gap-1 px-3.5 py-3">
+    <!-- inscription -->
+    <span class="flex min-w-0 flex-1 flex-col gap-1 px-3 py-2.5">
       <span class="flex items-center gap-2">
-        <span class="label-mono truncate">{{ meta.label }}</span>
+        <span
+          class="truncate font-mono text-[9px] uppercase tracking-[0.2em]"
+          :class="
+            status === 'in-progress'
+              ? 'text-[rgb(var(--ember))]'
+              : status === 'completed' || status === 'mastered'
+                ? 'text-[rgb(var(--seal))]'
+                : 'text-[rgb(var(--astral))]/70'
+          "
+          >{{ meta.label }}</span
+        >
         <span
           v-if="node.optional"
-          class="ml-auto shrink-0 border border-line px-1.5 py-px font-mono text-[9px] uppercase tracking-wider text-faint"
+          class="ml-auto shrink-0 border px-1 py-px font-mono text-[8px] uppercase tracking-wider text-[rgb(var(--astral))]/60"
+          style="border-color: rgb(var(--astral) / 0.3)"
           >Optional</span
         >
       </span>
 
       <span
-        class="leading-snug text-ink transition-colors"
-        :class="[
-          major ? 'text-[17px] font-semibold' : 'text-[15px] font-medium',
-          status === 'available' ? 'group-hover:text-[rgb(var(--track))]' : '',
-        ]"
+        class="leading-snug"
+        :class="[titleTone, major ? 'text-[15px] font-semibold' : 'text-[13.5px] font-medium']"
         style="font-family: 'Cinzel', Georgia, serif"
       >
         {{ node.title }}
       </span>
 
-      <span class="line-clamp-2 text-[13.5px] leading-relaxed text-muted">
+      <span
+        class="line-clamp-2 text-[12px] leading-relaxed"
+        :class="
+          status === 'locked'
+            ? 'text-[rgb(var(--star))]/35'
+            : 'text-[rgb(var(--star))]/60'
+        "
+      >
         {{ node.tagline }}
       </span>
 
-      <span class="mt-0.5 flex items-center gap-2 font-mono text-[10px] text-faint">
-        <AppIcon name="clock" :size="10" />
+      <span
+        class="mt-0.5 flex items-center gap-1.5 font-mono text-[9px] text-[rgb(var(--astral))]/60"
+      >
+        <AppIcon name="clock" :size="9" />
         {{ node.time.basics }}
-        <span
-          class="ml-auto flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
-        >
-          Read <AppIcon name="arrow-right" :size="10" />
-        </span>
       </span>
     </span>
   </button>

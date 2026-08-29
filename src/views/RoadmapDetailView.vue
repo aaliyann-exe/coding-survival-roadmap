@@ -12,6 +12,8 @@ import ProjectDetail from "@/components/projects/ProjectDetail.vue";
 import ManuscriptModal from "@/components/ui/ManuscriptModal.vue";
 import ProgressBar from "@/components/ui/ProgressBar.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
+import BookSpread from "@/components/book/BookSpread.vue";
+import ArcaneSigil from "@/components/arcane/ArcaneSigil.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -87,129 +89,111 @@ watch(
 </script>
 
 <template>
-  <div v-if="roadmap" :class="roadmap.trackClass">
-    <!-- Discipline title page: an illuminated opening spread for the school,
-         with the register of standing down the outer margin. -->
-    <header class="relative border-b-2 border-line bg-raised/50">
-      <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-        <RouterLink
-          to="/roadmaps"
-          class="mb-8 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
-        >
-          <AppIcon name="arrow-left" :size="11" /> All roadmaps
-        </RouterLink>
-
-        <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-16">
-          <div class="relative">
-            <!-- discipline insignia: a struck plate carrying the school mark -->
-            <div class="mb-6 flex items-center gap-4">
-              <span
-                class="flex h-12 w-12 shrink-0 items-center justify-center border-2 text-lg"
-                style="
-                  border-color: rgb(var(--track));
-                  color: rgb(var(--track));
-                  box-shadow: inset 0 0 0 3px rgb(var(--canvas));
-                "
-                aria-hidden="true"
-                >❖</span
-              >
-              <div class="min-w-0">
-                <p
-                  class="mb-1 font-mono text-[10px] uppercase tracking-[0.3em] text-faint"
-                >
-                  Discipline
-                </p>
-                <h1
-                  class="text-3xl leading-none text-ink md:text-[2.6rem]"
-                  style="font-family: 'Cinzel', Georgia, serif"
-                >
-                  {{ roadmap.title }}
-                </h1>
-              </div>
-            </div>
-
-            <div class="ink-rule mb-6 max-w-2xl" aria-hidden="true" />
-
-            <p class="mb-5 max-w-2xl text-[16px] leading-relaxed text-ink/85">
-              {{ roadmap.tagline }}
-            </p>
-            <p class="max-w-2xl text-[15px] leading-relaxed text-muted">
-              {{ roadmap.intro }}
-            </p>
-          </div>
-
-          <!-- register of standing, ruled like a ledger margin -->
-          <div v-if="stats" class="lg:border-l-2 lg:border-line/40 lg:pl-6">
-            <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
-              Standing
-            </p>
-            <div class="ledger-row">
-              <span class="ledger-label">Cleared</span>
-              <span class="ledger-rule" aria-hidden="true" />
-              <span class="ledger-value text-[13px]"
-                >{{ stats.completed }}/{{ stats.total }}</span
-              >
-            </div>
-            <div class="ledger-row">
-              <span class="ledger-label">In progress</span>
-              <span class="ledger-rule" aria-hidden="true" />
-              <span class="ledger-value text-[13px]">{{ stats.inProgress }}</span>
-            </div>
-            <div class="ledger-row">
-              <span class="ledger-label">Trials built</span>
-              <span class="ledger-rule" aria-hidden="true" />
-              <span class="ledger-value text-[13px]"
-                >{{ stats.projectsCompleted }}/{{ stats.projectsTotal }}</span
-              >
-            </div>
-            <div class="mt-4">
-              <ProgressBar :percent="stats.percent" :show-value="true" />
-            </div>
-            <p
-              class="mt-4 font-mono text-[10px] uppercase tracking-widest leading-relaxed text-faint"
-            >
-              {{ roadmap.totalTime }}
-            </p>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- graph -->
-    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-      <div
-        class="mb-8 flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-line pb-4"
+  <BookSpread
+    v-if="roadmap"
+    :class="roadmap.trackClass"
+    eyebrow="Discipline"
+    :title="roadmap.title"
+    :folio="`Folio ${roadmap.short}`"
+  >
+    <!-- ============ LEFT PAGE: the school's apparatus ============ -->
+    <template #left>
+      <RouterLink
+        to="/roadmaps"
+        class="mb-7 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
       >
+        <AppIcon name="arrow-left" :size="11" /> All roadmaps
+      </RouterLink>
+
+      <!-- discipline insignia struck into the page -->
+      <div class="mb-7 flex items-center gap-3">
+        <span
+          class="flex h-11 w-11 shrink-0 items-center justify-center border-2"
+          style="
+            border-color: rgb(var(--track));
+            color: rgb(var(--track));
+            box-shadow: inset 0 0 0 3px rgb(var(--canvas));
+          "
+          aria-hidden="true"
+        >
+          <ArcaneSigil :seed="roadmap.id" :size="20" />
+        </span>
+        <span class="font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+          {{ roadmap.difficulty }}
+        </span>
+      </div>
+
+      <p class="mb-5 text-[15px] leading-relaxed text-ink/85">
+        {{ roadmap.tagline }}
+      </p>
+      <p class="mb-7 text-[14px] leading-relaxed text-muted">
+        {{ roadmap.intro }}
+      </p>
+
+      <div v-if="stats">
+        <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+          Standing
+        </p>
+        <div class="ledger-row">
+          <span class="ledger-label">Cleared</span>
+          <span class="ledger-rule" aria-hidden="true" />
+          <span class="ledger-value text-[13px]"
+            >{{ stats.completed }}/{{ stats.total }}</span
+          >
+        </div>
+        <div class="ledger-row">
+          <span class="ledger-label">In progress</span>
+          <span class="ledger-rule" aria-hidden="true" />
+          <span class="ledger-value text-[13px]">{{ stats.inProgress }}</span>
+        </div>
+        <div class="ledger-row">
+          <span class="ledger-label">Trials built</span>
+          <span class="ledger-rule" aria-hidden="true" />
+          <span class="ledger-value text-[13px]"
+            >{{ stats.projectsCompleted }}/{{ stats.projectsTotal }}</span
+          >
+        </div>
+        <div class="mt-4">
+          <ProgressBar :percent="stats.percent" :show-value="true" />
+        </div>
         <p
+          class="mt-4 font-mono text-[10px] uppercase leading-relaxed tracking-widest text-faint"
+        >
+          {{ roadmap.totalTime }}
+        </p>
+      </div>
+    </template>
+
+    <template #left-foot>
+      <!-- legend, set as marginalia at the foot of the verso -->
+      <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+        Marks
+      </p>
+      <ul class="space-y-1.5" aria-label="What the node states mean">
+        <li
+          v-for="item in legend"
+          :key="item.label"
           class="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-faint"
         >
-          <AppIcon name="route" :size="12" />
-          Click any node for the full brief
-        </p>
+          <span class="shrink-0 text-[11px] leading-none" :class="item.tone">{{
+            item.rune
+          }}</span>
+          {{ item.label }}
+        </li>
+      </ul>
+    </template>
 
-        <ul
-          class="flex flex-wrap items-center gap-x-4 gap-y-2 sm:ml-auto"
-          aria-label="What the node states mean"
-        >
-          <li
-            v-for="item in legend"
-            :key="item.label"
-            class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint"
-          >
-            <span class="shrink-0 text-[11px] leading-none" :class="item.tone">{{
-              item.rune
-            }}</span>
-            {{ item.label }}
-          </li>
-        </ul>
-      </div>
+    <!-- ============ RIGHT PAGE: the portal ============ -->
+    <p
+      class="mb-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-faint"
+    >
+      <AppIcon name="route" :size="12" />
+      Click any node for the full brief
+    </p>
 
-      <SkillTree
-        :roadmap="roadmap"
-        :active-id="activeNodeId"
-        @select="openNode"
-      />
-    </div>
+    <SkillTree :roadmap="roadmap" :active-id="activeNodeId" @select="openNode" />
+
+    <p class="folio mt-5 text-right">The Arcane Aperture</p>
 
     <!-- node drawer -->
     <ManuscriptModal
@@ -242,5 +226,5 @@ watch(
         @open-node="openNode"
       />
     </ManuscriptModal>
-  </div>
+  </BookSpread>
 </template>

@@ -383,3 +383,220 @@ metaphor, node/modal/progress composition.
    return to `fantasy-revamp`.
 
 Results are recorded in `FantasyChange.md`.
+
+---
+
+# Second-Pass Grimoire Rebirth Analysis
+
+The first overhaul was rejected. This section records the honest re-audit of
+the rendered result and the architecture for the rebuild. It supersedes the
+strategy in §5 above where the two disagree.
+
+## Existing Implementation Audit
+
+Re-inspected the running app in a headless Chromium at 1400px and 390px, light
+and dark, across every route, and read the resulting screenshots rather than
+trusting `FantasyChange.md`.
+
+What is actually on screen after pass one:
+
+- A dark bar across the top holding a brand mark and four tab-shaped links.
+- Below it, a single parchment-coloured column filling the browser width, with
+  content stacked vertically inside a `max-w-6xl` container.
+- The roadmap: dashed and solid beige rectangles laid out on a light grid.
+- Route changes: a 200 ms opacity/translate fade.
+
+## Why Pass One Failed
+
+The previous changelog's claims are technically true at the code level and
+visually false at the product level. Specifically:
+
+1. **The book metaphor was superficial.** `FantasyChange.md` claims "the app
+   sits on a cover board with a leaf/page surface". In the browser this is a
+   `max-w-[1400px]` div with side padding and a 1px border. The viewport does
+   not contain a book-shaped object; the viewport *is* the page. There is no
+   cover, no visible thickness, no desk around it, and no left/right pages —
+   so nothing reads as a physical object.
+2. **Navigation remained a navbar.** Clipping the corner off a link and calling
+   it an index tab does not change the mental model: it is still a horizontal
+   row of links pinned to the top of the window. Real bookmarks protrude from
+   the *body of the book*, are vertically separated, and physically mark the
+   page they open.
+3. **There is no transition model at all.** Chapter changes are an opacity
+   fade - the single most generic route transition in existence. Nothing turns,
+   nothing is cast, nothing acknowledges that a different part of a physical
+   object is now open.
+4. **The skill tree has no world separation.** It was rebuilt as one continuous
+   grid, which fixed the *information* problem (branches now connect), but it
+   is still beige rectangles on parchment. There is no portal, no celestial
+   realm, no sense that the roadmap lives anywhere other than on the same page
+   as the body text. It reads as a dependency diagram, not an RPG progression
+   screen.
+5. **Every page has the same internal layout.** Home, Projects, Resources and
+   Progress are all "stacked full-width sections inside a centred container".
+   A real codex has differentiated page types.
+6. **The mystical dimension is entirely absent.** The palette is one warm
+   parchment world end to end. Nothing contrasts with it, so nothing feels
+   magical - just old.
+
+The root cause: pass one replaced *components and paint* but preserved the
+**spatial model** of a scrolling webpage. That is the thing that has to go.
+
+## Current Visual Architecture (to be dismantled)
+
+    body(board) -> max-w-[1400px] .leaf -> main -> view -> sections -> panels
+                        ^ sticky header with tab links
+
+## Desired Book Architecture
+
+    Desk (fixed, dark, vignetted - the room the book sits in)
+    +-- Tome (a bounded object, deliberately inset from the viewport)
+        +-- Cover boards (visible leather margin on all four sides)
+        +-- Page edges (stacked paper thickness, left + right + bottom)
+        +-- Bookmark rail (ribbons protruding from the top of the block,
+        |                  vertically staggered, each marking a chapter)
+        +-- Page block
+        |   +-- Left page   - chapter apparatus: folio, chapter numeral,
+        |   |                 title, marginalia, context, insignia
+        |   +-- Spine       - binding channel with stitching + gutter shadow
+        |   +-- Right page  - the body content (scrolls within the page)
+        +-- Turn layer      - the flipping leaf and the arcane seal, drawn
+                              above the block during a chapter change
+
+Every view is authored as a **spread** (`#left` apparatus + `#right` body)
+rather than as a stack of sections. That is the structural change pass one
+failed to make.
+
+## Navigation / Bookmark Model
+
+Ribbons anchored *behind* the top edge of the page block and protruding
+upward, each at a different height and slight rotation so they read as
+physically inserted rather than laid out by flexbox. The active ribbon is
+taller, brighter, and drops its bottom edge into the page it marks. On mobile
+the rail becomes a horizontally scrollable row of the same ribbons along the
+book's top edge - same object, less room.
+
+## Page-Transition Model
+
+Non-blocking, so routing and history stay intact:
+
+1. Watch the top-level route segment.
+2. On change, raise a turn layer above the page block.
+3. A page-shaped leaf rotates about the spine (`rotateY`, `transform-origin`
+   at the gutter, with `perspective` on the block).
+4. Mid-turn, an arcane seal ignites on the exposed page.
+5. The underlying content swaps behind the leaf.
+6. The leaf completes; the seal fades; the new spread settles.
+
+The router is never blocked, so back/forward and direct URLs behave normally
+and simply trigger the same visual sequence.
+
+## Arcane Loading Model
+
+An original SVG seal: concentric rules, a rotating rune ring, counter-rotating
+geometry, elemental marks at the cardinal points, a central sigil. It ignites
+and fades *on the page* - never as a full-screen overlay - so the browser
+still reads as a book.
+
+## SkillTree Portal Architecture
+
+    SkillTree
+    +-- PortalFrame        - engraved aperture cut through the parchment
+    +-- CelestialField     - night sky: layered stars, nebula, constellations
+    +-- ArcaneGeometry     - faint orbital rings and stage sigils behind the tree
+    +-- SkillConnections   - constellation pathways, state-aware
+    +-- SkillNode[]        - translucent arcane plates
+
+The portal is a hole in the page, not a card on it: the parchment gets an
+engraved rim, then a dark rim shadow, then the celestial field beneath.
+
+## Celestial Visual System
+
+Deterministic seeded PRNG so the sky is stable across renders (no reflow churn,
+no hydration mismatch): three depth layers of stars, a handful of constellation
+polylines, and soft nebula regions built from layered radial gradients - as
+*one* layer among several, not as the whole sky.
+
+## Symbol System
+
+Nine original geometric sigils (fire, water, earth, air, arcane, celestial,
+void, nature, knowledge) drawn from primitives - triangles, circles, chords,
+bars. Assigned to nodes deterministically by hashing the node id, so they are
+visual metadata layered on top of the data and never alter content.
+
+## Responsive Strategy
+
+Desktop: full spread, both pages, bookmarks along the top. Mobile: a single
+page with the binding on the left, condensed margins, apparatus collapsed into
+a compact chapter band, bookmarks scrollable. The tome frame is preserved at
+every width; only its proportions change.
+
+## Accessibility Strategy
+
+Semantic `nav`/`main`/`button`/`a`; the turn layer and all ornament
+`aria-hidden`; focus never inside the decorative leaf; reduced motion replaces
+the 3D flip with a brief seal and crossfade while keeping the same conceptual
+beat; state carried by symbol and label as well as colour; contrast maintained
+against the dark portal.
+
+## Performance Strategy
+
+Stars generated once as data and rendered as SVG (no thousands of DOM nodes, no
+per-frame JS); transforms and opacity only in the turn animation; the existing
+rAF-throttled graph measurement retained; no large raster assets.
+
+## Content Preservation Constraints
+
+Unchanged: everything in `src/data/` (md5-verified), the HomeView essay, the
+404 easter egg, footer copy and links, `main.ts` console jokes, all status and
+navigation labels, progress semantics and storage keys, and the query-driven
+`?node=`/`?project=` model.
+
+## Browser Research Findings
+
+Findings from inspecting the running app and from studying how physical books
+and RPG progression screens are actually composed:
+
+- **The object needs air around it.** A book only reads as an object when the
+  surface it rests on is visible on all four sides. Any layout that touches the
+  viewport edge reverts to reading as "a web page".
+- **Thickness comes from stacked edges, not from one drop shadow.** Several
+  offset hairlines along the outer edge sell paper depth far better than a
+  large blur.
+- **The gutter is the strongest book signal.** A dark, slightly asymmetric
+  channel with a shadow falling onto both facing pages is what makes two
+  columns read as two *pages* rather than as a split div.
+- **Bookmarks must be irregular.** Evenly spaced tabs read as a tab bar; varied
+  heights, depths and slight rotations read as ribbons someone inserted.
+- **Skill trees read as game systems because of the field they sit in.** The
+  dark, deep, star-lit background is doing as much work as the node shapes.
+- **Legibility over atmosphere.** Text on a night field needs a darkened plate
+  behind it; pure translucency over stars is unreadable.
+
+## Pinterest / Visual Reference Findings
+
+No external image services were reachable from this environment, so no
+reference boards were retrieved. The art direction was instead synthesised from
+the composition principles above and implemented as entirely original CSS/SVG:
+the seal, sigils, portal rim, star field, ribbons and page furniture are all
+drawn from geometric primitives in this repository. No third-party assets,
+illustrations or interface designs were copied.
+
+## Implementation Plan
+
+1. Two-world token layer (tome + arcane) in `style.css`.
+2. `ArcaneSigil` symbol system.
+3. `TomeShell` (desk, cover, edges, spine, turn layer) and `BookSpread`.
+4. `BookmarkRail`.
+5. `useBookTurn` and `ArcaneSeal`.
+6. `SkillTree` rebuilt as portal, plus `CelestialField` and `SkillNode`.
+7. Re-author every view as a spread.
+8. Verify, iterate on screenshots, document.
+
+## Verification Plan
+
+Build; then headless Chromium across 9 routes x 2 themes x 2 widths asserting
+no console errors and no horizontal overflow; interaction checks for bookmark
+turns, back/forward, node modal open/close/focus-restore, palette, theme
+toggle; screenshot review of every major state against the acceptance criteria;
+md5 re-check of `src/data/`.

@@ -1,24 +1,26 @@
 <script setup lang="ts">
 /**
- * The skill tree.
+ * The roadmap as an arcane portal cut through the page.
  *
- * The previous implementation rendered one CSS grid per stage, which made the
- * roadmap read top-to-bottom as N separate card grids — prerequisite edges
- * were drawn, but the composition fought them. This renders the entire
- * roadmap as ONE continuous grid: stage bands and nodes share a single
- * explicit row axis, so a branch that spans two stages is genuinely one
- * unbroken path and the eye can follow origin → branch → mastery.
+ * The parchment stops at the portal rim and the celestial realm begins
+ * beneath it. That contrast is the whole point: the tome is warm, physical
+ * and inked; the tree lives in a cold, deep, star-lit world seen *through*
+ * the page. The previous version drew the same tree directly on the
+ * parchment, which is why it read as a dependency diagram.
  *
- * Layout comes from the data and is not invented here: every node already
- * carries `col` (lane) and `row` (a globally increasing index). We only
- * rebase each stage's rows onto a shared cursor so the stage bands can sit
- * between them.
+ * Structure is unchanged from the data: every node's `col` (lane) and `row`
+ * are authored in `src/data/*.ts` and consumed here. Stage rows are compacted
+ * onto consecutive grid rows so empty rows don't cost a row gap, and stage
+ * bands share the single row axis with the nodes so branches cross them
+ * without a seam.
  */
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import type { Roadmap, RoadmapNode } from "@/data/types";
 import { useProgress } from "@/composables/useProgress";
 import { useReducedMotion } from "@/composables/useMotion";
 import SkillNode from "./SkillNode.vue";
+import CelestialField from "@/components/arcane/CelestialField.vue";
+import ArcaneSigil from "@/components/arcane/ArcaneSigil.vue";
 
 const props = defineProps<{ roadmap: Roadmap; activeId?: string | null }>();
 defineEmits<{ select: [node: RoadmapNode] }>();
@@ -49,29 +51,24 @@ function setCardRef(id: string, el: Element | null | { $el?: Element }) {
   else cardEls.delete(id);
 }
 
-/** How many other nodes list this one as a prerequisite. Nodes that gate a
- * lot of the tree are struck as milestones. */
+/** Nodes that gate several branches are milestones. */
 const unlockCount = computed(() => {
   const counts = new Map<string, number>();
   for (const node of props.roadmap.nodes) {
-    for (const p of node.prerequisites) {
-      counts.set(p, (counts.get(p) ?? 0) + 1);
-    }
+    for (const p of node.prerequisites) counts.set(p, (counts.get(p) ?? 0) + 1);
   }
   return counts;
 });
 
-/**
- * One flat list in reading order — band, that stage's nodes, next band — so
- * DOM order matches the visual order. This matters twice: screen readers and
- * tab order follow the document, and below `md` there is no explicit grid
- * placement at all, so the narrow layout *is* DOM order. (Emitting all bands
- * and then all nodes rendered every chapter heading in a block followed by
- * every node, which was correct on desktop only by accident of grid rows.)
- */
 const layout = computed(() => {
   type Item =
-    | { kind: "band"; key: string; stage: Roadmap["stages"][number]; row: number; index: number }
+    | {
+        kind: "band";
+        key: string;
+        stage: Roadmap["stages"][number];
+        row: number;
+        index: number;
+      }
     | { kind: "node"; key: string; node: RoadmapNode; row: number; col: number };
   const items: Item[] = [];
 
@@ -94,13 +91,8 @@ const layout = computed(() => {
       index,
     });
 
-    // Compact the stage's row values onto consecutive grid rows. The data's
-    // `row` indices are global and can skip (a stage may use 19, 21, 23), and
-    // an empty grid row still costs a full row gap — which showed up as
-    // hundreds of pixels of dead space down the tree.
     const distinct = [...new Set(group.nodes.map((n) => n.row))].sort((a, b) => a - b);
     const rowOf = new Map(distinct.map((value, i) => [value, cursor + 1 + i]));
-
     for (const node of group.nodes) {
       items.push({
         kind: "node",
@@ -110,8 +102,6 @@ const layout = computed(() => {
         col: node.col,
       });
     }
-    // Nodes occupy cursor+1 … cursor+distinct.length, so the next stage's
-    // band starts on the row after the last node row.
     cursor = cursor + distinct.length + 1;
   });
 
@@ -124,11 +114,7 @@ function stageProgress(stageId: string) {
   return { done, total: nodes.length };
 }
 
-/**
- * Measure real card geometry and emit connector paths. Kept imperative and
- * rAF-throttled (rather than reactive per-node) because it reads layout: one
- * batched read pass per frame avoids thrashing as the tree grows.
- */
+/** One batched layout read per frame — see onMounted for the throttling. */
 function measure() {
   const root = canvas.value;
   if (!root || !isWide.value) {
@@ -177,8 +163,6 @@ function measure() {
       next.push({
         id: `${prereqId}->${node.id}`,
         d,
-        // A path is only "sealed" when both ends are cleared; it is "open"
-        // once you could actually walk it; otherwise it stays dormant.
         kind: prereqDone && targetDone ? "sealed" : prereqDone ? "open" : "locked",
         live: prereqDone && (status === "available" || status === "in-progress"),
       });
@@ -224,119 +208,168 @@ watch(
   () => nextTick(scheduleMeasure),
 );
 
+/** Pathway inks. Sealed routes burn druid-green, walkable ones astral, and
+ * dormant ones are barely charted. */
 const edgeStroke: Record<EdgeKind, string> = {
   sealed: "rgb(var(--seal))",
-  open: "rgb(var(--track))",
-  locked: "rgb(var(--line))",
+  open: "rgb(var(--astral))",
+  locked: "rgb(var(--astral))",
 };
 </script>
 
 <template>
-  <div ref="canvas" class="relative">
-    <!-- Connector paths. Decorative only — every prerequisite is also listed
-         as text inside the node's own brief, so nothing depends on the SVG. -->
-    <svg
-      v-if="isWide"
-      class="pointer-events-none absolute inset-0 z-0 hidden md:block"
-      :width="canvasSize.width"
-      :height="canvasSize.height"
+  <!-- ============ THE APERTURE ============
+       The rim is engraved into the parchment; below it the page falls away
+       into the void. -->
+  <div class="relative">
+    <!-- corner marks scribed into the page around the aperture -->
+    <span
+      class="pointer-events-none absolute -left-2 -top-2 h-4 w-4 border-l-2 border-t-2 border-line-strong"
       aria-hidden="true"
-    >
-      <g fill="none" stroke-linecap="butt">
-        <!-- Each edge is inked twice: a heavy stroke, then a thin canvas-
-             coloured groove down the middle, so it reads as an engraved
-             channel cut into the page rather than a UI connector line. -->
-        <template v-for="edge in edges" :key="edge.id">
-          <path
-            :d="edge.d"
-            :stroke="edgeStroke[edge.kind]"
-            :stroke-width="edge.kind === 'locked' ? 3 : 5"
-            :stroke-opacity="edge.kind === 'locked' ? 0.3 : 0.9"
-            :stroke-dasharray="edge.kind === 'locked' ? '7 7' : undefined"
-          />
-          <path
-            v-if="edge.kind !== 'locked'"
-            :d="edge.d"
-            stroke="rgb(var(--canvas))"
-            stroke-width="1.75"
-            :stroke-dasharray="edge.live && !prefersReducedMotion ? '3 7' : undefined"
-            :class="edge.live && !prefersReducedMotion ? 'animate-dash' : ''"
-          />
-        </template>
-      </g>
-    </svg>
+    />
+    <span
+      class="pointer-events-none absolute -right-2 -top-2 h-4 w-4 border-r-2 border-t-2 border-line-strong"
+      aria-hidden="true"
+    />
+    <span
+      class="pointer-events-none absolute -bottom-2 -left-2 h-4 w-4 border-b-2 border-l-2 border-line-strong"
+      aria-hidden="true"
+    />
+    <span
+      class="pointer-events-none absolute -bottom-2 -right-2 h-4 w-4 border-b-2 border-r-2 border-line-strong"
+      aria-hidden="true"
+    />
 
-    <!-- ONE grid for the whole roadmap: stage bands and nodes share a single
-         row axis, so branches cross stage boundaries without a seam. -->
-    <div
-      class="relative z-10 grid gap-4 md:gap-x-7 md:gap-y-9"
-      :class="!isWide ? 'quest-chain' : ''"
-      :style="
-        isWide
-          ? {
-              gridTemplateColumns: `repeat(${roadmap.lanes}, minmax(0, 1fr))`,
-              gridTemplateRows: `repeat(${layout.rows}, auto)`,
-            }
-          : undefined
-      "
-    >
-      <template v-for="item in layout.items" :key="item.key">
-        <!-- chapter band: a landmark inside the tree, not a divider between grids -->
-        <div
-          v-if="item.kind === 'band'"
-          class="relative"
-          :style="isWide ? { gridColumn: '1 / -1', gridRow: String(item.row) } : undefined"
+    <div class="portal relative overflow-hidden">
+      <!-- world two -->
+      <CelestialField class="pointer-events-none" />
+
+      <!-- the tree floats above the sky -->
+      <div ref="canvas" class="relative px-4 py-8 sm:px-8 sm:py-12">
+        <!-- pathways -->
+        <svg
+          v-if="isWide"
+          class="pointer-events-none absolute inset-0 z-0 hidden md:block"
+          :width="canvasSize.width"
+          :height="canvasSize.height"
+          aria-hidden="true"
         >
-          <div class="relative overflow-hidden pt-3">
-            <span class="chapter-numeral" aria-hidden="true">{{
-              String(item.index + 1).padStart(2, "0")
-            }}</span>
-            <div class="relative z-10 flex items-baseline gap-3">
-              <h3
-                class="shrink-0 text-[15px] uppercase tracking-[0.2em] text-ink"
-                style="font-family: 'Cinzel', Georgia, serif"
-              >
-                {{ item.stage.title }}
-              </h3>
-              <span class="h-0.5 flex-1 bg-line/70" />
-              <span
-                class="shrink-0 font-mono text-[10px] tabular-nums"
-                :class="
-                  stageProgress(item.stage.id).done === stageProgress(item.stage.id).total
-                    ? 'text-seal'
-                    : 'text-faint'
+          <g fill="none" stroke-linecap="round">
+            <template v-for="edge in edges" :key="edge.id">
+              <!-- a broad halo, then the bright filament: the line reads as
+                   light rather than as a stroke -->
+              <path
+                v-if="edge.kind !== 'locked'"
+                :d="edge.d"
+                :stroke="edgeStroke[edge.kind]"
+                stroke-width="6"
+                stroke-opacity="0.16"
+              />
+              <path
+                :d="edge.d"
+                :stroke="edgeStroke[edge.kind]"
+                :stroke-width="edge.kind === 'locked' ? 1 : 1.6"
+                :stroke-opacity="edge.kind === 'locked' ? 0.22 : 0.9"
+                :stroke-dasharray="
+                  edge.kind === 'locked'
+                    ? '2 8'
+                    : edge.live && !prefersReducedMotion
+                      ? '5 9'
+                      : undefined
                 "
-              >
-                {{ stageProgress(item.stage.id).done }}/{{
-                  stageProgress(item.stage.id).total
-                }}
-              </span>
-            </div>
-            <p class="relative z-10 mt-1.5 max-w-2xl text-[13px] leading-relaxed text-muted">
-              {{ item.stage.blurb }}
-            </p>
-          </div>
-        </div>
+                :class="edge.live && !prefersReducedMotion ? 'animate-dash' : ''"
+              />
+            </template>
+          </g>
+        </svg>
 
-        <!-- node, placed on the shared axis -->
         <div
-          v-else
-          :ref="(el) => setCardRef(item.node.id, el as Element | null)"
+          class="relative z-10 grid gap-3.5 md:gap-x-6 md:gap-y-7"
           :style="
             isWide
-              ? { gridColumn: String(item.col + 1), gridRow: String(item.row) }
+              ? {
+                  gridTemplateColumns: `repeat(${roadmap.lanes}, minmax(0, 1fr))`,
+                  gridTemplateRows: `repeat(${layout.rows}, auto)`,
+                }
               : undefined
           "
         >
-          <SkillNode
-            :node="item.node"
-            :status="statusOf(item.node)"
-            :active="activeId === item.node.id"
-            :major="(unlockCount.get(item.node.id) ?? 0) >= 3"
-            @select="$emit('select', $event)"
-          />
+          <template v-for="item in layout.items" :key="item.key">
+            <!-- constellation marker: the stage as a region of the sky -->
+            <div
+              v-if="item.kind === 'band'"
+              class="relative"
+              :style="
+                isWide ? { gridColumn: '1 / -1', gridRow: String(item.row) } : undefined
+              "
+            >
+              <div class="flex items-center gap-3 pt-2">
+                <span
+                  class="flex h-7 w-7 shrink-0 items-center justify-center border text-[rgb(var(--ember))]"
+                  style="
+                    border-color: rgb(var(--ember) / 0.45);
+                    background-color: rgb(var(--void-deep) / 0.75);
+                  "
+                  aria-hidden="true"
+                >
+                  <ArcaneSigil :seed="item.stage.id" :size="14" />
+                </span>
+                <h3
+                  class="shrink-0 text-[12px] uppercase tracking-[0.28em] text-[rgb(var(--star))]/90"
+                  style="font-family: 'Cinzel', Georgia, serif"
+                >
+                  {{ item.stage.title }}
+                </h3>
+                <span
+                  class="h-px flex-1"
+                  style="
+                    background-image: linear-gradient(
+                      to right,
+                      rgb(var(--astral) / 0.5),
+                      transparent
+                    );
+                  "
+                />
+                <span
+                  class="shrink-0 font-mono text-[10px] tabular-nums"
+                  :class="
+                    stageProgress(item.stage.id).done === stageProgress(item.stage.id).total
+                      ? 'text-[rgb(var(--seal))]'
+                      : 'text-[rgb(var(--astral))]/70'
+                  "
+                >
+                  {{ stageProgress(item.stage.id).done }}/{{
+                    stageProgress(item.stage.id).total
+                  }}
+                </span>
+              </div>
+              <p
+                class="mt-1.5 max-w-2xl pl-10 text-[12px] leading-relaxed text-[rgb(var(--star))]/50"
+              >
+                {{ item.stage.blurb }}
+              </p>
+            </div>
+
+            <div
+              v-else
+              :ref="(el) => setCardRef(item.node.id, el as Element | null)"
+              :style="
+                isWide
+                  ? { gridColumn: String(item.col + 1), gridRow: String(item.row) }
+                  : undefined
+              "
+            >
+              <SkillNode
+                :node="item.node"
+                :status="statusOf(item.node)"
+                :active="activeId === item.node.id"
+                :major="(unlockCount.get(item.node.id) ?? 0) >= 3"
+                @select="$emit('select', $event)"
+              />
+            </div>
+          </template>
         </div>
-      </template>
+      </div>
     </div>
   </div>
 </template>

@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import AppIcon from "@/components/ui/AppIcon.vue";
+import BookSpread from "@/components/book/BookSpread.vue";
 
 const route = useRoute();
 
@@ -27,9 +28,13 @@ const trace = computed(() => [
 </script>
 
 <template>
-  <div
-    class="mx-auto flex max-w-2xl flex-col items-start px-4 py-24 sm:px-6 sm:py-32"
+  <BookSpread
+    eyebrow="A page torn from the codex"
+    title="This route doesn't exist"
+    folio="Folio — Missing"
+    full
   >
+    <div class="mx-auto flex w-full max-w-2xl flex-col items-start py-6">
     <button
       type="button"
       class="label-mono mb-4 cursor-pointer transition-colors hover:text-ink"
@@ -39,11 +44,6 @@ const trace = computed(() => [
       404
     </button>
 
-    <h1
-      class="mb-4 text-3xl font-light leading-tight tracking-tight text-ink md:text-4xl"
-    >
-      This route doesn't exist
-    </h1>
     <p class="mb-8 text-base font-light leading-relaxed text-muted">
       Either you typed it wrong or I haven't written it yet. Both are fixable,
       only one of them is your problem.
@@ -89,5 +89,6 @@ const trace = computed(() => [
       </RouterLink>
       <RouterLink to="/roadmaps" class="btn">Go to the roadmaps</RouterLink>
     </div>
-  </div>
+    </div>
+  </BookSpread>
 </template>

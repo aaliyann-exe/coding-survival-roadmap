@@ -9,6 +9,7 @@ import { useProgress } from "@/composables/useProgress";
 import ProgressRing from "@/components/ui/ProgressRing.vue";
 import ProgressBar from "@/components/ui/ProgressBar.vue";
 import AppIcon from "@/components/ui/AppIcon.vue";
+import BookSpread from "@/components/book/BookSpread.vue";
 
 const router = useRouter();
 const {
@@ -70,83 +71,72 @@ function openNext() {
 </script>
 
 <template>
-  <div>
-    <!-- ==================================================== TITLE PAGE -->
-    <!-- The frontispiece of the codex: a ruled title block with the census
-         of contents set as a register, not a hero with stat tiles. -->
-    <section class="relative overflow-hidden border-b-2 border-line">
-      <div class="pointer-events-none absolute inset-0 grid-paper opacity-60" aria-hidden="true" />
+  <BookSpread
+    eyebrow="Being an account of six months"
+    title="A no bs guide/roadmap to what I have learned in 6 months"
+    folio="Folio I — Frontispiece"
+  >
+    <!-- ============ LEFT PAGE: the frontispiece apparatus ============ -->
+    <template #left>
+      <p class="seesaw-text mb-6 font-mono text-[10px] uppercase tracking-[0.3em] text-faint">
+        <span class="seesaw-num num-6">6</span>-<span class="seesaw-num num-7">7</span>
+        (omg 67) months of coding, mapped out
+      </p>
 
-      <div class="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <!-- double rule above the title, the way a printed frontispiece opens -->
-        <div class="mb-8 max-w-4xl" aria-hidden="true">
-          <div class="h-0.5 bg-line" />
-          <div class="mt-1 h-px bg-line/50" />
-        </div>
+      <p class="mb-7 text-[15px] leading-relaxed text-muted">
+        Not another list of technologies. This one tells you what to learn, in
+        what order, why it matters, roughly how long it takes, and what to
+        build so you actually remember it.
+      </p>
 
-        <p class="seesaw-text mb-7 font-mono text-[10px] uppercase tracking-[0.32em] text-faint">
-          <span class="seesaw-num num-6">6</span>-<span class="seesaw-num num-7"
-            >7</span
-          >
-          (omg 67) months of coding, mapped out
-        </p>
-
-        <h1
-          class="max-w-4xl text-[2rem] leading-[1.12] text-ink md:text-5xl lg:text-[3.4rem]"
-          style="font-family: 'Cinzel', Georgia, serif"
-        >
-          A no bs guide/roadmap to what I have learned in 6 months
-        </h1>
-
-        <div class="mt-8 max-w-4xl" aria-hidden="true">
-          <div class="h-px bg-line/50" />
-          <div class="mt-1 h-0.5 bg-line" />
-        </div>
-
-        <p class="mt-8 max-w-2xl text-[17px] leading-relaxed text-muted">
-          Not another list of technologies. This one tells you what to learn, in
-          what order, why it matters, roughly how long it takes, and what to
-          build so you actually remember it.
-        </p>
-
-        <div class="mt-9 flex flex-wrap items-center gap-3">
-          <RouterLink to="/roadmaps" class="btn btn-primary px-5 py-2.5">
-            Start learning <AppIcon name="arrow-right" :size="13" />
-          </RouterLink>
-          <RouterLink to="/projects" class="btn px-5 py-2.5">
-            Just gimme something to build
-          </RouterLink>
-        </div>
-
-        <!-- census of contents, ruled like a colophon -->
-        <dl class="mt-14 max-w-md">
-          <div class="ledger-row">
-            <dt class="ledger-label">Topics</dt>
-            <span class="ledger-rule" aria-hidden="true" />
-            <dd class="ledger-value text-lg">{{ totalTopics }}</dd>
-          </div>
-          <div class="ledger-row">
-            <dt class="ledger-label">Projects</dt>
-            <span class="ledger-rule" aria-hidden="true" />
-            <dd class="ledger-value text-lg">{{ projectList.length }}</dd>
-          </div>
-          <div class="ledger-row">
-            <dt class="ledger-label">Resources</dt>
-            <span class="ledger-rule" aria-hidden="true" />
-            <dd class="ledger-value text-lg">{{ allResources.length }}</dd>
-          </div>
-          <div class="ledger-row border-b-0">
-            <dt class="ledger-label">Paths</dt>
-            <span class="ledger-rule" aria-hidden="true" />
-            <dd class="ledger-value text-lg">{{ roadmaps.length }}</dd>
-          </div>
-        </dl>
+      <div class="mb-7 flex flex-wrap items-center gap-2.5">
+        <RouterLink to="/roadmaps" class="btn btn-primary px-4 py-2">
+          Start learning <AppIcon name="arrow-right" :size="12" />
+        </RouterLink>
+        <RouterLink to="/projects" class="btn px-4 py-2">
+          Just gimme something to build
+        </RouterLink>
       </div>
-    </section>
 
+      <!-- census of contents, ruled like a colophon -->
+      <p class="mb-1 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
+        Census of contents
+      </p>
+      <dl>
+        <div class="ledger-row">
+          <dt class="ledger-label">Topics</dt>
+          <span class="ledger-rule" aria-hidden="true" />
+          <dd class="ledger-value text-base">{{ totalTopics }}</dd>
+        </div>
+        <div class="ledger-row">
+          <dt class="ledger-label">Projects</dt>
+          <span class="ledger-rule" aria-hidden="true" />
+          <dd class="ledger-value text-base">{{ projectList.length }}</dd>
+        </div>
+        <div class="ledger-row">
+          <dt class="ledger-label">Resources</dt>
+          <span class="ledger-rule" aria-hidden="true" />
+          <dd class="ledger-value text-base">{{ allResources.length }}</dd>
+        </div>
+        <div class="ledger-row border-b-0">
+          <dt class="ledger-label">Paths</dt>
+          <span class="ledger-rule" aria-hidden="true" />
+          <dd class="ledger-value text-base">{{ roadmaps.length }}</dd>
+        </div>
+      </dl>
+    </template>
+
+    <template #left-foot>
+      <p class="max-w-xs text-[13px] italic leading-relaxed text-faint">
+        "Smart people in our industry are the ones who learn how to learn,
+        unlearn, and relearn" - Shafiqa Iqbal
+      </p>
+    </template>
+
+    <!-- ============ RIGHT PAGE: the body ============ -->
     <!-- ===================================================== QUICK START -->
     <!-- The three disciplines, struck as school plates rather than cards. -->
-    <section class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+    <section class="py-10">
       <h2 class="mb-8 rule-heading">Pick a lane</h2>
       <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
         <RouterLink
@@ -195,8 +185,8 @@ function openNext() {
     </section>
 
     <!-- ================================================== DOCS / THE YAP -->
-    <section class="border-y border-line bg-raised/40">
-      <div class="max-w-6xl px-4 mx-auto py-14 sm:px-6 sm:py-20">
+    <section class="border-y border-line/50 py-10">
+      <div>
         <h2 class="mb-8 rule-heading">Read this first</h2>
 
         <!-- A two-page spread: the long read on the left leaf, the short
@@ -330,7 +320,7 @@ function openNext() {
     </section>
 
     <!-- =================================================== YOUR PROGRESS -->
-    <section class="max-w-6xl px-4 mx-auto py-14 sm:px-6 sm:py-20">
+    <section class="py-10">
       <h2 class="mb-8 rule-heading">Where you're at</h2>
 
       <div class="grid gap-6 lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-12">
@@ -385,8 +375,8 @@ function openNext() {
     </section>
 
     <!-- ====================================================== WHAT'S NEXT -->
-    <section class="border-y border-line bg-raised/40">
-      <div class="max-w-6xl px-4 mx-auto py-14 sm:px-6 sm:py-20">
+    <section class="border-y border-line/50 py-10">
+      <div>
         <div class="grid gap-6 md:grid-cols-2">
           <!-- next topic -->
           <div
@@ -452,7 +442,7 @@ function openNext() {
     </section>
 
     <!-- =========================================================== ADVICE -->
-    <section class="max-w-6xl px-4 mx-auto py-14 sm:px-6 sm:py-20">
+    <section class="py-10">
       <div class="mb-10">
         <p class="mb-2 label-mono">Guideline</p>
         <h2 class="text-xl font-normal text-ink">
@@ -494,18 +484,8 @@ function openNext() {
       </div>
     </section>
 
-    <!-- ============================================================ QUOTE -->
-    <section class="border-t border-line">
-      <div class="max-w-6xl px-4 mx-auto text-center py-14 sm:px-6">
-        <p
-          class="max-w-xl mx-auto text-sm italic font-light leading-relaxed text-faint"
-        >
-          "Smart people in our industry are the ones who learn how to learn,
-          unlearn, and relearn" - Shafiqa Iqbal
-        </p>
-      </div>
-    </section>
-  </div>
+    <p class="folio mt-10 text-right">Folio I</p>
+  </BookSpread>
 </template>
 
 <style>

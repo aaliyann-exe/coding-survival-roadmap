@@ -41,21 +41,21 @@ withDefaults(
     <!-- ---------------------------------------------- LEFT PAGE (verso) -->
     <aside
       v-if="!full"
-      class="page page-left relative flex min-w-0 flex-col px-6 py-8 sm:px-9 lg:px-10 lg:py-14"
+      class="page page-left relative flex min-w-0 flex-col px-4 py-6 sm:px-9 sm:py-8 lg:px-10 lg:py-14"
     >
       <div class="lg:sticky lg:top-10">
         <p v-if="folio" class="folio mb-6 hidden lg:block">{{ folio }}</p>
 
         <p
           v-if="eyebrow"
-          class="mb-3 font-mono text-[10px] uppercase tracking-[0.3em] text-faint"
+          class="mb-3 font-mono text-[9px] uppercase tracking-[0.16em] text-faint sm:text-[10px] sm:tracking-[0.3em]"
         >
           {{ eyebrow }}
         </p>
 
         <h1
           v-if="title"
-          class="text-[1.9rem] leading-[1.05] text-ink lg:text-[2.35rem]"
+          class="text-[1.45rem] leading-[1.08] text-ink sm:text-[1.9rem] sm:leading-[1.05] lg:text-[2.35rem]"
           style="font-family: 'Cinzel', Georgia, serif"
         >
           {{ title }}
@@ -83,7 +83,7 @@ withDefaults(
 
     <!-- --------------------------------------------- RIGHT PAGE (recto) -->
     <div
-      class="page relative flex min-w-0 flex-col px-5 py-8 sm:px-9 lg:px-12 lg:py-14"
+      class="page relative flex min-w-0 flex-col px-4 py-6 sm:px-9 sm:py-8 lg:px-12 lg:py-14"
       :class="full ? '' : 'page-right'"
     >
       <!-- In `full` there is no verso to carry the apparatus, so the title
@@ -93,13 +93,13 @@ withDefaults(
         <p v-if="folio" class="folio mb-5">{{ folio }}</p>
         <p
           v-if="eyebrow"
-          class="mb-3 font-mono text-[10px] uppercase tracking-[0.3em] text-faint"
+          class="mb-3 font-mono text-[9px] uppercase tracking-[0.16em] text-faint sm:text-[10px] sm:tracking-[0.3em]"
         >
           {{ eyebrow }}
         </p>
         <h1
           v-if="title"
-          class="text-[1.9rem] leading-[1.05] text-ink lg:text-[2.35rem]"
+          class="text-[1.45rem] leading-[1.08] text-ink sm:text-[1.9rem] sm:leading-[1.05] lg:text-[2.35rem]"
           style="font-family: 'Cinzel', Georgia, serif"
         >
           {{ title }}

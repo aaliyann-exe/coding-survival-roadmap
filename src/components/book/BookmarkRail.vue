@@ -32,21 +32,25 @@ function isActive(to: string) {
 
 <template>
   <nav aria-label="Chapters" class="relative z-20 -mb-2">
+    <!-- Five equal columns on a phone, so every chapter is reachable without
+         sideways scrolling; natural-width ribbons in a row once there is room. -->
     <ul
-      class="no-scrollbar flex items-start gap-2 overflow-x-auto px-3 pt-2 sm:gap-4 sm:px-14"
+      class="no-scrollbar grid grid-cols-5 items-start gap-1 px-2 pt-2 sm:flex sm:gap-4 sm:overflow-x-auto sm:px-14"
     >
       <li
         v-for="(link, i) in links"
         :key="link.to"
-        class="shrink-0"
-        :style="{ paddingTop: `${SET[i % SET.length].depth}px` }"
+        class="ribbon-slot min-w-0"
+        :style="{ '--depth': SET[i % SET.length].depth }"
       >
         <RouterLink
           :to="link.to"
           class="ribbon"
           :data-active="isActive(link.to) ? 'true' : 'false'"
           :aria-current="isActive(link.to) ? 'page' : undefined"
-          :style="{ height: isActive(link.to) ? '3.35rem' : '2.9rem' }"
+          :style="{
+            height: isActive(link.to) ? 'var(--ribbon-h-active)' : 'var(--ribbon-h)',
+          }"
         >
           <span>{{ link.label }}</span>
         </RouterLink>

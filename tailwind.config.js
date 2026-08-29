@@ -12,9 +12,9 @@ export default {
         display: ["Cinzel", "Georgia", "serif"],
         // Stamped mechanical text: labels, stats, chips, code-ish bits.
         mono: ["Fira Code", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
-        // Ceremonial chapter marks / section rules. Falls back to the display
-        // face so the hierarchy survives until the file is supplied.
-        rule: ["Kultum Ramadhan", "Cinzel", "Georgia", "serif"],
+        // Ceremonial chapter marks / section rules — the same face as the
+        // closing quotation, so the two ceremonial voices match.
+        rule: ["Transcity", "Cinzel", "Georgia", "serif"],
         // The closing quotation.
         rune: ["Transcity", "Cinzel", "Georgia", "serif"],
         // Its attribution, in a hand.

@@ -78,7 +78,9 @@ function openNext() {
   >
     <!-- ============ LEFT PAGE: the frontispiece apparatus ============ -->
     <template #left>
-      <p class="seesaw-text mb-6 font-mono text-[10px] uppercase tracking-[0.3em] text-faint">
+      <p
+        class="seesaw-text mb-6 font-mono text-[9px] uppercase tracking-[0.16em] text-faint sm:text-[10px] sm:tracking-[0.3em]"
+      >
         <span class="seesaw-num num-6">6</span>-<span class="seesaw-num num-7">7</span>
         (omg 67) months of coding, mapped out
       </p>

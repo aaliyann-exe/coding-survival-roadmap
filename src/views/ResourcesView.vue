@@ -168,7 +168,7 @@ function reset() {
     <div v-else class="space-y-14">
       <section v-for="group in grouped" :key="group.type">
         <div class="mb-5 flex items-center gap-3">
-          <h2 class="min-w-0 font-rule text-[19px] uppercase leading-tight tracking-[0.1em] text-ink">
+          <h2 class="min-w-0 font-rule text-[17px] uppercase leading-tight tracking-[0.08em] text-ink">
             {{ resourceTypeLabels[group.type] }}
           </h2>
           <span class="h-px flex-1 bg-line/70" aria-hidden="true" />

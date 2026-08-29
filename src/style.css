@@ -46,6 +46,8 @@
    glyph set: the fallbacks after each family still matter for anything the
    font itself does not contain.
 --------------------------------------------------------------------------- */
+/* Declared and available, though nothing currently uses it — the section
+   headings moved to Transcity to match the quotation. */
 @font-face {
   font-family: "Kultum Ramadhan";
   font-display: swap;
@@ -90,6 +92,11 @@
     --edge-shadow: 0.18;
 
     /* The room the tome rests in. */
+    /* Ribbon heights, so the rail can shrink on a phone without the markup
+       needing to know about breakpoints. */
+    --ribbon-h: 2.35rem;
+    --ribbon-h-active: 2.7rem;
+
     --desk: 38 27 20;
     --desk-lit: 96 70 44;
     --ribbon: 138 30 34;
@@ -166,6 +173,13 @@
   }
   .dark .track-python {
     --track: 182 142 222;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --ribbon-h: 2.9rem;
+      --ribbon-h-active: 3.35rem;
+    }
   }
 
   html {
@@ -262,10 +276,9 @@
      Set in the display face rather than the stamped mono: these are titles,
      not machine labels, and the mono reading was too technical for them. */
   .rule-heading {
-    /* Kultum Ramadhan is a decorative face: the wide tracking that suited the
-       old mono setting pulls its letterforms apart, so it is eased here and
-       the size lifted to keep the headings readable. */
-    @apply flex items-center gap-3 font-rule text-[19px] uppercase tracking-[0.1em] text-ink;
+    /* Transcity, matching the closing quotation. It sets tighter and heavier
+       than the mono it replaced, so the tracking stays modest. */
+    @apply flex items-center gap-3 font-rule text-[17px] uppercase tracking-[0.08em] text-ink;
   }
   .rule-heading::before,
   .rule-heading::after {
@@ -380,10 +393,19 @@
     background-color: rgb(var(--canvas));
   }
   .page-left {
-    box-shadow: inset -22px 0 26px -22px rgb(var(--ink) / 0.42);
+    border-bottom: 1px solid rgb(var(--line) / 0.28);
   }
   .page-right {
-    box-shadow: inset 22px 0 26px -22px rgb(var(--ink) / 0.42);
+    box-shadow: none;
+  }
+  @media (min-width: 1024px) {
+    .page-left {
+      border-bottom: 0;
+      box-shadow: inset -22px 0 26px -22px rgb(var(--ink) / 0.42);
+    }
+    .page-right {
+      box-shadow: inset 22px 0 26px -22px rgb(var(--ink) / 0.42);
+    }
   }
 
   /* The binding channel between the facing pages. */
@@ -409,9 +431,9 @@
      even spacing and equal heights read as a tab bar, which is exactly the
      thing this replaces. */
   .ribbon {
-    @apply relative flex shrink-0 items-end justify-center whitespace-nowrap px-3 font-mono text-[9px] uppercase tracking-[0.14em];
-    min-width: 5.5rem;
-    padding-bottom: 0.55rem;
+    @apply relative flex w-full items-end justify-center whitespace-nowrap px-1 font-mono text-[7.5px] uppercase tracking-[0.02em];
+    min-width: 0;
+    padding-bottom: 0.4rem;
     color: rgb(var(--canvas));
     background-color: rgb(var(--ribbon));
     background-image: linear-gradient(
@@ -452,6 +474,26 @@
     height: 9px;
     transform: translateX(-50%);
     background-color: rgb(var(--ribbon));
+  }
+
+  @media (min-width: 640px) {
+    .ribbon {
+      @apply w-auto shrink-0 px-3 text-[9px] tracking-[0.14em];
+      min-width: 5.5rem;
+      padding-bottom: 0.55rem;
+    }
+  }
+
+  /* The insertion depth. Scaled right down on narrow screens: the full
+     stagger eats vertical space the phone does not have and reads as
+     misalignment rather than as ribbons pushed in by hand. */
+  .ribbon-slot {
+    padding-top: calc(var(--depth, 0) * 0.34px);
+  }
+  @media (min-width: 640px) {
+    .ribbon-slot {
+      padding-top: calc(var(--depth, 0) * 1px);
+    }
   }
 
   /* Text stamped directly onto the cover board.
@@ -734,7 +776,7 @@
     position: absolute;
     left: -0.04em;
     right: -0.04em;
-    top: 55%;
+    top: 45%;
     height: 2px;
     background-color: rgb(var(--wax));
     transform: scaleX(0);
@@ -744,25 +786,45 @@
     animation: strike-through 2s ease-in-out infinite;
   }
 
-  /* RELEARN — the word is re-inked: a gilt wash sweeps across it, left to
-     right, as though the letters are being written a second time. */
-  .quote-key-again {
-    background-image: linear-gradient(
-      100deg,
-      rgb(var(--line-strong)) 0%,
-      rgb(var(--line-strong)) 38%,
-      rgb(var(--star)) 50%,
-      rgb(var(--line-strong)) 62%,
-      rgb(var(--line-strong)) 100%
-    );
-    background-size: 260% 100%;
-    background-position: 130% 0;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  /* RELEARN — an arrow loops back over the word, from the "n" at the end to
+     the "r" at the start: the word doubling back on itself. */
+  .quote-loop {
+    position: absolute;
+    left: -8%;
+    right: -8%;
+    /* clear of the cap height, so the arc arches over the word rather than
+       striking through it */
+    bottom: 1.12em;
+    height: 0.68em;
+    overflow: visible;
+    pointer-events: none;
+    color: rgb(var(--line-strong));
   }
-  .epigraph-lit .quote-key-again {
-    animation: re-ink 2s ease-in-out infinite;
+  .quote-loop path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* one dash the length of the whole stroke, offset out of sight, so the
+       animation draws it on rather than fading it in */
+    stroke-dasharray: 210;
+    stroke-dashoffset: 210;
+    opacity: 0;
+  }
+  .epigraph-lit .quote-loop path {
+    animation: loop-draw 2s ease-in-out infinite;
+  }
+  /* The head is stamped, not drawn, so it must opt out of the dash the arc
+     uses — the shared rule above was dashing it entirely out of sight, and
+     only its opacity was being animated, so it never appeared at all. */
+  .quote-loop .loop-head {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+  /* the head lands only once the arc has actually arrived */
+  .epigraph-lit .quote-loop .loop-head {
+    animation: loop-head 2s ease-in-out infinite;
   }
 
   @keyframes rule-draw {
@@ -826,14 +888,40 @@
     }
   }
 
-  @keyframes re-ink {
+  @keyframes loop-draw {
     0%,
-    14% {
-      background-position: 130% 0;
+    6% {
+      stroke-dashoffset: 210;
+      opacity: 0;
     }
-    62%,
+    14% {
+      opacity: 1;
+    }
+    52% {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    76% {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
     100% {
-      background-position: -30% 0;
+      stroke-dashoffset: 0;
+      opacity: 0;
+    }
+  }
+
+  @keyframes loop-head {
+    0%,
+    46% {
+      opacity: 0;
+    }
+    56%,
+    76% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
     }
   }
 
@@ -848,13 +936,13 @@
       animation: none;
       opacity: 0;
     }
-    .epigraph-lit .quote-key-again {
+    .epigraph-lit .quote-loop path {
       animation: none;
-      background-position: -30% 0;
+      opacity: 0;
     }
   }
 
-  /* ---------------- The scroll ---------------- */  /* ---------------- The scroll ---------------- */
+  /* ---------------- The scroll ---------------- */ /* ---------------- The scroll ---------------- */
 
   /* A rolled sheet rather than a rectangular dialog. The field is flanked by
      wound parchment at head and foot, each with a dowel protruding at both

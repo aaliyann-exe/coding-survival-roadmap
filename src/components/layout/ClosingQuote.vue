@@ -57,7 +57,7 @@ onBeforeUnmount(() => observer?.disconnect());
       <span class="h-px flex-1 bg-current" />
     </div>
 
-    <figure class="mx-auto mt-7 max-w-4xl text-center">
+    <figure class="mx-auto mt-7 max-w-5xl text-center">
       <blockquote
         class="font-rune text-[1.5rem] leading-[1.7] opacity-95 sm:text-[1.9rem]"
       >
@@ -67,12 +67,27 @@ onBeforeUnmount(() => observer?.disconnect());
         "Smart people in our industry are the ones who learn how to
         <span class="quote-key"
           >learn<span class="quote-spark" aria-hidden="true">💡</span></span
-        >,
-        <span class="quote-key quote-key-undo">unlearn</span>, and
-        <span class="quote-key quote-key-again">relearn</span>"
+        >, <span class="quote-key quote-key-undo">unlearn</span>, and
+        <span class="quote-key"
+          >relearn<!-- the arc runs right-to-left: from the "n" back over the
+               word to the "r", ending in a head that points down at it -->
+          <svg
+            class="quote-loop"
+            viewBox="0 0 120 40"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path d="M110 36 C110 2 10 2 10 30" vector-effect="non-scaling-stroke" />
+            <path
+              class="loop-head"
+              d="M1 16 L10 34 L21 17"
+              vector-effect="non-scaling-stroke"
+            />
+          </svg></span
+        >"
       </blockquote>
       <figcaption
-        class="mt-5 font-hand text-[1.15rem] opacity-70 sm:text-[1.35rem]"
+        class="mt-5 font-hand font-bold text-[1.15rem] opacity-100 sm:text-[1.35rem]"
       >
         - Shafiqa Iqbal
       </figcaption>

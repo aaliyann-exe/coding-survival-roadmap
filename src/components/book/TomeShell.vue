@@ -147,6 +147,10 @@ watch(
             class="pointer-events-none absolute inset-0 z-40 overflow-hidden"
             aria-hidden="true"
           >
+            <!-- the parchment the spell burns away, under the leaf -->
+            <div
+              class="grain absolute inset-0 bg-canvas motion-safe:animate-veil-lift motion-reduce:hidden"
+            />
             <!-- the leaf swinging about the gutter -->
             <div
               class="turn-leaf motion-safe:animate-leaf-turn motion-reduce:hidden"

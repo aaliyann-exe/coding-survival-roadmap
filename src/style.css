@@ -184,6 +184,17 @@
     outline-offset: 2px;
   }
 
+  /* On the cover board the track accent can fall to almost no contrast, so
+     anything sitting on the desk (ribbons, colophon controls) gets the gilt
+     ring plus a dark halo to separate it from the leather. */
+  .desk .ribbon:focus-visible,
+  .on-board a:focus-visible,
+  .on-board button:focus-visible {
+    outline: 2px solid rgb(var(--line-strong));
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgb(0 0 0 / 0.55);
+  }
+
   ::-webkit-scrollbar {
     width: 13px;
     height: 13px;
@@ -687,10 +698,13 @@
     border-color: rgb(var(--track) / 0.45);
   }
 
-  /* Corner registration marks, floating just outside the element's border. */
-  .corner-frame {
-    position: relative;
-  }
+  /* Corner registration marks, floating just outside the element's border.
+     Deliberately does NOT set `position`: as a custom utility this is emitted
+     after Tailwind's core utilities, so a `position` here overrides `fixed`
+     / `absolute` on the same element. That is exactly what broke the login
+     modal and the command palette — both are `fixed` and were silently
+     demoted to `relative`, dropping them out of the viewport. Callers that
+     need a positioning context add `relative` themselves. */
   .corner-frame::before,
   .corner-frame::after {
     content: "";
@@ -711,6 +725,14 @@
     right: -6px;
     border-bottom: 2px solid;
     border-right: 2px solid;
+  }
+
+  /* A second rule inset from the border — the edge of a leaf inside its
+     cover. Used on loose sheets (dialogs) laid over the tome. */
+  .inset-rule {
+    box-shadow:
+      inset 0 0 0 4px rgb(var(--canvas)),
+      inset 0 0 0 5px rgb(var(--line) / 0.5);
   }
 
   /* Heavy ink rule with a shorter gilt line trailing under it. */

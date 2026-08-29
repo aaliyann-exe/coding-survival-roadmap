@@ -130,7 +130,7 @@ onUnmounted(() => {
     >
       <div
         v-if="isOpen"
-        class="page-edge corner-frame fixed left-1/2 top-[8vh] z-[120] w-[min(640px,calc(100vw-2rem))] -translate-x-1/2 border-2 border-line bg-surface shadow-lift"
+        class="inset-rule corner-frame fixed left-1/2 top-[8vh] z-[120] w-[min(640px,calc(100vw-2rem))] -translate-x-1/2 border-2 border-line bg-surface shadow-lift"
         role="dialog"
         aria-modal="true"
         aria-label="Search topics, projects and resources"

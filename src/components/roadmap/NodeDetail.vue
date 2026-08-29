@@ -5,6 +5,7 @@ import { nodeById, unlockedBy } from "@/data/roadmaps";
 import projectList from "@/data/projects";
 import { useProgress } from "@/composables/useProgress";
 import AppIcon from "@/components/ui/AppIcon.vue";
+import ArcaneSigil from "@/components/arcane/ArcaneSigil.vue";
 import ResourceCard from "@/components/resources/ResourceCard.vue";
 
 const props = defineProps<{ node: RoadmapNode }>();
@@ -37,6 +38,18 @@ const difficultyLabel = {
 
 <template>
   <div class="px-5 py-6 sm:px-7 sm:py-8">
+    <!-- The node's own sigil, repeated from the portal so the sheet is
+         visibly the record *of that node* rather than a generic dialog. -->
+    <div class="mb-5 flex items-center gap-3">
+      <span
+        class="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-line text-track"
+        aria-hidden="true"
+      >
+        <ArcaneSigil :seed="node.id" :size="17" />
+      </span>
+      <span class="h-px flex-1 bg-line/40" aria-hidden="true" />
+    </div>
+
     <!-- status + difficulty -->
     <div class="mb-6 flex flex-wrap items-center gap-2">
       <span class="chip">{{ difficultyLabel[node.difficulty] }}</span>

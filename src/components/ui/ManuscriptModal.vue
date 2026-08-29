@@ -25,6 +25,10 @@ const emit = defineEmits<{ close: [] }>();
 
 const panel = ref<HTMLElement | null>(null);
 let lastFocused: HTMLElement | null = null;
+/** Guards the close-side effects. Several of these components are mounted at
+ * once (the node sheet and the project sheet), so a closed one must not run
+ * teardown on its first immediate tick and undo the open one's scroll lock. */
+let hasOpened = false;
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -57,22 +61,28 @@ function onKeydown(event: KeyboardEvent) {
   }
 }
 
+// `immediate` is required, not cosmetic: landing directly on `?node=<id>`
+// (a deep link, a search result, a cross-roadmap prerequisite) mounts this
+// component with `open` already true, so a lazy watcher never fires and the
+// sheet opens with no focus, no scroll lock and no Escape handler.
 watch(
   () => props.open,
   async (isOpen) => {
     if (isOpen) {
+      hasOpened = true;
       lastFocused = document.activeElement as HTMLElement | null;
       document.body.style.overflow = "hidden";
       window.addEventListener("keydown", onKeydown, true);
       await nextTick();
       panel.value?.focus();
-    } else {
+    } else if (hasOpened) {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKeydown, true);
       lastFocused?.focus?.();
       lastFocused = null;
     }
   },
+  { immediate: true },
 );
 
 onUnmounted(() => {

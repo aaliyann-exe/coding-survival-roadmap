@@ -774,3 +774,117 @@ remained.
 Checked out on `fantasy-revamp`, working tree clean, `fantasy-revamp` and
 `main` both at the rebirth commit. Build clean (`vue-tsc --noEmit` + Vite).
 Browser verification passing across all routes, themes and widths.
+
+---
+
+# Polish Pass — Requested Changes and Fixes
+
+## 1. Diamond stars
+
+`CelestialField.vue` now emits each star as a four-pointed diamond path
+(`M x,y−r  L x+r,y  L x,y+r  L x−r,y  Z`) instead of a `<circle>`. The path is
+built once at generation time alongside the seeded position, so the render is
+still one element per star with no per-node transform to resolve — a rotated
+`<rect>` would have cost a transform on every one of ~290 stars.
+
+Diamonds read visually smaller than discs at the same radius, so the three
+depth bands were widened to compensate (far 0.7–1.3, mid 1.4–2.2, near
+2.2–3.1) and the near band nudged to 26 stars.
+
+## 2. Login modal — fixed
+
+The modal was **invisible**: the backdrop rendered and dimmed the page, but the
+dialog itself was nowhere on screen. Four separate defects, all fixed:
+
+**a. The dialog was positioned out of the viewport (the visible bug).**
+`.corner-frame` set `position: relative`. As a custom utility it is emitted
+*after* Tailwind's core utilities, so it silently overrode `fixed` on the same
+element — the teleported dialog was demoted to static flow and rendered below
+the footer. The command palette had the identical bug.
+Fix: `.corner-frame` no longer sets `position` at all; callers that need a
+positioning context (`ProjectCard`, `AchievementCard`) add `relative`
+themselves, and the two `fixed` dialogs are left alone.
+
+**b. A dangling CSS class.** Both dialogs referenced `.page-edge`, whose
+definition was removed during the rebirth (it was replaced by `.page-edges`,
+which is a different thing — the book's paper stack). Restored as
+`.inset-rule` with a name that cannot be confused with the book furniture.
+
+**c. The field was never focused, and Escape did nothing.**
+`showLoginModal` is initialised to `true` for a first-time visitor, so a lazy
+watcher never fired for the exact case that needed it. The watcher is now
+`immediate`, and Escape plus the Tab focus trap are bound at the window rather
+than on the panel — a panel-level handler only sees keys once something inside
+it already has focus, which on a cold open is never. Body scroll is now locked
+while it is up, and released on close.
+
+**d. The offline notice was unreachable.** `setUsername` closed the modal
+itself, so the caller's "couldn't reach the sync server" message was written to
+an already-dismissed dialog and no one had ever seen it. `setUsername` no
+longer closes the modal; the caller decides once the sync result is known, and
+on a failed sync the sheet is held open long enough to read the notice.
+
+## 3. Longer arcane loading — 2 seconds
+
+`seal-cast` runs 2s, with its keyframes reshaped so the extra time is spent
+*lit* (opaque from 14% to 82%) rather than fading in slowly. `leaf-turn` was
+lengthened to 850ms so the page does not finish turning long before the spell
+it accompanies, and the rune rings were sped up (9s / 14s) so a 2s hold shows
+visible rotation. `useBookTurn` timings follow at 2000ms / 2060ms.
+
+A **veil** was added to make the extra second meaningful: a parchment layer
+under the leaf that holds opaque while the seal burns and lifts in the last
+~40% (`veil-lift`). Without it the leaf finished at 850ms and the new chapter
+simply sat exposed behind a still-glowing seal for another second. Now the
+spell genuinely reveals the page. Reduced motion skips both the leaf and the
+veil and keeps a shorter seal-only beat.
+
+## 4. Additional improvements
+
+**Recommended next step marked in the tree.** The tree could already show what
+was *reachable* but never where to actually go next — the single most useful
+thing a progression screen can say. `SkillNode` takes a `next` flag, driven by
+the existing `nextUp` selector, and marks that node with a small ember plate.
+No content or ordering changed; this is presentation of a value the product
+already computed.
+
+**Deep-linked nodes no longer strand the reader.** Arriving at `?node=<id>`
+from the command palette or a cross-roadmap prerequisite opened the brief while
+the tree stayed scrolled to the top, so closing it left you with no idea where
+that node lived. The tree now parks on it. Deliberately fires on *close*, not
+open: the sheet locks body scroll while it is up, so a scroll issued at open
+time silently does nothing.
+
+**Node briefs carry their sigil.** The sheet repeats the node's portal sigil,
+so it is visibly the record of *that* node rather than a generic dialog.
+
+**Browser chrome matches the desk.** `theme-color` pointed at the old page
+colours; the book now sits on a desk, and that is what meets the browser chrome
+at the viewport edge.
+
+**Focus rings survive the leather.** On the cover board the track accent can
+fall to almost no contrast, so ribbons and colophon controls get a gilt ring
+plus a dark halo.
+
+### Two further bugs found while verifying the above
+
+**Modals mounted open did nothing.** `ManuscriptModal`'s watcher was not
+`immediate` either, so landing directly on `?node=<id>` mounted it with `open`
+already true and it opened with no focus, no scroll lock and no Escape handler.
+Same root cause as the login modal. Fixed the same way.
+
+**A closed modal wiped the open one's scroll lock.** Two `ManuscriptModal`
+instances mount at once (node sheet + project sheet). Once the watchers became
+`immediate`, the closed one's teardown branch ran on its first tick and cleared
+the body scroll lock the open one had just set. Both modals now guard teardown
+behind a `hasOpened` flag so a sheet that was never open never runs cleanup.
+
+## Verification
+
+`npm run build` clean. Headless Chromium sweep re-run: 9 routes x 2 themes x 2
+widths, no console errors, no horizontal overflow — `ALL CHECKS PASSED`.
+Targeted checks: login modal centred at 380x380 with the field focused and
+scroll locked, Escape closing and unlocking; seal present at 400/1200/1900ms
+and gone by 2300ms; veil holding the page at 1200ms; deep link opening with a
+lock and parking the tree at `scrollY 490` on close. `md5sum` of all nine
+`src/data/` files unchanged.

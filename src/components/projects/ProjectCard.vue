@@ -24,7 +24,7 @@ const trackClass: Record<Project["roadmap"], string> = {
 
 <template>
   <article
-    class="corner-frame group flex h-full flex-col border-2 border-line bg-surface transition-colors hover:border-[rgb(var(--track))]"
+    class="relative corner-frame group flex h-full flex-col border-2 border-line bg-surface transition-colors hover:border-[rgb(var(--track))]"
     :class="[trackClass[project.roadmap], isProjectDone(project.id) ? 'border-emerald-600/60' : '']"
   >
     <button

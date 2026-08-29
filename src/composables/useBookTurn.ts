@@ -42,8 +42,8 @@ export function chapterOf(route: RouteLocationNormalized | { path: string }) {
 
 /**
  * Run the turn. Durations are matched to the CSS animations
- * (`leaf-turn` 620ms, `seal-cast` 780ms) and kept short enough that repeated
- * navigation never feels obstructed.
+ * (`leaf-turn` 850ms, `seal-cast` 2s) — the seal is the long beat, so the
+ * phase has to outlast it or the spell would be cut off mid-cast.
  */
 function start() {
   clearTimers();
@@ -53,15 +53,15 @@ function start() {
     // rotates. The leaf is not rendered at all in this mode.
     phase.value = "turning";
     casting.value = true;
-    timers.push(window.setTimeout(() => (casting.value = false), 300));
-    timers.push(window.setTimeout(() => (phase.value = "idle"), 340));
+    timers.push(window.setTimeout(() => (casting.value = false), 900));
+    timers.push(window.setTimeout(() => (phase.value = "idle"), 950));
     return;
   }
 
   phase.value = "turning";
   casting.value = true;
-  timers.push(window.setTimeout(() => (casting.value = false), 700));
-  timers.push(window.setTimeout(() => (phase.value = "idle"), 760));
+  timers.push(window.setTimeout(() => (casting.value = false), 2000));
+  timers.push(window.setTimeout(() => (phase.value = "idle"), 2060));
 }
 
 export function useBookTurn() {

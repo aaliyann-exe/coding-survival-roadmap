@@ -21,6 +21,8 @@ const props = defineProps<{
   active?: boolean;
   /** Milestone nodes gate several branches and are struck larger. */
   major?: boolean;
+  /** The roadmap's recommended next step — the reader's current quest. */
+  next?: boolean;
 }>();
 
 defineEmits<{ select: [node: RoadmapNode] }>();
@@ -104,6 +106,19 @@ const titleTone = computed(() =>
         <AppIcon :name="status === 'mastered' ? 'trophy' : 'check'" :size="9" />
       </span>
     </span>
+
+    <!-- The recommended next step. The tree could already show what was
+         reachable, but not where to actually go next, which is the single
+         most useful thing a progression screen can say. -->
+    <span
+      v-if="next && status !== 'completed' && status !== 'mastered'"
+      class="absolute -top-2 left-9 z-10 border px-1.5 py-px font-mono text-[8px] uppercase tracking-[0.2em] text-[rgb(var(--ember))]"
+      style="
+        border-color: rgb(var(--ember) / 0.7);
+        background-color: rgb(var(--void-deep));
+      "
+      >Next</span
+    >
 
     <!-- inscription -->
     <span class="flex min-w-0 flex-1 flex-col gap-1 px-3 py-2.5">

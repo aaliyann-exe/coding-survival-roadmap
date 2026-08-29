@@ -32,11 +32,11 @@ function makeRng(seed: number) {
 }
 
 interface Star {
-  x: number;
-  y: number;
-  r: number;
+  /** Diamond path, built once at generation time. */
+  path: string;
   o: number;
-  d: string;
+  /** Twinkle period. */
+  dur: string;
 }
 
 const layers = computed(() => {
@@ -47,23 +47,26 @@ const layers = computed(() => {
   const band = (count: number, rMin: number, rMax: number, oMin: number, oMax: number) => {
     const out: Star[] = [];
     for (let i = 0; i < count; i++) {
+      const x = +(rng() * W).toFixed(1);
+      const y = +(rng() * H).toFixed(1);
+      const r = +(rMin + rng() * (rMax - rMin)).toFixed(2);
       out.push({
-        x: +(rng() * W).toFixed(1),
-        y: +(rng() * H).toFixed(1),
-        r: +(rMin + rng() * (rMax - rMin)).toFixed(2),
+        // A four-pointed diamond: N → E → S → W. Written as a path rather
+        // than a rotated <rect> so no transform has to be resolved per star.
+        path: `M${x} ${(y - r).toFixed(2)}L${(x + r).toFixed(2)} ${y}L${x} ${(y + r).toFixed(2)}L${(x - r).toFixed(2)} ${y}Z`,
         o: +(oMin + rng() * (oMax - oMin)).toFixed(2),
         // Wide spread of periods so the field never pulses in unison, which
         // would read as a loading indicator instead of a sky.
-        d: `${(3 + rng() * 9).toFixed(1)}s`,
+        dur: `${(3 + rng() * 9).toFixed(1)}s`,
       });
     }
     return out;
   };
 
   return {
-    far: band(190, 0.5, 1.0, 0.35, 0.7),
-    mid: band(75, 1.0, 1.7, 0.6, 0.9),
-    near: band(24, 1.8, 2.8, 0.85, 1),
+    far: band(190, 0.7, 1.3, 0.35, 0.7),
+    mid: band(75, 1.4, 2.2, 0.6, 0.9),
+    near: band(26, 2.2, 3.1, 0.85, 1),
   };
 });
 
@@ -139,37 +142,21 @@ const constellations = [
       <path v-for="(d, i) in constellations" :key="i" :d="d" />
     </g>
 
-    <!-- 5. star bands, far to near -->
+    <!-- 5. star bands, far to near — diamonds, not discs -->
     <g fill="rgb(var(--star))">
-      <circle
-        v-for="(s, i) in layers.far"
-        :key="`f${i}`"
-        :cx="s.x"
-        :cy="s.y"
-        :r="s.r"
-        :opacity="s.o"
-      />
+      <path v-for="(s, i) in layers.far" :key="`f${i}`" :d="s.path" :opacity="s.o" />
     </g>
     <g fill="rgb(var(--star))" class="motion-safe:animate-twinkle" style="--o: 0.7">
-      <circle
-        v-for="(s, i) in layers.mid"
-        :key="`m${i}`"
-        :cx="s.x"
-        :cy="s.y"
-        :r="s.r"
-        :opacity="s.o"
-      />
+      <path v-for="(s, i) in layers.mid" :key="`m${i}`" :d="s.path" :opacity="s.o" />
     </g>
     <g fill="rgb(var(--star))">
-      <circle
+      <path
         v-for="(s, i) in layers.near"
         :key="`n${i}`"
-        :cx="s.x"
-        :cy="s.y"
-        :r="s.r"
+        :d="s.path"
         :opacity="s.o"
         class="motion-safe:animate-twinkle"
-        :style="{ '--o': s.o, '--d': s.d }"
+        :style="{ '--o': s.o, '--d': s.dur }"
       />
     </g>
 

@@ -31,7 +31,10 @@ async function setUsername(raw: string): Promise<{ ok: false } | { ok: true; syn
 
   username.value = trimmed;
   localStorage.setItem(STORAGE_KEY, trimmed);
-  showLoginModal.value = false;
+  // Deliberately does NOT close the modal. It used to, which meant the
+  // caller's "couldn't reach the sync server" notice was written to a dialog
+  // that had already been dismissed and was never seen. Closing is now the
+  // caller's decision, taken once the sync result is known.
 
   const remoteUser = await identifyUser(trimmed);
   notify();

@@ -25,7 +25,7 @@ import ArcaneSigil from "@/components/arcane/ArcaneSigil.vue";
 const props = defineProps<{ roadmap: Roadmap; activeId?: string | null }>();
 defineEmits<{ select: [node: RoadmapNode] }>();
 
-const { statusOf, completedNodeIds } = useProgress();
+const { statusOf, completedNodeIds, nextUp } = useProgress();
 const { prefersReducedMotion } = useReducedMotion();
 
 const canvas = ref<HTMLElement | null>(null);
@@ -208,6 +208,48 @@ watch(
   () => nextTick(scheduleMeasure),
 );
 
+/** Park the tree on whichever node the reader was just looking at.
+ *
+ * This deliberately fires when the brief *closes*, not when it opens: the
+ * sheet locks body scroll while it is up, so a scroll issued at open time
+ * silently does nothing. Closing is also the moment it matters — arriving at
+ * `?node=<id>` from the command palette or a cross-roadmap prerequisite used
+ * to dump the reader at the top of the tree with no idea where that node was.
+ *
+ * The card refs do not exist on the first tick of a cold load, so this retries
+ * across a few frames rather than giving up immediately.
+ */
+function revealNode(id: string, attempt = 0) {
+  const el = cardEls.get(id);
+  if (!el) {
+    if (attempt < 12) requestAnimationFrame(() => revealNode(id, attempt + 1));
+    return;
+  }
+  const rect = el.getBoundingClientRect();
+  if (rect.top >= 0 && rect.bottom <= window.innerHeight) return;
+  el.scrollIntoView({
+    block: "center",
+    behavior: prefersReducedMotion.value ? "auto" : "smooth",
+  });
+}
+
+let lastActive: string | null = null;
+watch(
+  () => props.activeId,
+  (id) => {
+    if (id) {
+      lastActive = id;
+      return;
+    }
+    if (lastActive) {
+      const target = lastActive;
+      lastActive = null;
+      nextTick(() => revealNode(target));
+    }
+  },
+  { immediate: true },
+);
+
 /** Pathway inks. Sealed routes burn druid-green, walkable ones astral, and
  * dormant ones are barely charted. */
 const edgeStroke: Record<EdgeKind, string> = {
@@ -364,6 +406,7 @@ const edgeStroke: Record<EdgeKind, string> = {
                 :status="statusOf(item.node)"
                 :active="activeId === item.node.id"
                 :major="(unlockCount.get(item.node.id) ?? 0) >= 3"
+                :next="nextUp?.node.id === item.node.id"
                 @select="$emit('select', $event)"
               />
             </div>

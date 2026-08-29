@@ -10,7 +10,7 @@ defineProps<{ achievement: Achievement; unlocked: boolean }>();
     class="flex items-start gap-3 border p-4 transition-colors"
     :class="
       unlocked
-        ? 'corner-frame border-emerald-600/50 bg-emerald-500/[0.05]'
+        ? 'relative corner-frame border-emerald-600/50 bg-emerald-500/[0.05]'
         : 'border-line border-dashed bg-raised opacity-80'
     "
   >

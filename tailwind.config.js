@@ -121,9 +121,17 @@ export default {
         // The seal igniting on the exposed page and fading back into it.
         "seal-cast": {
           "0%": { opacity: "0", transform: "scale(0.82)" },
-          "35%": { opacity: "1", transform: "scale(1)" },
-          "70%": { opacity: "1", transform: "scale(1)" },
+          "14%": { opacity: "1", transform: "scale(1)" },
+          "82%": { opacity: "1", transform: "scale(1.015)" },
           "100%": { opacity: "0", transform: "scale(1.06)" },
+        },
+        // The parchment veil the spell burns away. It holds opaque while the
+        // seal is lit, then lifts at the end — so the chapter is revealed *by*
+        // the spell rather than sitting exposed behind it for a second and a
+        // half.
+        "veil-lift": {
+          "0%, 58%": { opacity: "1" },
+          "100%": { opacity: "0" },
         },
         "rune-spin": { to: { transform: "rotate(360deg)" } },
         "rune-spin-rev": { to: { transform: "rotate(-360deg)" } },
@@ -147,10 +155,11 @@ export default {
         flicker: "flicker 1.8s ease-in-out infinite",
         "set-down": "set-down 0.32s cubic-bezier(0.3, 1.2, 0.5, 1) both",
         "ink-in": "ink-in 0.7s ease-out both",
-        "leaf-turn": "leaf-turn 0.62s cubic-bezier(0.55, 0.02, 0.35, 1) forwards",
-        "seal-cast": "seal-cast 0.78s ease-out forwards",
-        "rune-spin": "rune-spin 14s linear infinite",
-        "rune-spin-rev": "rune-spin-rev 22s linear infinite",
+        "leaf-turn": "leaf-turn 0.85s cubic-bezier(0.55, 0.02, 0.35, 1) forwards",
+        "seal-cast": "seal-cast 2s ease-out forwards",
+        "veil-lift": "veil-lift 2s ease-in forwards",
+        "rune-spin": "rune-spin 9s linear infinite",
+        "rune-spin-rev": "rune-spin-rev 14s linear infinite",
         twinkle: "twinkle var(--d, 5s) ease-in-out infinite",
         drift: "drift 9s ease-in-out infinite",
       },

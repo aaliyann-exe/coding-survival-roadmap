@@ -252,7 +252,7 @@ function doReset() {
     <!-- achievements -->
     <section class="mb-14">
       <div class="mb-5 flex items-center gap-3">
-        <h2 class="min-w-0 font-rule text-[15px] uppercase leading-tight tracking-[0.22em] text-ink">
+        <h2 class="min-w-0 font-rule text-[19px] uppercase leading-tight tracking-[0.1em] text-ink">
           Achievements
         </h2>
         <span class="h-px flex-1 bg-line/70" aria-hidden="true" />

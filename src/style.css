@@ -40,41 +40,26 @@
 /* ---------------------------------------------------------------------------
    Custom display faces.
 
-   Kultum Ramadhan, Transcity and Kugile are commercial faces, so the files are
-   NOT in this repo — drop them into `public/fonts/` using the names below and
-   they take effect immediately. Several formats are listed so whichever
-   format you have works; the browser takes the first one it finds and skips
-   the rest without erroring.
-
-   Until then each falls back to a face that carries the same intent, so the
-   design reads correctly rather than collapsing to a system default.
+   These are the supplied files, referenced by their real names (spaces are
+   percent-encoded — an unencoded space silently breaks the URL and the face
+   falls back with no error). They are demo/trial cuts, so expect a reduced
+   glyph set: the fallbacks after each family still matter for anything the
+   font itself does not contain.
 --------------------------------------------------------------------------- */
 @font-face {
   font-family: "Kultum Ramadhan";
   font-display: swap;
-  src:
-    url("/fonts/kultum-ramadhan.woff2") format("woff2"),
-    url("/fonts/kultum-ramadhan.woff") format("woff"),
-    url("/fonts/kultum-ramadhan.otf") format("opentype"),
-    url("/fonts/kultum-ramadhan.ttf") format("truetype");
+  src: url("/fonts/Kultum%20Ramadhan.otf") format("opentype");
 }
 @font-face {
   font-family: "Transcity";
   font-display: swap;
-  src:
-    url("/fonts/transcity.woff2") format("woff2"),
-    url("/fonts/transcity.woff") format("woff"),
-    url("/fonts/transcity.otf") format("opentype"),
-    url("/fonts/transcity.ttf") format("truetype");
+  src: url("/fonts/Transcity%20DEMO.otf") format("opentype");
 }
 @font-face {
   font-family: "Kugile";
   font-display: swap;
-  src:
-    url("/fonts/kugile.woff2") format("woff2"),
-    url("/fonts/kugile.woff") format("woff"),
-    url("/fonts/kugile.otf") format("opentype"),
-    url("/fonts/kugile.ttf") format("truetype");
+  src: url("/fonts/Kugile_Demo.ttf") format("truetype");
 }
 
 /* ---------------------------------------------------------------------------
@@ -277,7 +262,10 @@
      Set in the display face rather than the stamped mono: these are titles,
      not machine labels, and the mono reading was too technical for them. */
   .rule-heading {
-    @apply flex items-center gap-3 font-rule text-[15px] uppercase tracking-[0.22em] text-ink;
+    /* Kultum Ramadhan is a decorative face: the wide tracking that suited the
+       old mono setting pulls its letterforms apart, so it is eased here and
+       the size lifted to keep the headings readable. */
+    @apply flex items-center gap-3 font-rule text-[19px] uppercase tracking-[0.1em] text-ink;
   }
   .rule-heading::before,
   .rule-heading::after {
@@ -683,15 +671,18 @@
 
   /* ---------------- The epigraph ---------------- */
 
-  /* The three verbs of the quotation, gilded and underscored by a rule that
-     draws itself. The words are the argument of the sentence, so they get to
-     look like it. */
+  /* The three verbs of the quotation. Each gets its own idea, and the whole
+     set replays on a 2s cycle so the line keeps performing itself.
+     One shared cycle length with staggered delays keeps them in lockstep —
+     independent durations would drift apart within a few loops. */
   .quote-key {
     position: relative;
     display: inline-block;
     color: rgb(var(--line-strong));
     white-space: nowrap;
   }
+
+  /* the rule that draws under every verb */
   .quote-key::after {
     content: "";
     position: absolute;
@@ -709,22 +700,35 @@
     transform: scaleX(0);
     transform-origin: left center;
   }
-  /* Drawn in sequence once the epigraph is on screen. */
   .epigraph-lit .quote-key::after {
-    animation: rule-draw 0.55s cubic-bezier(0.22, 0.7, 0.25, 1) forwards;
+    animation: rule-draw 2s ease-in-out infinite;
   }
   .epigraph-lit .quote-key:nth-of-type(1)::after {
-    animation-delay: 0.15s;
+    animation-delay: 0s;
   }
   .epigraph-lit .quote-key:nth-of-type(2)::after {
-    animation-delay: 0.5s;
+    animation-delay: 0.22s;
   }
   .epigraph-lit .quote-key:nth-of-type(3)::after {
-    animation-delay: 0.85s;
+    animation-delay: 0.44s;
   }
 
-  /* "unlearn" is struck through and then released — the one word in the
-     sentence that describes undoing something. */
+  /* LEARN — an idea arrives. The bulb rises out of the word and vanishes. */
+  .quote-spark {
+    position: absolute;
+    left: 50%;
+    top: -0.15em;
+    font-size: 0.62em;
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.5);
+  }
+  .epigraph-lit .quote-spark {
+    animation: spark-rise 2s ease-out infinite;
+  }
+
+  /* UNLEARN — struck through, then wiped away from the far edge. */
   .quote-key-undo::before {
     content: "";
     position: absolute;
@@ -737,35 +741,84 @@
     transform-origin: left center;
   }
   .epigraph-lit .quote-key-undo::before {
-    animation: strike-through 1.1s ease-in-out 0.55s forwards;
+    animation: strike-through 2s ease-in-out infinite;
+  }
+
+  /* RELEARN — the word is re-inked: a gilt wash sweeps across it, left to
+     right, as though the letters are being written a second time. */
+  .quote-key-again {
+    background-image: linear-gradient(
+      100deg,
+      rgb(var(--line-strong)) 0%,
+      rgb(var(--line-strong)) 38%,
+      rgb(var(--star)) 50%,
+      rgb(var(--line-strong)) 62%,
+      rgb(var(--line-strong)) 100%
+    );
+    background-size: 260% 100%;
+    background-position: 130% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .epigraph-lit .quote-key-again {
+    animation: re-ink 2s ease-in-out infinite;
   }
 
   @keyframes rule-draw {
-    from {
+    0% {
       transform: scaleX(0);
+      transform-origin: left center;
     }
-    to {
+    28%,
+    72% {
       transform: scaleX(1);
+      transform-origin: left center;
+    }
+    100% {
+      transform: scaleX(0);
+      transform-origin: right center;
     }
   }
 
-  /* draw across, hold, then wipe away from the same edge it came from */
+  @keyframes spark-rise {
+    0%,
+    8% {
+      opacity: 0;
+      transform: translate(-50%, 0) scale(0.5);
+    }
+    26% {
+      opacity: 1;
+      transform: translate(-50%, -0.7em) scale(1);
+    }
+    52% {
+      opacity: 1;
+      transform: translate(-50%, -0.95em) scale(1);
+    }
+    72%,
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -1.45em) scale(0.7);
+    }
+  }
+
   @keyframes strike-through {
     0% {
       transform: scaleX(0);
       transform-origin: left center;
       opacity: 1;
     }
-    38% {
+    30% {
       transform: scaleX(1);
       transform-origin: left center;
       opacity: 1;
     }
-    58% {
+    52% {
       transform: scaleX(1);
       transform-origin: right center;
       opacity: 1;
     }
+    76%,
     100% {
       transform: scaleX(0);
       transform-origin: right center;
@@ -773,19 +826,35 @@
     }
   }
 
+  @keyframes re-ink {
+    0%,
+    14% {
+      background-position: 130% 0;
+    }
+    62%,
+    100% {
+      background-position: -30% 0;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    /* No drawing; the words simply arrive already underscored. */
+    /* No looping. The verbs simply arrive underscored and inked. */
     .epigraph-lit .quote-key::after {
       animation: none;
       transform: scaleX(1);
     }
-    .epigraph-lit .quote-key-undo::before {
+    .epigraph-lit .quote-key-undo::before,
+    .epigraph-lit .quote-spark {
       animation: none;
-      transform: scaleX(0);
+      opacity: 0;
+    }
+    .epigraph-lit .quote-key-again {
+      animation: none;
+      background-position: -30% 0;
     }
   }
 
-  /* ---------------- The scroll ---------------- */
+  /* ---------------- The scroll ---------------- */  /* ---------------- The scroll ---------------- */
 
   /* A rolled sheet rather than a rectangular dialog. The field is flanked by
      wound parchment at head and foot, each with a dowel protruding at both

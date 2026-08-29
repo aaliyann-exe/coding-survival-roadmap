@@ -48,13 +48,16 @@ onBeforeUnmount(() => observer?.disconnect());
     aria-label="Epigraph"
   >
     <!-- an ornamental rule to set the quotation apart from the page above -->
-    <div class="mx-auto flex max-w-md items-center gap-3 opacity-40" aria-hidden="true">
+    <div
+      class="mx-auto flex max-w-md items-center gap-3 opacity-40"
+      aria-hidden="true"
+    >
       <span class="h-px flex-1 bg-current" />
       <span class="text-[10px]">❖</span>
       <span class="h-px flex-1 bg-current" />
     </div>
 
-    <figure class="mx-auto mt-7 max-w-3xl text-center">
+    <figure class="mx-auto mt-7 max-w-4xl text-center">
       <blockquote
         class="font-rune text-[1.5rem] leading-[1.7] opacity-95 sm:text-[1.9rem]"
       >
@@ -62,11 +65,15 @@ onBeforeUnmount(() => observer?.disconnect());
              learn how to" is the sentence's main verb, not one of the three
              things being enumerated, so it stays plain. -->
         "Smart people in our industry are the ones who learn how to
-        <span class="quote-key">learn</span>,
+        <span class="quote-key"
+          >learn<span class="quote-spark" aria-hidden="true">💡</span></span
+        >,
         <span class="quote-key quote-key-undo">unlearn</span>, and
-        <span class="quote-key">relearn</span>"
+        <span class="quote-key quote-key-again">relearn</span>"
       </blockquote>
-      <figcaption class="mt-5 font-hand text-[1.15rem] opacity-70 sm:text-[1.35rem]">
+      <figcaption
+        class="mt-5 font-hand text-[1.15rem] opacity-70 sm:text-[1.35rem]"
+      >
         - Shafiqa Iqbal
       </figcaption>
     </figure>

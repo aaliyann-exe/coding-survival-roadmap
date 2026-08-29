@@ -100,7 +100,7 @@ watch(
     <template #left>
       <RouterLink
         to="/roadmaps"
-        class="mb-7 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
+        class="-ml-1 mb-6 inline-flex min-h-[40px] items-center gap-1.5 px-1 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
       >
         <AppIcon name="arrow-left" :size="11" /> All roadmaps
       </RouterLink>

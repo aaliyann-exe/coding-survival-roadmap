@@ -41,10 +41,13 @@ withDefaults(
     <!-- ---------------------------------------------- LEFT PAGE (verso) -->
     <aside
       v-if="!full"
-      class="page page-left relative flex min-w-0 flex-col px-4 py-6 sm:px-9 sm:py-8 lg:px-10 lg:py-14"
+      class="page page-left relative flex min-w-0 flex-col py-6 pl-7 pr-4 sm:py-8 sm:pl-9 sm:pr-9 lg:px-10 lg:py-14"
     >
       <div class="lg:sticky lg:top-10">
         <p v-if="folio" class="folio mb-6 hidden lg:block">{{ folio }}</p>
+
+        <!-- running head, printed at the top of the page on phones -->
+        <p v-if="folio" class="running-head mb-5 lg:hidden">{{ folio }}</p>
 
         <p
           v-if="eyebrow"
@@ -83,9 +86,12 @@ withDefaults(
 
     <!-- --------------------------------------------- RIGHT PAGE (recto) -->
     <div
-      class="page relative flex min-w-0 flex-col px-4 py-6 sm:px-9 sm:py-8 lg:px-12 lg:py-14"
+      class="page relative flex min-w-0 flex-col py-6 pl-7 pr-4 sm:py-8 sm:pl-9 sm:pr-9 lg:px-12 lg:py-14"
       :class="full ? '' : 'page-right'"
     >
+      <!-- On a full-bleed page the recto is the only page, so it carries the
+           running head itself. -->
+      <p v-if="full && folio" class="running-head mb-5 lg:hidden">{{ folio }}</p>
       <!-- In `full` there is no verso to carry the apparatus, so the title
            block moves onto the recto. Without this a full-bleed page (the
            404) silently lost its heading entirely. -->
@@ -112,6 +118,15 @@ withDefaults(
       </header>
 
       <slot />
+
+      <!-- folio at the foot, the way a printed page closes -->
+      <p
+        v-if="folio"
+        class="mt-10 flex items-center justify-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-faint lg:hidden"
+      >
+        <span aria-hidden="true">❖</span>
+        {{ folio }}
+      </p>
     </div>
   </div>
 </template>

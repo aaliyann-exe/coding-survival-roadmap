@@ -327,6 +327,7 @@ const edgeStroke: Record<EdgeKind, string> = {
 
         <div
           class="relative z-10 grid gap-3.5 md:gap-x-6 md:gap-y-7"
+          :class="!isWide ? 'astral-chain' : ''"
           :style="
             isWide
               ? {
@@ -340,7 +341,7 @@ const edgeStroke: Record<EdgeKind, string> = {
             <!-- constellation marker: the stage as a region of the sky -->
             <div
               v-if="item.kind === 'band'"
-              class="relative"
+              class="is-band relative"
               :style="
                 isWide ? { gridColumn: '1 / -1', gridRow: String(item.row) } : undefined
               "
@@ -356,12 +357,12 @@ const edgeStroke: Record<EdgeKind, string> = {
                 >
                   <ArcaneSigil :seed="item.stage.id" :size="14" />
                 </span>
-                <h3
+                <h2
                   class="shrink-0 text-[12px] uppercase tracking-[0.28em] text-[rgb(var(--star))]/90"
                   style="font-family: 'Cinzel', Georgia, serif"
                 >
                   {{ item.stage.title }}
-                </h3>
+                </h2>
                 <span
                   class="h-px flex-1"
                   style="

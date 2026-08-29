@@ -64,7 +64,7 @@ watch(
     >
       <RouterLink
         to="/"
-        class="flex shrink-0 items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.3em] opacity-90 transition-opacity hover:opacity-100"
+        class="flex min-h-[40px] shrink-0 items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.3em] opacity-90 transition-opacity hover:opacity-100"
       >
         <span
           class="flex h-5 w-5 items-center justify-center border border-line-strong/70 text-[9px] text-line-strong"
@@ -96,7 +96,7 @@ watch(
 
         <button
           type="button"
-          class="flex items-center gap-1.5 border border-line-strong/50 px-2 py-1 opacity-75 transition-all hover:border-line-strong hover:opacity-100"
+          class="flex min-h-[36px] items-center gap-1.5 border border-line-strong/50 px-2.5 opacity-75 transition-all hover:border-line-strong hover:opacity-100"
           aria-label="Search (Ctrl + K)"
           @click="open()"
         >
@@ -108,7 +108,7 @@ watch(
 
         <button
           type="button"
-          class="border border-line-strong/50 p-1 opacity-75 transition-all hover:border-line-strong hover:opacity-100"
+          class="flex min-h-[36px] min-w-[36px] items-center justify-center border border-line-strong/50 opacity-75 transition-all hover:border-line-strong hover:opacity-100"
           :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
           @click="toggleDarkMode()"
         >
@@ -135,6 +135,11 @@ watch(
           class="page-edges relative min-h-[68vh] bg-canvas"
           style="perspective: 2600px; perspective-origin: 50% 40%"
         >
+          <!-- The binding, on phones only: the book is held open to a single
+               page there, so the inner edge needs to read as a bound edge
+               rather than as the side of a scrolling column. -->
+          <span class="phone-binding" aria-hidden="true" />
+
           <main id="main" class="grain relative block min-h-[68vh]">
             <slot />
           </main>

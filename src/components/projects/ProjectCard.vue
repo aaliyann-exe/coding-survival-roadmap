@@ -60,10 +60,10 @@ const trackClass: Record<Project["roadmap"], string> = {
       </div>
     </button>
 
-    <div class="flex items-center justify-between border-t border-line px-5 py-2.5">
+    <div class="flex items-center justify-between border-t border-line px-5">
       <button
         type="button"
-        class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
+        class="-ml-1 flex min-h-[44px] items-center gap-1.5 px-1 font-mono text-[10px] uppercase tracking-widest transition-colors"
         :class="
           isProjectDone(project.id)
             ? 'text-emerald-600 dark:text-emerald-400'
@@ -77,7 +77,7 @@ const trackClass: Record<Project["roadmap"], string> = {
       </button>
       <button
         type="button"
-        class="flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
+        class="-mr-1 flex min-h-[44px] items-center gap-1 px-1 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
         @click="$emit('select', project)"
       >
         Brief <AppIcon name="arrow-right" :size="11" />

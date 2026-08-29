@@ -47,7 +47,7 @@ const notice = [
     <div class="mx-auto flex w-full max-w-2xl flex-col items-start py-6">
       <button
         type="button"
-        class="mb-5 cursor-pointer font-mono text-[11px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
+        class="-ml-1 mb-4 inline-flex min-h-[40px] cursor-pointer items-center px-1 font-mono text-[11px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
         :aria-label="`404. Pressed ${pokes} times.`"
         @click="pokes++"
       >

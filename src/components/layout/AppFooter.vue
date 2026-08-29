@@ -45,11 +45,11 @@ function toTop() {
         <!-- site -->
         <nav aria-label="Footer">
           <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-55">The site</p>
-          <ul class="space-y-2">
+          <ul>
             <li v-for="link in siteLinks" :key="link.to">
               <RouterLink
                 :to="link.to"
-                class="text-[13px] font-light opacity-70 transition-opacity hover:opacity-100"
+                class="inline-flex min-h-[40px] items-center text-[13px] font-light opacity-70 transition-opacity hover:opacity-100"
                 >{{ link.label }}</RouterLink
               >
             </li>
@@ -59,11 +59,11 @@ function toTop() {
         <!-- paths -->
         <nav aria-label="Roadmaps">
           <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-55">The paths</p>
-          <ul class="space-y-2">
+          <ul>
             <li v-for="r in roadmaps" :key="r.id" :class="r.trackClass">
               <RouterLink
                 :to="`/roadmaps/${r.id}`"
-                class="group flex items-center gap-2 text-[13px] font-light opacity-70 transition-opacity hover:opacity-100"
+                class="group inline-flex min-h-[40px] items-center gap-2 text-[13px] font-light opacity-70 transition-opacity hover:opacity-100"
               >
                 <span
                   class="h-1.5 w-1.5 shrink-0"
@@ -88,7 +88,7 @@ function toTop() {
           href="https://youtu.be/QDia3e12czc"
           target="_blank"
           rel="noopener noreferrer"
-          class="font-mono text-[10px] uppercase tracking-widest opacity-55 transition-opacity hover:opacity-100"
+          class="inline-flex min-h-[40px] items-center font-mono text-[10px] uppercase tracking-widest opacity-55 transition-opacity hover:opacity-100"
           >Top secret 🤓👉</a
         >
 

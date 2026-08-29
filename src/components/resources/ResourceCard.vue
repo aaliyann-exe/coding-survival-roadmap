@@ -50,9 +50,9 @@ const typeLabel: Record<ResourceType, string> = {
     </div>
 
     <div class="flex items-start justify-between gap-2">
-      <h4 class="text-[14px] font-medium leading-snug text-ink">
+      <h3 class="text-[14px] font-medium leading-snug text-ink">
         {{ resource.title }}
-      </h4>
+      </h3>
       <AppIcon
         name="external"
         :size="13"

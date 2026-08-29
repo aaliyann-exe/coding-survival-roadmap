@@ -289,12 +289,6 @@
   .panel {
     @apply border border-line bg-surface;
   }
-  .panel-raised {
-    @apply border border-line bg-raised;
-  }
-  .hairline {
-    @apply border-line;
-  }
 
   /* Brass plaque. Hover presses it into the page (inverted ink). */
   .btn {
@@ -584,6 +578,48 @@
       0 0 18px -6px rgb(var(--seal) / 0.6);
   }
 
+  /* Narrow screens draw no connector paths (the SVG needs measured card
+     geometry and two lanes to be meaningful), so the stacked nodes get an
+     inked trail with waypoints instead — otherwise the tree reads as a plain
+     list and all sense of progression is lost on a phone. */
+  .astral-chain {
+    position: relative;
+  }
+  .astral-chain::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 1rem;
+    bottom: 1rem;
+    width: 1px;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgb(var(--astral) / 0.55) 0 5px,
+      transparent 5px 11px
+    );
+  }
+  .astral-chain > * {
+    position: relative;
+    margin-left: 1.4rem;
+  }
+  .astral-chain > *::before {
+    content: "";
+    position: absolute;
+    top: 1.35rem;
+    left: -1.4rem;
+    width: 7px;
+    height: 7px;
+    transform: translateX(-3px) rotate(45deg);
+    background: rgb(var(--void));
+    border: 1px solid rgb(var(--astral) / 0.7);
+    z-index: 1;
+  }
+  /* the stage markers sit on the trail as brighter waypoints */
+  .astral-chain > .is-band::before {
+    background: rgb(var(--ember));
+    border-color: rgb(var(--ember));
+  }
+
   /* The turning leaf: a page-shaped surface hinged at the gutter. */
   .turn-leaf {
     position: absolute;
@@ -680,36 +716,7 @@
 
   /* ---------------- Manuscript sheet (modal) ---------------- */
 
-  /* A loose sheet set down on the open book. Deckled top and bottom edges,
-     heavy frame, hard offset shadow — paper on a desk, not floating glass. */
-  .manuscript {
-    position: relative;
-    background-color: rgb(var(--canvas));
-    border: 2px solid rgb(var(--line));
-    box-shadow:
-      inset 0 0 0 1px rgb(var(--line-strong) / 0.35),
-      8px 8px 0 -2px rgb(0 0 0 / 0.35);
-  }
   .manuscript::before,
-  .manuscript::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background-image: repeating-linear-gradient(
-      to right,
-      rgb(var(--line)) 0 5px,
-      transparent 5px 9px
-    );
-    pointer-events: none;
-  }
-  .manuscript::before {
-    top: -1px;
-  }
-  .manuscript::after {
-    bottom: -1px;
-  }
 
   /* ---------------- The epigraph ---------------- */
 
@@ -790,39 +797,37 @@
      the "r" at the start: the word doubling back on itself. */
   .quote-loop {
     position: absolute;
-    left: -8%;
-    right: -8%;
-    /* clear of the cap height, so the arc arches over the word rather than
-       striking through it */
-    bottom: 1.12em;
-    height: 0.68em;
+    left: 0;
+    right: 100%;
+    bottom: 1.2em;
+    height: 0.9em;
     overflow: visible;
     pointer-events: none;
     color: rgb(var(--line-strong));
   }
+
   .quote-loop path {
     fill: none;
     stroke: currentColor;
     stroke-width: 2.4;
     stroke-linecap: round;
     stroke-linejoin: round;
-    /* one dash the length of the whole stroke, offset out of sight, so the
-       animation draws it on rather than fading it in */
     stroke-dasharray: 210;
     stroke-dashoffset: 210;
     opacity: 0;
   }
+
   .epigraph-lit .quote-loop path {
     animation: loop-draw 2s ease-in-out infinite;
   }
-  /* The head is stamped, not drawn, so it must opt out of the dash the arc
-     uses — the shared rule above was dashing it entirely out of sight, and
-     only its opacity was being animated, so it never appeared at all. */
+
+  /* Arrowhead: static geometry, independently animated */
   .quote-loop .loop-head {
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
+    fill: currentColor;
+    stroke: none;
+    opacity: 0;
   }
-  /* the head lands only once the arc has actually arrived */
+
   .epigraph-lit .quote-loop .loop-head {
     animation: loop-head 2s ease-in-out infinite;
   }
@@ -965,6 +970,57 @@
       linear-gradient(to top, rgb(var(--ink) / 0.13), transparent 22px);
   }
 
+  /* ---------------- Phone: one page of the codex ----------------
+     On a phone there is no room for a spread, so the book becomes a single
+     page held open: a stitched binding down the inner edge, a running head,
+     paper thickness on the outer edge and a folio at the foot. Without this
+     furniture the page has no boundaries and reads as one long scroll. */
+
+  /* the binding running the full height of the inner edge */
+  .phone-binding {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 13px;
+    z-index: 3;
+    pointer-events: none;
+    background-color: rgb(var(--board));
+    background-image:
+      /* the gutter shadow, deepest against the spine */
+      linear-gradient(
+        to right,
+        rgb(0 0 0 / 0.55),
+        rgb(0 0 0 / 0.18) 60%,
+        rgb(0 0 0 / 0.4)
+      ),
+      /* stitching: short, low-contrast, and widely spaced — at full strength
+         it read as a barber's pole rather than thread */
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 30px,
+        rgb(var(--line-strong) / 0.22) 30px 40px
+      );
+    box-shadow: 3px 0 9px -3px rgb(var(--ink) / 0.55);
+  }
+  @media (min-width: 1024px) {
+    .phone-binding {
+      display: none;
+    }
+  }
+
+  /* the running head printed at the top of every page */
+  .running-head {
+    @apply flex items-center gap-2 font-mono text-[8.5px] uppercase tracking-[0.24em] text-faint;
+  }
+  .running-head::after {
+    content: "";
+    @apply h-px flex-1;
+    background-image: linear-gradient(
+      to right,
+      rgb(var(--line) / 0.45),
+      transparent
+    );
+  }
+
   /* A wound roll: layered bands read as parchment turned on itself, with a
      dark core where the last wrap tucks under. */
   .scroll-roll {
@@ -1075,30 +1131,9 @@
       );
   }
 
-  /* Cartographer's grid, for map-like surfaces. */
-  .grid-paper {
-    background-image:
-      linear-gradient(
-        to right,
-        rgb(var(--grain) / var(--grain-alpha)) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        rgb(var(--grain) / var(--grain-alpha)) 1px,
-        transparent 1px
-      );
-    background-size: 32px 32px;
-  }
 
   .track-text {
     color: rgb(var(--track));
-  }
-  .track-bg-soft {
-    background-color: rgb(var(--track) / 0.1);
-  }
-  .track-border {
-    border-color: rgb(var(--track) / 0.45);
   }
 
   /* Corner registration marks, floating just outside the element's border.
@@ -1154,20 +1189,6 @@
     background: rgb(var(--line-strong) / 0.8);
   }
 
-  /* Oversized faded chapter numeral behind a heading. */
-  .chapter-numeral {
-    position: absolute;
-    top: -0.35em;
-    left: -0.1em;
-    font-family: "Cinzel", Georgia, serif;
-    font-weight: 600;
-    font-size: 5em;
-    line-height: 1;
-    color: rgb(var(--line) / 0.13);
-    pointer-events: none;
-    user-select: none;
-    z-index: 0;
-  }
 
   /* Struck wax seal. */
   .wax-seal {
@@ -1178,59 +1199,8 @@
     border: 4px double currentColor;
   }
 
-  /* Vertical trail with waypoint marks — the narrow-screen tree fallback. */
-  .quest-chain {
-    position: relative;
-  }
-  .quest-chain::before {
-    content: "";
-    position: absolute;
-    left: 7px;
-    top: 0.75rem;
-    bottom: 0.75rem;
-    width: 2px;
-    background: repeating-linear-gradient(
-      to bottom,
-      rgb(var(--line) / 0.55) 0 6px,
-      transparent 6px 11px
-    );
-  }
-  .quest-chain > * {
-    position: relative;
-    margin-left: 1.25rem;
-  }
-  .quest-chain > *::before {
-    content: "";
-    position: absolute;
-    top: 1.1rem;
-    left: -1.25rem;
-    width: 9px;
-    height: 9px;
-    background: rgb(var(--canvas));
-    border: 2px solid rgb(var(--line-strong));
-    z-index: 1;
-  }
 
-  .tablet-cut {
-    clip-path: polygon(
-      14px 0,
-      100% 0,
-      100% calc(100% - 14px),
-      calc(100% - 14px) 100%,
-      0 100%,
-      0 14px
-    );
-  }
 
-  .fade-edges-y {
-    mask-image: linear-gradient(
-      to bottom,
-      transparent,
-      black 40px,
-      black calc(100% - 40px),
-      transparent
-    );
-  }
 
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;

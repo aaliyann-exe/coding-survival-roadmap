@@ -184,11 +184,11 @@ function openNext() {
       <div>
         <h2 class="mb-8 rule-heading">Read this first</h2>
 
-        <!-- A two-page spread: the long read on the left leaf, the short
-             version on the right, a spine crease between them. Below `lg`
-             there's no room for two pages, so it collapses to one. -->
-        <div class="grid lg:grid-cols-[minmax(0,1fr)_10px_260px]">
-          <div class="page-leaf p-6 sm:p-8 lg:border-r-0 lg:p-10">
+        <!-- The long read, with the short version set as marginal notes.
+             This used to be its own nested two-page spread, which made no
+             sense once the whole application became a spread. -->
+        <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_230px] lg:gap-12">
+          <div>
             <!-- Original writing. Preserved exactly. Typography comes from
                  `.prose-note` in style.css so the wall of text stays one
                  consistent measure. -->
@@ -278,11 +278,9 @@ function openNext() {
             </div>
           </div>
 
-          <div class="book-spine hidden lg:block" aria-hidden="true" />
-
-          <!-- sticky mini-nav for the long read -->
+          <!-- marginalia: the short version, ruled off in the outer margin -->
           <aside class="hidden lg:block">
-            <div class="page-leaf sticky top-24 p-5 lg:border-l-0">
+            <div class="sticky top-24 border-l-2 border-line/40 pl-5">
               <p class="mb-4 label-mono">The short version</p>
               <ol
                 class="space-y-3 text-[13px] font-light leading-relaxed text-muted"

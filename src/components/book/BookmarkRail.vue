@@ -14,14 +14,15 @@ defineProps<{ links: { to: string; label: string }[] }>();
 
 const route = useRoute();
 
-/** Per-ribbon insertion depth and lean. Fixed values rather than random, so
- * the book looks the same on every visit. */
+/** Per-ribbon insertion depth. Fixed values rather than random, so the book
+ * looks the same on every visit. The ribbons sit square — the depth alone
+ * carries the "inserted by hand" feel without any tilt. */
 const SET = [
-  { depth: 0, lean: -1.1 },
-  { depth: 10, lean: 0.7 },
-  { depth: 4, lean: -0.5 },
-  { depth: 14, lean: 1.2 },
-  { depth: 7, lean: -0.9 },
+  { depth: 0 },
+  { depth: 10 },
+  { depth: 4 },
+  { depth: 14 },
+  { depth: 7 },
 ];
 
 function isActive(to: string) {
@@ -45,10 +46,7 @@ function isActive(to: string) {
           class="ribbon"
           :data-active="isActive(link.to) ? 'true' : 'false'"
           :aria-current="isActive(link.to) ? 'page' : undefined"
-          :style="{
-            height: isActive(link.to) ? '3.35rem' : '2.9rem',
-            transform: `rotate(${SET[i % SET.length].lean}deg)`,
-          }"
+          :style="{ height: isActive(link.to) ? '3.35rem' : '2.9rem' }"
         >
           <span>{{ link.label }}</span>
         </RouterLink>

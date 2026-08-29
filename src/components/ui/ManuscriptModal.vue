@@ -131,7 +131,9 @@ onUnmounted(() => {
 
           <!-- The field between the rolls. `unfurl` clips it open from the top
                so the sheet reads as unrolling rather than fading in. -->
-          <div class="flex min-h-0 flex-1 flex-col motion-safe:animate-unfurl">
+          <div
+            class="scroll-field flex min-h-0 flex-1 flex-col motion-safe:animate-unfurl"
+          >
           <!-- Sheet header: registration marks, chapter mark, heavy ink rule -->
           <header class="relative shrink-0 px-5 pb-4 pt-6 sm:px-9 sm:pt-8">
             <span

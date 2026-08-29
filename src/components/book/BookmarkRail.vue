@@ -31,7 +31,9 @@ function isActive(to: string) {
 
 <template>
   <nav aria-label="Chapters" class="relative z-20 -mb-2">
-    <ul class="no-scrollbar flex items-start gap-2 overflow-x-auto px-3 pt-2 sm:gap-4 sm:px-14">
+    <ul
+      class="no-scrollbar flex items-start gap-2 overflow-x-auto px-3 pt-2 sm:gap-4 sm:px-14"
+    >
       <li
         v-for="(link, i) in links"
         :key="link.to"

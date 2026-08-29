@@ -156,17 +156,25 @@ watch(
               class="turn-leaf motion-safe:animate-leaf-turn motion-reduce:hidden"
               style="transform-style: preserve-3d"
             />
-            <!-- the seal igniting on the exposed page -->
-            <div
-              v-if="casting"
-              class="absolute inset-0 flex items-center justify-center animate-seal-cast"
-            >
-              <ArcaneSeal :size="260" class="hidden sm:block" />
-              <ArcaneSeal :size="180" class="sm:hidden" />
-            </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- The casting seal, pinned to the viewport.
+         It cannot live inside the page block: that element sets `perspective`
+         (so the leaf can hinge in 3D), and a `perspective` ancestor becomes
+         the containing block for `position: fixed` descendants. Inside it the
+         seal resolved against a ~4500px-tall block, so it sat far down the
+         page and scrolled away with the content. Out here it is genuinely
+         fixed and stays dead centre of the screen for the whole cast. -->
+    <div
+      v-if="phase === 'turning' && casting"
+      class="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center animate-seal-cast"
+      aria-hidden="true"
+    >
+      <ArcaneSeal :size="260" class="hidden sm:block" />
+      <ArcaneSeal :size="180" class="sm:hidden" />
     </div>
 
     <slot name="after" />

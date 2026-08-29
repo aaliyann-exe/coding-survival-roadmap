@@ -16,7 +16,7 @@ export default {
         // face so the hierarchy survives until the file is supplied.
         rule: ["Kultum Ramadhan", "Cinzel", "Georgia", "serif"],
         // The closing quotation.
-        rune: ["Runethia", "Cinzel", "Georgia", "serif"],
+        rune: ["Transcity", "Cinzel", "Georgia", "serif"],
         // Its attribution, in a hand.
         hand: ["Kugile", "Segoe Script", "Brush Script MT", "cursive"],
       },
@@ -171,7 +171,7 @@ export default {
         "leaf-turn": "leaf-turn 0.85s cubic-bezier(0.55, 0.02, 0.35, 1) forwards",
         "seal-cast": "seal-cast 2s ease-out forwards",
         "veil-lift": "veil-lift 2s ease-in forwards",
-        unfurl: "unfurl 0.55s cubic-bezier(0.22, 0.7, 0.25, 1) both",
+        unfurl: "unfurl 1.5s cubic-bezier(0.25, 0.6, 0.2, 1) both",
         "rune-spin": "rune-spin 9s linear infinite",
         "rune-spin-rev": "rune-spin-rev 14s linear infinite",
         twinkle: "twinkle var(--d, 5s) ease-in-out infinite",

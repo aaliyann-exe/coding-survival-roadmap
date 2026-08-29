@@ -40,7 +40,7 @@
 /* ---------------------------------------------------------------------------
    Custom display faces.
 
-   Kultum Ramadhan, Runethia and Kugile are commercial faces, so the files are
+   Kultum Ramadhan, Transcity and Kugile are commercial faces, so the files are
    NOT in this repo — drop them into `public/fonts/` using the names below and
    they take effect immediately. Several formats are listed so whichever
    format you have works; the browser takes the first one it finds and skips
@@ -59,13 +59,13 @@
     url("/fonts/kultum-ramadhan.ttf") format("truetype");
 }
 @font-face {
-  font-family: "Runethia";
+  font-family: "Transcity";
   font-display: swap;
   src:
-    url("/fonts/runethia.woff2") format("woff2"),
-    url("/fonts/runethia.woff") format("woff"),
-    url("/fonts/runethia.otf") format("opentype"),
-    url("/fonts/runethia.ttf") format("truetype");
+    url("/fonts/transcity.woff2") format("woff2"),
+    url("/fonts/transcity.woff") format("woff"),
+    url("/fonts/transcity.otf") format("opentype"),
+    url("/fonts/transcity.ttf") format("truetype");
 }
 @font-face {
   font-family: "Kugile";
@@ -434,7 +434,7 @@
       rgb(0 0 0 / 0.28)
     );
     /* notched tail, like a cut ribbon end */
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 9px), 0 100%);
+    clip-path: polygon(0 0, 50% 9px, 100% 0, 100% 100%, 0 100%);
     box-shadow: 0 3px 8px -2px rgb(0 0 0 / 0.6);
     transition:
       transform 0.18s cubic-bezier(0.2, 0.8, 0.3, 1),
@@ -495,8 +495,8 @@
       0 0 0 5px rgb(var(--canvas)),
       0 0 0 6px rgb(var(--line) / 0.55),
       0 0 0 9px rgb(var(--canvas) / 0.6),
-      /* the page falls away into the dark */
-      inset 0 0 44px 10px rgb(var(--void-deep)),
+      /* the page falls away into the dark */ inset 0 0 44px 10px
+        rgb(var(--void-deep)),
       inset 0 0 120px 30px rgb(0 0 0 / 0.55);
   }
 
@@ -681,66 +681,200 @@
     bottom: -1px;
   }
 
+  /* ---------------- The epigraph ---------------- */
+
+  /* The three verbs of the quotation, gilded and underscored by a rule that
+     draws itself. The words are the argument of the sentence, so they get to
+     look like it. */
+  .quote-key {
+    position: relative;
+    display: inline-block;
+    color: rgb(var(--line-strong));
+    white-space: nowrap;
+  }
+  .quote-key::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.14em;
+    height: 2px;
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      rgb(var(--line-strong)) 12%,
+      rgb(var(--line-strong)) 88%,
+      transparent
+    );
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  /* Drawn in sequence once the epigraph is on screen. */
+  .epigraph-lit .quote-key::after {
+    animation: rule-draw 0.55s cubic-bezier(0.22, 0.7, 0.25, 1) forwards;
+  }
+  .epigraph-lit .quote-key:nth-of-type(1)::after {
+    animation-delay: 0.15s;
+  }
+  .epigraph-lit .quote-key:nth-of-type(2)::after {
+    animation-delay: 0.5s;
+  }
+  .epigraph-lit .quote-key:nth-of-type(3)::after {
+    animation-delay: 0.85s;
+  }
+
+  /* "unlearn" is struck through and then released — the one word in the
+     sentence that describes undoing something. */
+  .quote-key-undo::before {
+    content: "";
+    position: absolute;
+    left: -0.04em;
+    right: -0.04em;
+    top: 55%;
+    height: 2px;
+    background-color: rgb(var(--wax));
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  .epigraph-lit .quote-key-undo::before {
+    animation: strike-through 1.1s ease-in-out 0.55s forwards;
+  }
+
+  @keyframes rule-draw {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* draw across, hold, then wipe away from the same edge it came from */
+  @keyframes strike-through {
+    0% {
+      transform: scaleX(0);
+      transform-origin: left center;
+      opacity: 1;
+    }
+    38% {
+      transform: scaleX(1);
+      transform-origin: left center;
+      opacity: 1;
+    }
+    58% {
+      transform: scaleX(1);
+      transform-origin: right center;
+      opacity: 1;
+    }
+    100% {
+      transform: scaleX(0);
+      transform-origin: right center;
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* No drawing; the words simply arrive already underscored. */
+    .epigraph-lit .quote-key::after {
+      animation: none;
+      transform: scaleX(1);
+    }
+    .epigraph-lit .quote-key-undo::before {
+      animation: none;
+      transform: scaleX(0);
+    }
+  }
+
   /* ---------------- The scroll ---------------- */
 
-  /* A rolled sheet rather than a rectangular dialog: wound parchment at the
-     head and foot, with the readable field between them. */
+  /* A rolled sheet rather than a rectangular dialog. The field is flanked by
+     wound parchment at head and foot, each with a dowel protruding at both
+     ends, and the paper curls into shadow where it meets the roll. */
   .scroll-sheet {
     position: relative;
     background-color: rgb(var(--canvas));
     box-shadow:
-      inset 0 0 0 1px rgb(var(--line-strong) / 0.35),
-      8px 8px 0 -2px rgb(0 0 0 / 0.35);
+      inset 0 0 0 1px rgb(var(--line-strong) / 0.3),
+      10px 12px 0 -3px rgb(0 0 0 / 0.4),
+      0 26px 50px -18px rgb(0 0 0 / 0.6);
   }
 
-  /* The wound ends. A dowel line down the middle with the parchment curling
-     over it, and a soft shadow cast onto the field so the roll sits proud. */
+  /* The readable field. The gradients at top and bottom are the paper bending
+     away as it enters each roll. */
+  .scroll-field {
+    position: relative;
+    background-image:
+      linear-gradient(to bottom, rgb(var(--ink) / 0.16), transparent 26px),
+      linear-gradient(to top, rgb(var(--ink) / 0.13), transparent 22px);
+  }
+
+  /* A wound roll: layered bands read as parchment turned on itself, with a
+     dark core where the last wrap tucks under. */
   .scroll-roll {
     position: relative;
-    height: 22px;
+    height: 30px;
     flex-shrink: 0;
+    background-color: rgb(var(--raised));
     background-image:
+      /* the tucked core */
       linear-gradient(
         to bottom,
-        rgb(var(--sunken)) 0%,
-        rgb(var(--raised)) 22%,
-        rgb(var(--canvas)) 46%,
-        rgb(var(--raised)) 72%,
-        rgb(var(--sunken)) 100%
-      );
-    box-shadow:
-      inset 0 0 0 1px rgb(var(--line) / 0.5),
-      0 0 0 1px rgb(var(--line) / 0.25);
+        transparent 42%,
+        rgb(var(--ink) / 0.34) 50%,
+        transparent 58%
+      ),
+      /* the curve of the wrap */
+        linear-gradient(
+          to bottom,
+          rgb(var(--ink) / 0.28) 0%,
+          rgb(var(--raised)) 16%,
+          rgb(var(--canvas)) 34%,
+          rgb(var(--surface)) 62%,
+          rgb(var(--raised)) 82%,
+          rgb(var(--ink) / 0.3) 100%
+        ),
+      /* faint striation along the roll */
+        repeating-linear-gradient(
+          90deg,
+          rgb(var(--ink) / 0.05) 0 1px,
+          transparent 1px 7px
+        );
+    border-top: 1px solid rgb(var(--line) / 0.55);
+    border-bottom: 1px solid rgb(var(--line) / 0.55);
   }
-  /* the dowel poking out at each end */
+
+  /* the dowel, protruding past both ends of the roll */
   .scroll-roll::before,
   .scroll-roll::after {
     content: "";
     position: absolute;
     top: 50%;
-    width: 9px;
-    height: 9px;
+    width: 15px;
+    height: 13px;
     transform: translateY(-50%);
     border-radius: 9999px;
-    background-color: rgb(var(--line-strong));
-    box-shadow: inset 0 0 0 1px rgb(var(--line) / 0.7);
+    background-image: linear-gradient(
+      to bottom,
+      rgb(var(--line-strong)),
+      rgb(var(--line)) 55%,
+      rgb(var(--line-strong) / 0.7)
+    );
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--line) / 0.8),
+      0 2px 4px -1px rgb(0 0 0 / 0.55);
   }
   .scroll-roll::before {
-    left: -5px;
+    left: -9px;
   }
   .scroll-roll::after {
-    right: -5px;
+    right: -9px;
   }
 
   .scroll-roll-top {
-    box-shadow:
-      inset 0 0 0 1px rgb(var(--line) / 0.5),
-      0 4px 8px -3px rgb(var(--ink) / 0.45);
+    box-shadow: 0 6px 12px -5px rgb(var(--ink) / 0.6);
   }
   .scroll-roll-bottom {
-    box-shadow:
-      inset 0 0 0 1px rgb(var(--line) / 0.5),
-      0 -4px 8px -3px rgb(var(--ink) / 0.45);
+    box-shadow: 0 -6px 12px -5px rgb(var(--ink) / 0.6);
   }
 
   /* ---------------- Ledger ---------------- */
@@ -787,8 +921,16 @@
   /* Cartographer's grid, for map-like surfaces. */
   .grid-paper {
     background-image:
-      linear-gradient(to right, rgb(var(--grain) / var(--grain-alpha)) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(var(--grain) / var(--grain-alpha)) 1px, transparent 1px);
+      linear-gradient(
+        to right,
+        rgb(var(--grain) / var(--grain-alpha)) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        rgb(var(--grain) / var(--grain-alpha)) 1px,
+        transparent 1px
+      );
     background-size: 32px 32px;
   }
 

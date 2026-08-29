@@ -38,6 +38,46 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Custom display faces.
+
+   Kultum Ramadhan, Runethia and Kugile are commercial faces, so the files are
+   NOT in this repo — drop them into `public/fonts/` using the names below and
+   they take effect immediately. Several formats are listed so whichever
+   format you have works; the browser takes the first one it finds and skips
+   the rest without erroring.
+
+   Until then each falls back to a face that carries the same intent, so the
+   design reads correctly rather than collapsing to a system default.
+--------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Kultum Ramadhan";
+  font-display: swap;
+  src:
+    url("/fonts/kultum-ramadhan.woff2") format("woff2"),
+    url("/fonts/kultum-ramadhan.woff") format("woff"),
+    url("/fonts/kultum-ramadhan.otf") format("opentype"),
+    url("/fonts/kultum-ramadhan.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Runethia";
+  font-display: swap;
+  src:
+    url("/fonts/runethia.woff2") format("woff2"),
+    url("/fonts/runethia.woff") format("woff"),
+    url("/fonts/runethia.otf") format("opentype"),
+    url("/fonts/runethia.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Kugile";
+  font-display: swap;
+  src:
+    url("/fonts/kugile.woff2") format("woff2"),
+    url("/fonts/kugile.woff") format("woff"),
+    url("/fonts/kugile.otf") format("opentype"),
+    url("/fonts/kugile.ttf") format("truetype");
+}
+
+/* ---------------------------------------------------------------------------
    MATERIAL TOKENS
    Two artifacts, one object: the Ancient Tome (light) and the same book after
    fire and age, the Cursed Grimoire (dark). Surfaces layer
@@ -233,14 +273,16 @@
     @apply font-mono text-[11px] uppercase tracking-widest text-faint;
   }
 
-  /* A ceremonial heading flanked by rules — a chapter mark. */
+  /* A ceremonial heading flanked by rules — a chapter mark.
+     Set in the display face rather than the stamped mono: these are titles,
+     not machine labels, and the mono reading was too technical for them. */
   .rule-heading {
-    @apply flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-muted;
+    @apply flex items-center gap-3 font-rule text-[15px] uppercase tracking-[0.22em] text-ink;
   }
   .rule-heading::before,
   .rule-heading::after {
     content: "";
-    @apply flex-1 h-px bg-line;
+    @apply h-px flex-1 bg-line/70;
   }
 
   .panel {
@@ -637,6 +679,68 @@
   }
   .manuscript::after {
     bottom: -1px;
+  }
+
+  /* ---------------- The scroll ---------------- */
+
+  /* A rolled sheet rather than a rectangular dialog: wound parchment at the
+     head and foot, with the readable field between them. */
+  .scroll-sheet {
+    position: relative;
+    background-color: rgb(var(--canvas));
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--line-strong) / 0.35),
+      8px 8px 0 -2px rgb(0 0 0 / 0.35);
+  }
+
+  /* The wound ends. A dowel line down the middle with the parchment curling
+     over it, and a soft shadow cast onto the field so the roll sits proud. */
+  .scroll-roll {
+    position: relative;
+    height: 22px;
+    flex-shrink: 0;
+    background-image:
+      linear-gradient(
+        to bottom,
+        rgb(var(--sunken)) 0%,
+        rgb(var(--raised)) 22%,
+        rgb(var(--canvas)) 46%,
+        rgb(var(--raised)) 72%,
+        rgb(var(--sunken)) 100%
+      );
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--line) / 0.5),
+      0 0 0 1px rgb(var(--line) / 0.25);
+  }
+  /* the dowel poking out at each end */
+  .scroll-roll::before,
+  .scroll-roll::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    transform: translateY(-50%);
+    border-radius: 9999px;
+    background-color: rgb(var(--line-strong));
+    box-shadow: inset 0 0 0 1px rgb(var(--line) / 0.7);
+  }
+  .scroll-roll::before {
+    left: -5px;
+  }
+  .scroll-roll::after {
+    right: -5px;
+  }
+
+  .scroll-roll-top {
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--line) / 0.5),
+      0 4px 8px -3px rgb(var(--ink) / 0.45);
+  }
+  .scroll-roll-bottom {
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--line) / 0.5),
+      0 -4px 8px -3px rgb(var(--ink) / 0.45);
   }
 
   /* ---------------- Ledger ---------------- */

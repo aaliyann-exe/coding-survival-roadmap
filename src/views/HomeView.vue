@@ -126,13 +126,6 @@ function openNext() {
       </dl>
     </template>
 
-    <template #left-foot>
-      <p class="max-w-xs text-[13px] italic leading-relaxed text-faint">
-        "Smart people in our industry are the ones who learn how to learn,
-        unlearn, and relearn" - Shafiqa Iqbal
-      </p>
-    </template>
-
     <!-- ============ RIGHT PAGE: the body ============ -->
     <!-- ===================================================== QUICK START -->
     <!-- The three disciplines, struck as school plates rather than cards. -->

@@ -216,10 +216,10 @@ function resetFilters() {
     <div v-else class="space-y-14">
       <section v-for="group in grouped" :key="group.tier">
         <div class="mb-5 flex items-center gap-3">
-          <h2 class="font-mono text-[11px] uppercase tracking-widest text-muted">
+          <h2 class="min-w-0 font-rule text-[15px] uppercase leading-tight tracking-[0.22em] text-ink">
             {{ tierLabel[group.tier] }}
           </h2>
-          <span class="h-px flex-1 bg-line" />
+          <span class="h-px flex-1 bg-line/70" aria-hidden="true" />
           <span class="font-mono text-[10px] text-faint">{{ group.items.length }}</span>
         </div>
 

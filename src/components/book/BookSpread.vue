@@ -86,6 +86,31 @@ withDefaults(
       class="page relative flex min-w-0 flex-col px-5 py-8 sm:px-9 lg:px-12 lg:py-14"
       :class="full ? '' : 'page-right'"
     >
+      <!-- In `full` there is no verso to carry the apparatus, so the title
+           block moves onto the recto. Without this a full-bleed page (the
+           404) silently lost its heading entirely. -->
+      <header v-if="full && (title || eyebrow)" class="mx-auto mb-8 w-full max-w-2xl">
+        <p v-if="folio" class="folio mb-5">{{ folio }}</p>
+        <p
+          v-if="eyebrow"
+          class="mb-3 font-mono text-[10px] uppercase tracking-[0.3em] text-faint"
+        >
+          {{ eyebrow }}
+        </p>
+        <h1
+          v-if="title"
+          class="text-[1.9rem] leading-[1.05] text-ink lg:text-[2.35rem]"
+          style="font-family: 'Cinzel', Georgia, serif"
+        >
+          {{ title }}
+        </h1>
+        <div v-if="title" class="mt-5 flex items-center gap-2" aria-hidden="true">
+          <span class="h-px flex-1 bg-line/60" />
+          <span class="text-[10px] text-line-strong">◆</span>
+          <span class="h-px flex-1 bg-line/60" />
+        </div>
+      </header>
+
       <slot />
     </div>
   </div>

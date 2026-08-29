@@ -113,6 +113,7 @@ onUnmounted(() => {
       leave-active-class="transition duration-150 ease-in"
       leave-to-class="opacity-0 translate-y-2"
     >
+      <!-- eslint-disable-next-line -->
       <div
         v-if="open"
         class="pointer-events-none fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto overscroll-contain p-3 sm:p-6 md:p-10"
@@ -123,8 +124,14 @@ onUnmounted(() => {
           role="dialog"
           aria-modal="true"
           :aria-label="title"
-          class="manuscript pointer-events-auto my-auto flex w-full max-w-2xl flex-col outline-none"
+          class="scroll-sheet pointer-events-auto my-auto flex w-full max-w-2xl flex-col outline-none"
         >
+          <!-- wound head of the scroll -->
+          <div class="scroll-roll scroll-roll-top" aria-hidden="true" />
+
+          <!-- The field between the rolls. `unfurl` clips it open from the top
+               so the sheet reads as unrolling rather than fading in. -->
+          <div class="flex min-h-0 flex-1 flex-col motion-safe:animate-unfurl">
           <!-- Sheet header: registration marks, chapter mark, heavy ink rule -->
           <header class="relative shrink-0 px-5 pb-4 pt-6 sm:px-9 sm:pt-8">
             <span
@@ -175,6 +182,10 @@ onUnmounted(() => {
           >
             <slot name="footer" />
           </footer>
+          </div>
+
+          <!-- wound foot of the scroll -->
+          <div class="scroll-roll scroll-roll-bottom" aria-hidden="true" />
         </div>
       </div>
     </Transition>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TomeShell from "@/components/book/TomeShell.vue";
+import ClosingQuote from "@/components/layout/ClosingQuote.vue";
 import AppFooter from "@/components/layout/AppFooter.vue";
 import CommandPalette from "@/components/search/CommandPalette.vue";
 import AchievementToast from "@/components/achievements/AchievementToast.vue";
@@ -31,6 +32,7 @@ useAchievements();
     </RouterView>
 
     <template #after>
+      <ClosingQuote />
       <AppFooter />
       <CommandPalette />
       <AchievementToast />

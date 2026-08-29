@@ -12,6 +12,13 @@ export default {
         display: ["Cinzel", "Georgia", "serif"],
         // Stamped mechanical text: labels, stats, chips, code-ish bits.
         mono: ["Fira Code", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        // Ceremonial chapter marks / section rules. Falls back to the display
+        // face so the hierarchy survives until the file is supplied.
+        rule: ["Kultum Ramadhan", "Cinzel", "Georgia", "serif"],
+        // The closing quotation.
+        rune: ["Runethia", "Cinzel", "Georgia", "serif"],
+        // Its attribution, in a hand.
+        hand: ["Kugile", "Segoe Script", "Brush Script MT", "cursive"],
       },
       colors: {
         canvas: "rgb(var(--canvas) / <alpha-value>)",
@@ -133,6 +140,12 @@ export default {
           "0%, 58%": { opacity: "1" },
           "100%": { opacity: "0" },
         },
+        // The scroll unrolling. clip-path rather than scaleY so the text is
+        // revealed by the edge travelling down it, not squashed and stretched.
+        unfurl: {
+          from: { "clip-path": "inset(0 0 100% 0)" },
+          to: { "clip-path": "inset(0 0 0% 0)" },
+        },
         "rune-spin": { to: { transform: "rotate(360deg)" } },
         "rune-spin-rev": { to: { transform: "rotate(-360deg)" } },
         // Stars breathing, at wildly different rates so it never pulses in
@@ -158,6 +171,7 @@ export default {
         "leaf-turn": "leaf-turn 0.85s cubic-bezier(0.55, 0.02, 0.35, 1) forwards",
         "seal-cast": "seal-cast 2s ease-out forwards",
         "veil-lift": "veil-lift 2s ease-in forwards",
+        unfurl: "unfurl 0.55s cubic-bezier(0.22, 0.7, 0.25, 1) both",
         "rune-spin": "rune-spin 9s linear infinite",
         "rune-spin-rev": "rune-spin-rev 14s linear infinite",
         twinkle: "twinkle var(--d, 5s) ease-in-out infinite",

@@ -68,7 +68,6 @@ export function useBookTurn() {
   return {
     phase: readonly(phase),
     casting: readonly(casting),
-    isTurning: readonly(phase),
     start,
     chapterOf,
   };

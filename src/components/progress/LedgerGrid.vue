@@ -62,8 +62,6 @@ function cellTitle(cell: Cell) {
   const label = dateFormat.format(new Date(`${cell.iso}T00:00:00Z`));
   return `${label} — ${cell.active ? "active" : "nothing marked"}`;
 }
-
-defineExpose({ activeCount });
 </script>
 
 <template>

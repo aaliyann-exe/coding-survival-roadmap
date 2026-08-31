@@ -291,14 +291,6 @@ function resetTopic(id: string) {
   setTopic(id, null);
 }
 
-function cycleTopic(id: string) {
-  const current = state.topics[id];
-  if (!current) startTopic(id);
-  else if (current === "in-progress") completeTopic(id);
-  else if (current === "completed") masterTopic(id);
-  else resetTopic(id);
-}
-
 function toggleProject(id: string) {
   const nowDone = !state.projects[id];
   if (nowDone) state.projects[id] = true;
@@ -344,7 +336,6 @@ export function useProgress() {
     streak,
     longestStreak,
     totalEstimatedHours,
-    estimatedHours,
     perRoadmap,
     overallPercent,
     skillLevel,
@@ -353,7 +344,6 @@ export function useProgress() {
     completeTopic,
     masterTopic,
     resetTopic,
-    cycleTopic,
     toggleProject,
     isProjectDone,
     resetEverything,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { Project, ProjectTier } from "@/data/types";
+import type { Project, ProjectTier, Roadmap, RoadmapNode } from "@/data/types";
 import { nodeById, roadmapForNode } from "@/data/roadmaps";
 import AppIcon from "@/components/ui/AppIcon.vue";
 
@@ -14,17 +14,18 @@ const tierLabel: Record<ProjectTier, string> = {
   pain: "Why did I do this to myself?",
 };
 
-const relatedNodes = computed(() =>
-  props.project.skills
-    .map((id) => {
-      const node = nodeById(id);
-      if (!node) return null;
-      return { node, roadmap: roadmapForNode(id) };
-    })
-    .filter((x): x is { node: NonNullable<ReturnType<typeof nodeById>>; roadmap: ReturnType<typeof roadmapForNode> } =>
-      Boolean(x),
-    ),
-);
+/** `project.skills` holds node ids, some of which may no longer exist if a
+ * topic was renamed or removed. A plain loop states that plainly; the
+ * previous version needed a `ReturnType<typeof ...>` type predicate three
+ * lines long to say the same thing. */
+const relatedNodes = computed(() => {
+  const out: { node: RoadmapNode; roadmap: Roadmap | undefined }[] = [];
+  for (const id of props.project.skills) {
+    const node = nodeById(id);
+    if (node) out.push({ node, roadmap: roadmapForNode(id) });
+  }
+  return out;
+});
 </script>
 
 <template>

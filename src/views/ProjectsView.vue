@@ -108,9 +108,6 @@ function resetFilters() {
       <button type="button" class="btn w-full justify-center py-2.5" @click="surpriseMe">
         <AppIcon name="spark" :size="12" /> I'm bored, give me something to build
       </button>
-      <p class="mt-6 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
-        {{ filtered.length }} of {{ projectList.length }} shown
-      </p>
     </template>
 
     <!-- filters -->
@@ -186,9 +183,12 @@ function resetFilters() {
       </div>
     </div>
 
-    <!-- results -->
+    <!-- One result count, next to the filters that produce it. The verso
+         carried a second copy of the same number. -->
     <p class="mb-6 font-mono text-[10px] uppercase tracking-widest text-faint">
-      {{ filtered.length }} project{{ filtered.length === 1 ? "" : "s" }}
+      {{ filtered.length }} of {{ projectList.length }} project{{
+        projectList.length === 1 ? "" : "s"
+      }}
     </p>
 
     <div v-if="filtered.length === 0" class="border border-line bg-raised p-12 text-center">

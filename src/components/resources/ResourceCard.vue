@@ -52,6 +52,10 @@ const typeLabel: Record<ResourceType, string> = {
     <div class="flex items-start justify-between gap-2">
       <h3 class="text-[14px] font-medium leading-snug text-ink">
         {{ resource.title }}
+        <!-- Every resource card is an external link and the only sign of it
+             was an aria-hidden glyph, so a screen reader announced no
+             difference between these and the site's own links. -->
+        <span class="sr-only">(opens in a new tab)</span>
       </h3>
       <AppIcon
         name="external"

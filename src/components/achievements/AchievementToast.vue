@@ -1,20 +1,47 @@
 <script setup lang="ts">
-import { watch } from "vue";
+import { onUnmounted, watch } from "vue";
 import { useAchievements } from "@/composables/useAchievements";
 import AppIcon from "@/components/ui/AppIcon.vue";
 
 const { queue, dismiss } = useAchievements();
 
-// Auto-dismiss so celebrations don't become clutter.
+const VISIBLE_MS = 6000;
+
+/**
+ * Auto-dismiss so celebrations don't become clutter.
+ *
+ * One timer per achievement, tracked by id. The previous version scheduled a
+ * timeout for every item in the queue on every change to the queue — so
+ * unlocking a second achievement, or dismissing one by hand, gave everything
+ * still on screen an extra timer, and those fired against ids that were
+ * already gone.
+ */
+const timers = new Map<string, number>();
+
 watch(
   queue,
   (list) => {
     for (const achievement of list) {
-      window.setTimeout(() => dismiss(achievement.id), 6000);
+      if (timers.has(achievement.id)) continue;
+      timers.set(
+        achievement.id,
+        window.setTimeout(() => dismiss(achievement.id), VISIBLE_MS),
+      );
+    }
+    // Anything dismissed by hand no longer needs its timer.
+    for (const [id, timer] of timers) {
+      if (list.some((a) => a.id === id)) continue;
+      window.clearTimeout(timer);
+      timers.delete(id);
     }
   },
   { deep: true },
 );
+
+onUnmounted(() => {
+  for (const timer of timers.values()) window.clearTimeout(timer);
+  timers.clear();
+});
 </script>
 
 <template>
@@ -54,8 +81,8 @@ watch(
           </div>
           <button
             type="button"
-            class="-mr-1 -mt-1 p-1 text-faint transition-colors hover:text-ink"
-            aria-label="Dismiss"
+            class="-mr-2 -mt-2 flex h-9 w-9 shrink-0 items-center justify-center text-faint transition-colors hover:text-ink"
+            :aria-label="`Dismiss ${achievement.title}`"
             @click="dismiss(achievement.id)"
           >
             <AppIcon name="close" :size="14" />

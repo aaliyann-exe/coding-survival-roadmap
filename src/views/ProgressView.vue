@@ -193,10 +193,10 @@ function doReset() {
           v-for="node in inProgressNodes"
           :key="node.id"
           type="button"
-          class="group flex items-center gap-3 border border-amber-500/40 bg-amber-500/[0.04] p-4 text-left transition-colors hover:border-amber-500/70"
+          class="group flex items-center gap-3 border border-gild/50 bg-gild/[0.06] p-4 text-left transition-colors hover:border-gild"
           @click="openNode(node.id)"
         >
-          <span class="h-1.5 w-1.5 shrink-0 bg-amber-500" />
+          <span class="h-1.5 w-1.5 shrink-0 bg-gild" />
           <span class="min-w-0 flex-1">
             <span class="block truncate text-[14px] text-ink">{{ node.title }}</span>
             <span class="block truncate text-2xs text-faint">In progress</span>
@@ -238,7 +238,7 @@ function doReset() {
           v-for="node in recentCompleted"
           :key="node.id"
           type="button"
-          class="chip border-emerald-500/30 text-emerald-700 transition-colors hover:border-emerald-500/60 dark:text-emerald-400"
+          class="chip chip-sealed transition-colors hover:border-seal"
           @click="openNode(node.id)"
         >
           <AppIcon name="check" :size="10" /> {{ node.title }}
@@ -292,7 +292,7 @@ function doReset() {
       <div v-else class="flex flex-wrap gap-2">
         <button
           type="button"
-          class="btn border-red-500/40 text-red-600 hover:border-red-500/70 dark:text-red-400"
+          class="btn border-wax/50 text-wax hover:border-wax hover:bg-wax hover:text-canvas"
           @click="doReset"
         >
           Yes, wipe it

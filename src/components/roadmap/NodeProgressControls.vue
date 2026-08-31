@@ -44,7 +44,7 @@ const touched = computed(() => status.value !== "available" && status.value !== 
 
     <span
       v-if="status === 'mastered'"
-      class="btn cursor-default border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
+      class="btn cursor-default border-seal/40 text-seal"
     >
       <AppIcon name="trophy" :size="12" /> Mastered
     </span>

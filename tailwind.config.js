@@ -38,25 +38,6 @@ export default {
         seal: "rgb(var(--seal) / <alpha-value>)",
         gild: "rgb(var(--gild) / <alpha-value>)",
         wax: "rgb(var(--wax) / <alpha-value>)",
-        // Tailwind's status palettes are re-pointed at the same material
-        // tokens so any lingering emerald-/amber-/red- utility renders in the
-        // grimoire's ink rather than a stock SaaS hue.
-        emerald: {
-          400: "rgb(var(--seal) / <alpha-value>)",
-          500: "rgb(var(--seal) / <alpha-value>)",
-          600: "rgb(var(--seal) / <alpha-value>)",
-          700: "rgb(var(--seal) / <alpha-value>)",
-        },
-        amber: {
-          400: "rgb(var(--gild) / <alpha-value>)",
-          500: "rgb(var(--gild) / <alpha-value>)",
-          600: "rgb(var(--gild) / <alpha-value>)",
-        },
-        red: {
-          400: "rgb(var(--wax) / <alpha-value>)",
-          500: "rgb(var(--wax) / <alpha-value>)",
-          600: "rgb(var(--wax) / <alpha-value>)",
-        },
       },
       borderRadius: {
         DEFAULT: "0px",

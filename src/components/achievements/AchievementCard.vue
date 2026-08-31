@@ -10,7 +10,7 @@ defineProps<{ achievement: Achievement; unlocked: boolean }>();
     class="flex items-start gap-3 border p-4 transition-colors"
     :class="
       unlocked
-        ? 'relative corner-frame border-emerald-600/50 bg-emerald-500/[0.05]'
+        ? 'relative corner-frame border-seal/50 bg-seal/[0.06]'
         : 'border-line border-dashed bg-raised opacity-80'
     "
   >
@@ -18,7 +18,7 @@ defineProps<{ achievement: Achievement; unlocked: boolean }>();
       class="wax-seal mt-0.5 shrink-0"
       :class="
         unlocked
-          ? 'border-emerald-600/60 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+          ? 'border-seal/60 bg-seal/10 text-seal'
           : 'border-line text-faint'
       "
     >

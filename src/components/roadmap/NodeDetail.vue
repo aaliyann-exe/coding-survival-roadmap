@@ -58,9 +58,9 @@ const difficultyLabel = {
         class="chip"
         :class="
           status === 'completed' || status === 'mastered'
-            ? 'border-emerald-500/40 text-emerald-600 dark:text-emerald-400'
+            ? 'chip-sealed'
             : status === 'in-progress'
-              ? 'border-amber-500/40 text-amber-600 dark:text-amber-400'
+              ? 'chip-active'
               : ''
         "
       >
@@ -134,7 +134,7 @@ const difficultyLabel = {
               class="h-1.5 w-1.5 shrink-0"
               :class="
                 statusOf(p) === 'completed' || statusOf(p) === 'mastered'
-                  ? 'bg-emerald-500'
+                  ? 'bg-seal'
                   : 'bg-faint/50'
               "
             />
@@ -194,7 +194,7 @@ const difficultyLabel = {
             <AppIcon
               :name="isProjectDone(project.id) ? 'check' : 'box'"
               :size="14"
-              :class="isProjectDone(project.id) ? 'text-emerald-500' : 'text-faint'"
+              :class="isProjectDone(project.id) ? 'text-seal' : 'text-faint'"
             />
             <span class="min-w-0 flex-1">
               <span class="block truncate text-[13px] text-ink">{{ project.title }}</span>

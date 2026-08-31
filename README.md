@@ -9,7 +9,7 @@ map you can click through.
 
 ## Okay but what IS it
 
-You open the site, it looks like a big old book. The pages *turn* when you
+You open the site, it looks like a big old book. The pages _turn_ when you
 click a chapter. There's a little glowing magic circle that flashes while
 it turns. This is deeply unnecessary and we regret nothing.
 
@@ -25,10 +25,12 @@ Inside the book:
 - 🔥 **Progress tracking** — check things off, keep a streak, unlock
   achievements. It's basically a to-do list cosplaying as an RPG.
 
+## Enough yapping, where is it?
+
+https://coding-survival-roadmap.vercel.app
+
 No sign-up, no password. Type any name and it just remembers you (on your
-device). Progress is saved right in your browser, so the site works fine
-with zero internet and zero backend. If the little Go server *is* up, it
-quietly backs your progress up too. If it's not, nothing breaks — the book
+device). Progress is saved right in your browser. If the little Go server _is_ up, it quietly backs your progress up too. If it's not, nothing breaks — the book
 doesn't care.
 
 ## Running it yourself

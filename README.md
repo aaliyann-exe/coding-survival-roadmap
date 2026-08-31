@@ -1,93 +1,57 @@
-# Coding Survival Roadmap
+# Coding Survival Roadmap 📖
 
-An interactive roadmap of what I actually learned in ~6 months of coding, and
-the order I'd learn it in if I had to start again. Three paths — Front-End,
-Back-End, and Python / AI-ML — each one a dependency graph of topics with the
-reasoning, a realistic time estimate, and projects attached to every step.
-
-It's a teaching site, not a link dump: every topic answers _why should I care_,
-_what do I actually need to know_, and _what do I build to prove I know it_.
+A website that pretends to be a cursed spellbook, but is actually just
+someone's notes on "how I taught myself to code in 6 months" turned into a
+map you can click through.
 
 > If you were sent here to learn from it: close this file. It's the boring
 > half. Go to the site. **hey no spoilers !!!**
 
-## What's in it
+## Okay but what IS it
 
-| | |
-| --- | --- |
-| Roadmaps | 3 paths, split into stages, drawn as a real prerequisite graph |
-| Topics | Each with a brief, gotchas, curated resources, and time ranges |
-| Projects | Tiered beginner → "why did I do this to myself", each with stretch goals |
-| Resources | Docs-first, filterable by type, track, and free/paid |
-| Progress | Per-topic and per-project tracking, streaks, achievements, activity graph |
+You open the site, it looks like a big old book. The pages *turn* when you
+click a chapter. There's a little glowing magic circle that flashes while
+it turns. This is deeply unnecessary and we regret nothing.
 
-Progress lives in `localStorage` first and syncs to the backend when it's
-reachable, so the site keeps working offline and with no server at all.
+Inside the book:
 
-## Stack
+- 🖥️ **Three roadmaps** — Front-End, Back-End, and Python/AI. Each one is a
+  big graph of topics connected like a skill tree, so you always know
+  what to learn next and what it needs first.
+- 🧪 **Projects** — from "cute little thing" to "why did I do this to
+  myself," attached to the topics that unlock them.
+- 📚 **Resources** — the actual good docs/courses/videos, not a 400-tab
+  homework dump.
+- 🔥 **Progress tracking** — check things off, keep a streak, unlock
+  achievements. It's basically a to-do list cosplaying as an RPG.
 
-- **Vue 3** (`<script setup>`, Composition API) + **TypeScript**
-- **Vite** for dev/build
-- **Tailwind CSS**, driven by CSS custom properties so light/dark and the
-  per-roadmap accent colour are all one token swap (see `src/style.css`)
-- **vue-router** with lazy-loaded views
-- No component library, no icon package — the ~45 icons are inline paths in
-  `src/components/ui/AppIcon.vue`
-- **Go + PostgreSQL** backend for progress sync (see `backend/`)
+No sign-up, no password. Type any name and it just remembers you (on your
+device). Progress is saved right in your browser, so the site works fine
+with zero internet and zero backend. If the little Go server *is* up, it
+quietly backs your progress up too. If it's not, nothing breaks — the book
+doesn't care.
 
-## Running it
+## Running it yourself
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
 ```
 
-```bash
-npm run build      # type-checks, then builds to dist/
-npm run preview    # serve the production build
-npm run typecheck  # vue-tsc, no emit
-```
+That's it. That's the whole website, offline, no backend needed.
 
-The frontend runs fine with no backend — it falls back to `localStorage` and
-shows an "offline" hint on the login modal. To run the sync server too, see
-[`backend/README.md`](backend/README.md), and copy `.env.example` to `.env` to
-point the frontend at it.
+If you also want the optional sync server (so progress follows you across
+devices), see [`backend/README.md`](backend/README.md) — it's a tiny Go +
+Postgres API. Copy `.env.example` to `.env` to point the site at it.
 
-## Layout
+## Made of
 
-```
-src/
-  data/         Content. The roadmaps, projects, resources and advice live
-                here as typed objects — this is the part worth editing.
-    types.ts      Shape of every content object
-    frontend.ts   Front-End roadmap (nodes, stages, resources)
-    backend.ts    Back-End roadmap
-    python.ts     Python / AI-ML roadmap
-    projects.ts   Every project brief
-  composables/  useProgress (the store), useTheme, useAchievements,
-                useSearch (⌘K palette), useUser
-  components/   roadmap/ projects/ resources/ achievements/ ui/ layout/
-  views/        One per route
-backend/        Go API: usernames + completed topics/projects (see CLAUDE2.md)
-```
+Vue 3 + TypeScript + Vite + Tailwind on the front, a small Go + PostgreSQL
+API on the back, and an unreasonable number of `<svg>` sigils that someone
+drew by hand instead of sleeping.
 
-### Adding content
+## Want the actual deep-dive?
 
-Topics and projects are plain objects — no CMS, no markdown pipeline. Add a
-node to the relevant file in `src/data/`, give it `prerequisites` and a `stage`,
-and the graph, the search index, the resource list and the progress totals all
-pick it up automatically.
-
-## Conventions
-
-- Colour comes from `--track`, set by a `.track-frontend` / `.track-backend` /
-  `.track-python` wrapper class and inherited by everything inside it. Don't
-  hardcode accent colours in components.
-- Surfaces are layered `canvas → surface → raised → sunken`. Borders are
-  `line` / `line-strong`. Text is `ink` / `muted` / `faint`.
-- Everything animated is guarded by `prefers-reduced-motion`.
-
-## Notes
-
-`CLAUDE1.md`, `CLAUDE2.md`, `CLAUDE3.md` and `DEPLOYMENT.md` are the working
-briefs for the frontend, the backend, later revisions, and deployment.
+See [`About.md`](About.md) — it explains every gear turning under the
+leather cover, for whoever (probably future-me) needs to remember how any
+of this works.

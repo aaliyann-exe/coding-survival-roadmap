@@ -33,11 +33,6 @@ const TIMEOUT_MS = 5000;
  */
 let reachable = API_BASE !== "";
 
-/** True when a sync target is configured and hasn't already failed. */
-export function isSyncEnabled() {
-  return reachable;
-}
-
 export interface ApiUser {
   id: number;
   username: string;

@@ -2,7 +2,10 @@
 import { roadmaps, totalTopics } from "@/data/roadmaps";
 import projects from "@/data/projects";
 import { allResources } from "@/data/resources";
+import { useReducedMotion } from "@/composables/useMotion";
 import AppIcon from "@/components/ui/AppIcon.vue";
+
+const { prefersReducedMotion } = useReducedMotion();
 
 const siteLinks = [
   { to: "/roadmaps", label: "Roadmaps" },
@@ -12,7 +15,13 @@ const siteLinks = [
 ];
 
 function toTop() {
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  // An explicit `behavior` here overrides the `scroll-behavior: auto` that
+  // style.css sets under prefers-reduced-motion, so this has to ask as well —
+  // it was the one animation in the app that ignored the setting.
+  window.scrollTo({
+    top: 0,
+    behavior: prefersReducedMotion.value ? "auto" : "smooth",
+  });
 }
 </script>
 
@@ -94,7 +103,7 @@ function toTop() {
 
         <button
           type="button"
-          class="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest opacity-55 transition-colors hover:text-ink"
+          class="ml-auto flex min-h-[40px] items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest opacity-55 transition-opacity hover:opacity-100"
           @click="toTop"
         >
           Back to top <AppIcon name="arrow-right" :size="11" class="-rotate-90" />

@@ -313,6 +313,51 @@
     @apply inline-flex items-center gap-1.5 border border-line bg-sunken px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted;
   }
 
+  /* Status inks for chips and markers. Named for the material, not the hue,
+     so both palettes stay correct: `--seal` and `--wax` are already lifted in
+     the dark grimoire, which a fixed colour could never be. */
+  .chip-sealed {
+    border-color: rgb(var(--seal) / 0.45);
+    color: rgb(var(--seal));
+  }
+  .chip-active {
+    border-color: rgb(var(--gild) / 0.5);
+    color: rgb(var(--gild));
+  }
+
+  /* A filter toggle. One implementation for every filter row in the site —
+     roadmaps, projects and resources each grew their own slightly different
+     version, with two different "selected" treatments between them.
+     Selection is driven by `aria-pressed`, so the state a screen reader
+     announces and the state you can see can never drift apart. */
+  .filter-tab {
+    @apply inline-flex min-h-[2.25rem] items-center border border-line px-3 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors;
+  }
+  .filter-tab:hover {
+    @apply border-line-strong text-ink;
+  }
+  .filter-tab[aria-pressed="true"] {
+    color: rgb(var(--ink));
+    border-color: rgb(var(--track));
+    background-color: rgb(var(--track) / 0.08);
+  }
+
+  /* A section heading with a rule running out to a count on the right.
+     Used by every grouped list (projects by tier, resources by type,
+     achievements). Previously copied inline into three views. */
+  .section-head {
+    @apply mb-5 flex items-center gap-3;
+  }
+  .section-head > h2 {
+    @apply min-w-0 font-rule text-[17px] uppercase leading-tight tracking-[0.08em] text-ink;
+  }
+  .section-head > .section-rule {
+    @apply h-px flex-1 bg-line/70;
+  }
+  .section-head > .section-count {
+    @apply shrink-0 font-mono text-[10px] tabular-nums text-faint;
+  }
+
   .prose-note p {
     @apply mb-6 text-base leading-relaxed text-muted md:text-[17px];
   }
@@ -714,10 +759,6 @@
     background-color: rgb(var(--sunken) / 0.7);
   }
 
-  /* ---------------- Manuscript sheet (modal) ---------------- */
-
-  .manuscript::before,
-
   /* ---------------- The epigraph ---------------- */
 
   /* The three verbs of the quotation. Each gets its own idea, and the whole
@@ -947,7 +988,7 @@
     }
   }
 
-  /* ---------------- The scroll ---------------- */ /* ---------------- The scroll ---------------- */
+  /* ---------------- The scroll ---------------- */
 
   /* A rolled sheet rather than a rectangular dialog. The field is flanked by
      wound parchment at head and foot, each with a dowel protruding at both

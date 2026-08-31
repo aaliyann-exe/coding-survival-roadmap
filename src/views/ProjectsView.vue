@@ -23,6 +23,13 @@ const tierLabel: Record<ProjectTier, string> = {
   pain: "Why did I do this to myself?",
 };
 
+/** The filter row needs something that fits on one line — the full "pain"
+ * label is four words long and wrapped the whole row onto three. */
+const tierShortLabel: Record<ProjectTier, string> = {
+  ...tierLabel,
+  pain: "Pain",
+};
+
 const activeTrack = ref<RoadmapId | "all">("all");
 const activeTier = ref<ProjectTier | "all">("all");
 const activeStatus = ref<"all" | "todo" | "done">("all");
@@ -101,9 +108,6 @@ function resetFilters() {
       <button type="button" class="btn w-full justify-center py-2.5" @click="surpriseMe">
         <AppIcon name="spark" :size="12" /> I'm bored, give me something to build
       </button>
-      <p class="mt-6 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
-        {{ filtered.length }} of {{ projectList.length }} shown
-      </p>
     </template>
 
     <!-- filters -->
@@ -112,12 +116,8 @@ function resetFilters() {
         <span class="label-mono w-16 shrink-0">Track</span>
         <button
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="
-            activeTrack === 'all'
-              ? 'border-line-strong text-ink'
-              : 'border-line text-faint hover:text-ink'
-          "
+          class="filter-tab"
+          :aria-pressed="activeTrack === 'all'"
           @click="activeTrack = 'all'"
         >
           All
@@ -126,13 +126,9 @@ function resetFilters() {
           v-for="r in roadmaps"
           :key="r.id"
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="[
-            r.trackClass,
-            activeTrack === r.id
-              ? 'border-[rgb(var(--track))] text-ink'
-              : 'border-line text-faint hover:text-ink',
-          ]"
+          class="filter-tab"
+          :class="r.trackClass"
+          :aria-pressed="activeTrack === r.id"
           @click="activeTrack = r.id"
         >
           {{ r.short }}
@@ -143,12 +139,8 @@ function resetFilters() {
         <span class="label-mono w-16 shrink-0">Level</span>
         <button
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="
-            activeTier === 'all'
-              ? 'border-line-strong text-ink'
-              : 'border-line text-faint hover:text-ink'
-          "
+          class="filter-tab"
+          :aria-pressed="activeTier === 'all'"
           @click="activeTier = 'all'"
         >
           All
@@ -157,15 +149,11 @@ function resetFilters() {
           v-for="tier in tierOrder"
           :key="tier"
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="
-            activeTier === tier
-              ? 'border-line-strong text-ink'
-              : 'border-line text-faint hover:text-ink'
-          "
+          class="filter-tab"
+          :aria-pressed="activeTier === tier"
           @click="activeTier = tier"
         >
-          {{ tierLabel[tier] }}
+          {{ tierShortLabel[tier] }}
         </button>
       </div>
 
@@ -175,18 +163,14 @@ function resetFilters() {
           v-for="s in (['all', 'todo', 'done'] as const)"
           :key="s"
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="
-            activeStatus === s
-              ? 'border-line-strong text-ink'
-              : 'border-line text-faint hover:text-ink'
-          "
+          class="filter-tab"
+          :aria-pressed="activeStatus === s"
           @click="activeStatus = s"
         >
           {{ s === "all" ? "All" : s === "todo" ? "Not built" : "Built" }}
         </button>
 
-        <label class="ml-auto flex min-w-[180px] flex-1 items-center gap-2 border border-line bg-surface px-3 sm:max-w-xs">
+        <label class="ml-auto flex min-h-[2.25rem] min-w-[180px] flex-1 items-center gap-2 border border-line bg-surface px-3 focus-within:border-line-strong sm:max-w-xs">
           <AppIcon name="search" :size="13" class="text-faint" />
           <input
             v-model="search"
@@ -199,9 +183,12 @@ function resetFilters() {
       </div>
     </div>
 
-    <!-- results -->
+    <!-- One result count, next to the filters that produce it. The verso
+         carried a second copy of the same number. -->
     <p class="mb-6 font-mono text-[10px] uppercase tracking-widest text-faint">
-      {{ filtered.length }} project{{ filtered.length === 1 ? "" : "s" }}
+      {{ filtered.length }} of {{ projectList.length }} project{{
+        projectList.length === 1 ? "" : "s"
+      }}
     </p>
 
     <div v-if="filtered.length === 0" class="border border-line bg-raised p-12 text-center">
@@ -215,12 +202,10 @@ function resetFilters() {
 
     <div v-else class="space-y-14">
       <section v-for="group in grouped" :key="group.tier">
-        <div class="mb-5 flex items-center gap-3">
-          <h2 class="min-w-0 font-rule text-[17px] uppercase leading-tight tracking-[0.08em] text-ink">
-            {{ tierLabel[group.tier] }}
-          </h2>
-          <span class="h-px flex-1 bg-line/70" aria-hidden="true" />
-          <span class="font-mono text-[10px] text-faint">{{ group.items.length }}</span>
+        <div class="section-head">
+          <h2>{{ tierLabel[group.tier] }}</h2>
+          <span class="section-rule" aria-hidden="true" />
+          <span class="section-count">{{ group.items.length }}</span>
         </div>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -10,13 +10,15 @@ const { statusOf, startTopic, completeTopic, masterTopic, resetTopic } =
   useProgress();
 
 const status = computed(() => statusOf(props.node));
-const touched = computed(() => status.value !== "available" && status.value !== "locked");
+const touched = computed(
+  () => status.value !== "available" && status.value !== "locked",
+);
 </script>
 
 <template>
   <div class="flex flex-wrap items-center gap-2">
     <button
-      v-if="status !== 'in-progress' && !touched"
+      v-if="!touched"
       type="button"
       class="btn btn-primary"
       @click="startTopic(node.id)"
@@ -42,18 +44,21 @@ const touched = computed(() => status.value !== "available" && status.value !== 
       <AppIcon name="trophy" :size="12" /> Mark mastered
     </button>
 
-    <span
+    <!-- The end of the line. This was a <span class="btn">, which put
+         something shaped exactly like the three real buttons beside it and
+         did nothing when pressed. It is a status mark now, not a control. -->
+    <p
       v-if="status === 'mastered'"
-      class="btn cursor-default border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
+      class="flex items-center gap-2 py-2 font-mono text-[11px] uppercase tracking-widest text-seal"
     >
       <AppIcon name="trophy" :size="12" /> Mastered
-    </span>
+    </p>
 
     <button v-if="touched" type="button" class="btn" @click="resetTopic(node.id)">
       <AppIcon name="reset" :size="12" /> Reset
     </button>
 
-    <p v-if="status === 'locked'" class="ml-auto text-2xs text-faint">
+    <p v-if="status === 'locked'" class="text-2xs leading-relaxed text-faint sm:ml-auto">
       Prerequisites aren't done — but nothing's stopping you.
     </p>
   </div>

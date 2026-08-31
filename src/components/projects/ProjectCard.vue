@@ -23,15 +23,24 @@ const trackClass: Record<Project["roadmap"], string> = {
 </script>
 
 <template>
+  <!--
+    The card body is not itself a button. It used to be, with the title,
+    blurb and stack chips inside it — a heading and paragraphs inside a
+    <button> is invalid, and it also meant a screen reader read the entire
+    card out as one long button label.
+
+    Instead the markup stays semantic and the "Brief" button in the footer is
+    stretched over the whole card by a ::before. The button itself is left
+    statically positioned on purpose, so `inset-0` resolves against the
+    <article> rather than the button. One focus stop, one announced name, the
+    whole card still clickable — and "mark as built" is lifted above that
+    layer with z-10 so it stays hittable.
+  -->
   <article
     class="relative corner-frame group flex h-full flex-col border-2 border-line bg-surface transition-colors hover:border-[rgb(var(--track))]"
-    :class="[trackClass[project.roadmap], isProjectDone(project.id) ? 'border-emerald-600/60' : '']"
+    :class="[trackClass[project.roadmap], isProjectDone(project.id) ? 'border-seal/60' : '']"
   >
-    <button
-      type="button"
-      class="flex flex-1 flex-col items-start p-5 text-left"
-      @click="$emit('select', project)"
-    >
+    <div class="flex flex-1 flex-col p-5">
       <div class="mb-3 flex w-full items-center gap-2">
         <span
           class="h-1.5 w-1.5 shrink-0"
@@ -58,26 +67,27 @@ const trackClass: Record<Project["roadmap"], string> = {
           >+{{ project.stack.length - 4 }}</span
         >
       </div>
-    </button>
+    </div>
 
-    <div class="flex items-center justify-between border-t border-line px-5">
+    <div class="flex items-center justify-between gap-2 border-t border-line px-5">
       <button
         type="button"
-        class="-ml-1 flex min-h-[44px] items-center gap-1.5 px-1 font-mono text-[10px] uppercase tracking-widest transition-colors"
+        class="relative z-10 -ml-1 flex min-h-[44px] items-center gap-1.5 px-1 font-mono text-[10px] uppercase tracking-widest transition-colors"
         :class="
-          isProjectDone(project.id)
-            ? 'text-emerald-600 dark:text-emerald-400'
-            : 'text-faint hover:text-ink'
+          isProjectDone(project.id) ? 'text-seal' : 'text-faint hover:text-ink'
         "
+        :aria-label="`Mark ${project.title} as built`"
         :aria-pressed="isProjectDone(project.id)"
         @click="toggleProject(project.id)"
       >
         <AppIcon :name="isProjectDone(project.id) ? 'check' : 'dot'" :size="12" />
         {{ isProjectDone(project.id) ? "Built it" : "Mark as built" }}
       </button>
+
       <button
         type="button"
-        class="-mr-1 flex min-h-[44px] items-center gap-1 px-1 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors hover:text-ink"
+        class="-mr-1 flex min-h-[44px] items-center gap-1 px-1 font-mono text-[10px] uppercase tracking-widest text-faint transition-colors before:absolute before:inset-0 before:content-[''] hover:text-ink"
+        :aria-label="`Read the brief for ${project.title}`"
         @click="$emit('select', project)"
       >
         Brief <AppIcon name="arrow-right" :size="11" />

@@ -36,12 +36,28 @@ const inProgressNodes = computed(() =>
   allNodes.filter((n) => startedNodeIds.value.has(n.id)),
 );
 
-const recentCompleted = computed(() =>
-  allNodes.filter((n) => completedNodeIds.value.has(n.id)).slice(-8).reverse(),
+/** Everything cleared, in roadmap order. This was labelled "Recently
+ * cleared" and took the last eight, but nothing records *when* a topic was
+ * marked — that was just the tail of the data file, in data order. Rather
+ * than store timestamps for one strip of chips, the label now says what the
+ * list actually is. */
+const CLEARED_SHOWN = 12;
+const clearedTopics = computed(() =>
+  allNodes.filter((n) => completedNodeIds.value.has(n.id)),
 );
 
 const builtProjects = computed(() =>
   projectList.filter((p) => completedProjectIds.value.has(p.id)),
+);
+
+/** Nothing marked, nothing built, no active days: a first visit. Several
+ * sections below are meaningless in that state, and one of them (the reset
+ * control) offers to wipe something that does not exist yet. */
+const hasProgress = computed(
+  () =>
+    completedNodeIds.value.size > 0 ||
+    startedNodeIds.value.size > 0 ||
+    completedProjectIds.value.size > 0,
 );
 
 const currentRoadmap = computed(() => {
@@ -95,13 +111,10 @@ function doReset() {
       </div>
     </template>
 
-    <!-- Standing: the seal on the left, the register of figures on the right.
-         Numbers are right-aligned against leader rules like a real ledger,
-         instead of sitting in a grid of stat tiles. -->
     <!-- The register of figures. Numbers are right-aligned against leader
          rules like a real ledger, instead of sitting in a grid of stat tiles.
-         (The seal and skill level now live on the facing page.) -->
-    <section class="mb-12">
+         (The seal and skill level live on the facing page.) -->
+    <section v-if="hasProgress" class="mb-12">
       <div class="border-2 border-line bg-surface p-5 sm:p-6">
         <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
           Register of standing
@@ -157,8 +170,37 @@ function doReset() {
       </div>
     </section>
 
+    <!-- Nothing recorded yet. A register of zeros and an empty practice grid
+         say "this feature is broken" rather than "you haven't started" — so
+         the first visit gets a short explanation of how anything gets in
+         here, and a way through to the roadmaps. -->
+    <section v-else class="mb-12 border-2 border-line bg-surface p-6 sm:p-8">
+      <p class="label-mono mb-3">Nothing recorded yet</p>
+      <h2 class="mb-3 text-xl leading-snug text-ink">
+        This page fills itself in as you go
+      </h2>
+      <p class="mb-6 max-w-xl text-[14px] leading-relaxed text-muted">
+        Open any topic and mark it started, completed or mastered, or tick a
+        project off once you've built it. That's the whole mechanism — the
+        streak, the study-hour estimate and the achievements are all worked out
+        from those marks. It's stored in this browser, so nothing here is
+        waiting on a server.
+      </p>
+      <div class="flex flex-wrap gap-2.5">
+        <RouterLink
+          v-if="nextUp"
+          :to="`/roadmaps/${roadmapForNode(nextUp.node.id)?.id}?node=${nextUp.node.id}`"
+          class="btn btn-primary text-left"
+        >
+          <AppIcon name="arrow-right" :size="12" />
+          Start with {{ nextUp.node.title }}
+        </RouterLink>
+        <RouterLink to="/roadmaps" class="btn">See all three paths</RouterLink>
+      </div>
+    </section>
+
     <!-- practice record -->
-    <section class="mb-12">
+    <section v-if="hasProgress" class="mb-12">
       <LedgerGrid :active-days="state.activeDays" />
     </section>
 
@@ -193,10 +235,10 @@ function doReset() {
           v-for="node in inProgressNodes"
           :key="node.id"
           type="button"
-          class="group flex items-center gap-3 border border-amber-500/40 bg-amber-500/[0.04] p-4 text-left transition-colors hover:border-amber-500/70"
+          class="group flex items-center gap-3 border border-gild/50 bg-gild/[0.06] p-4 text-left transition-colors hover:border-gild"
           @click="openNode(node.id)"
         >
-          <span class="h-1.5 w-1.5 shrink-0 bg-amber-500" />
+          <span class="h-1.5 w-1.5 shrink-0 bg-gild" />
           <span class="min-w-0 flex-1">
             <span class="block truncate text-[14px] text-ink">{{ node.title }}</span>
             <span class="block truncate text-2xs text-faint">In progress</span>
@@ -230,20 +272,35 @@ function doReset() {
       </div>
     </section>
 
-    <!-- recent -->
-    <section v-if="recentCompleted.length || builtProjects.length" class="mb-14">
-      <h2 class="rule-heading mb-5">Recently cleared</h2>
+    <!-- cleared -->
+    <section v-if="clearedTopics.length || builtProjects.length" class="mb-14">
+      <div class="section-head">
+        <h2>Cleared so far</h2>
+        <span class="section-rule" aria-hidden="true" />
+        <span class="section-count"
+          >{{ clearedTopics.length }} + {{ builtProjects.length }} built</span
+        >
+      </div>
       <div class="flex flex-wrap gap-1.5">
         <button
-          v-for="node in recentCompleted"
+          v-for="node in clearedTopics.slice(0, CLEARED_SHOWN)"
           :key="node.id"
           type="button"
-          class="chip border-emerald-500/30 text-emerald-700 transition-colors hover:border-emerald-500/60 dark:text-emerald-400"
+          class="chip chip-sealed min-h-[1.75rem] transition-colors hover:border-seal"
           @click="openNode(node.id)"
         >
           <AppIcon name="check" :size="10" /> {{ node.title }}
         </button>
-        <span v-for="project in builtProjects" :key="project.id" class="chip">
+        <span
+          v-if="clearedTopics.length > CLEARED_SHOWN"
+          class="chip min-h-[1.75rem] border-dashed"
+          >+{{ clearedTopics.length - CLEARED_SHOWN }} more</span
+        >
+        <span
+          v-for="project in builtProjects"
+          :key="project.id"
+          class="chip min-h-[1.75rem]"
+        >
           <AppIcon name="box" :size="10" /> {{ project.title }}
         </span>
       </div>
@@ -251,12 +308,10 @@ function doReset() {
 
     <!-- achievements -->
     <section class="mb-14">
-      <div class="mb-5 flex items-center gap-3">
-        <h2 class="min-w-0 font-rule text-[17px] uppercase leading-tight tracking-[0.08em] text-ink">
-          Achievements
-        </h2>
-        <span class="h-px flex-1 bg-line/70" aria-hidden="true" />
-        <span class="font-mono text-[10px] text-faint"
+      <div class="section-head">
+        <h2>Achievements</h2>
+        <span class="section-rule" aria-hidden="true" />
+        <span class="section-count"
           >{{ unlocked.length }} / {{ unlocked.length + locked.length }}</span
         >
       </div>
@@ -277,8 +332,8 @@ function doReset() {
       </div>
     </section>
 
-    <!-- danger zone -->
-    <section class="border border-line bg-raised/50 p-5">
+    <!-- Offering to wipe progress that does not exist yet is dead UI. -->
+    <section v-if="hasProgress" class="border border-line bg-raised/50 p-5">
       <h2 class="label-mono mb-2">Start over</h2>
       <p class="mb-4 max-w-xl text-[13px] font-light leading-relaxed text-muted">
         Wipes every topic, project and streak stored in this browser. There is no undo
@@ -292,7 +347,7 @@ function doReset() {
       <div v-else class="flex flex-wrap gap-2">
         <button
           type="button"
-          class="btn border-red-500/40 text-red-600 hover:border-red-500/70 dark:text-red-400"
+          class="btn border-wax/50 text-wax hover:border-wax hover:bg-wax hover:text-canvas"
           @click="doReset"
         >
           Yes, wipe it

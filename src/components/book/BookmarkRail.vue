@@ -10,7 +10,7 @@
  */
 import { useRoute } from "vue-router";
 
-defineProps<{ links: { to: string; label: string }[] }>();
+defineProps<{ links: { to: string; label: string; short: string }[] }>();
 
 const route = useRoute();
 
@@ -52,7 +52,12 @@ function isActive(to: string) {
             height: isActive(link.to) ? 'var(--ribbon-h-active)' : 'var(--ribbon-h)',
           }"
         >
-          <span>{{ link.label }}</span>
+          <!-- Five ribbons share the width of a 320px phone, which leaves
+               about 48px of usable label per column. "Frontispiece" is wider
+               than that and spilled out of its ribbon, so the narrow layout
+               uses the short form. -->
+          <span class="sm:hidden">{{ link.short }}</span>
+          <span class="hidden sm:inline">{{ link.label }}</span>
         </RouterLink>
       </li>
     </ul>

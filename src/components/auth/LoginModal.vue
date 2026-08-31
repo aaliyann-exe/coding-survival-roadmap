@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, watch } from "vue";
 import { useUser } from "@/composables/useUser";
+import { useScrollLock } from "@/composables/useScrollLock";
 import AppIcon from "@/components/ui/AppIcon.vue";
 
 const { showLoginModal, setUsername } = useUser();
+const { lock, unlock } = useScrollLock();
 
 const name = ref("");
 const submitting = ref(false);
@@ -60,12 +62,12 @@ watch(
       name.value = "";
       offlineNote.value = false;
       submitting.value = false;
-      document.body.style.overflow = "hidden";
+      lock();
       window.addEventListener("keydown", onKeydown, true);
       await nextTick();
       input.value?.focus();
     } else if (hasOpened) {
-      document.body.style.overflow = "";
+      unlock();
       window.removeEventListener("keydown", onKeydown, true);
     }
   },
@@ -74,7 +76,7 @@ watch(
 
 onUnmounted(() => {
   window.clearTimeout(closeTimer);
-  document.body.style.overflow = "";
+  if (showLoginModal.value) unlock();
   window.removeEventListener("keydown", onKeydown, true);
 });
 

@@ -88,6 +88,8 @@ src/
     useBookTurn.ts    Drives the page-turn animation independent of routing
     useSearch.ts      Builds the ⌘K command-palette search index
     useMotion.ts      Shared motion/reduced-motion helpers
+    useScrollLock.ts  Reference-counted body-scroll lock shared by every
+                      overlay (see §5)
 
   components/
     book/           TomeShell (page frame), BookSpread (two-page layout),
@@ -264,7 +266,26 @@ flourish text like the epigraph.
 
 Everything animated is guarded by `prefers-reduced-motion` throughout —
 this is treated as a hard requirement, not a nice-to-have, and shows up in
-`useBookTurn`, the seal, and the leaf-turn CSS animations alike.
+`useBookTurn`, the seal, the leaf-turn CSS animations, `ProgressRing`'s
+count-up and the footer's scroll-to-top alike. Note that an explicit
+`behavior: "smooth"` passed to `window.scrollTo` overrides the
+`scroll-behavior: auto` that the media query sets, so JS-driven scrolling has
+to check the preference itself rather than relying on the stylesheet.
+
+**Shared UI primitives** live in `style.css`'s `@layer components` and exist
+because the same thing had been hand-rolled in several views: `.btn`,
+`.chip` (plus `.chip-sealed` / `.chip-active` for status), `.filter-tab`
+(every filter row; selected state is driven off `aria-pressed` so the
+announced and painted states cannot drift), `.section-head` (a grouped-list
+heading with a rule and a count), `.ledger-row` and `.rule-heading`. Reach
+for one of these before writing a new one-off.
+
+**One scroll lock, shared.** Overlays can overlap — the palette opens over a
+topic brief, a project brief opens over the topic brief that linked to it —
+and each of them setting `document.body.style.overflow` itself meant
+whichever closed first unlocked the page behind the ones still open.
+`useScrollLock` counts holders instead; the lock lifts when the last one
+releases.
 
 ## 6. Content model
 
@@ -351,8 +372,8 @@ page change, but explicitly *not* reset when only the query string changes
 ## 10. Known easter eggs
 
 - The 404 page's "404" label is clickable; five clicks produces a confession
-  message, with escalating hints along the way, plus a fake stack trace
-  panel showing the attempted route.
+  message, with escalating hints along the way. The page itself is written up
+  as a missing-person notice pinned to a tavern board.
 - The footer's old "TOP SECRET" link survived the footer rewrite as a
   rickroll, now reading "Top secret 🤓👉".
 - The home page has a "6-7" that bobs on hover.

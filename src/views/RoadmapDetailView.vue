@@ -62,8 +62,11 @@ function openNode(node: RoadmapNode | string) {
 }
 
 function openProject(id: string) {
-  // Only one drawer at a time — swap the node brief for the project brief.
-  router.push({ path: route.path, query: { project: id } });
+  // `?node=` is kept alongside `?project=`. Only one sheet shows at a time
+  // (see the node sheet's `open` below), but keeping the node in the URL
+  // means closing the project brief returns to the topic it was opened
+  // from rather than dumping the reader back at the tree.
+  router.push({ path: route.path, query: { ...route.query, project: id } });
 }
 
 function closeNode() {
@@ -197,7 +200,7 @@ watch(
 
     <!-- node drawer -->
     <ManuscriptModal
-      :open="Boolean(activeNode)"
+      :open="Boolean(activeNode) && !activeProject"
       :title="activeNode?.title ?? ''"
       :eyebrow="roadmap.title"
       @close="closeNode"

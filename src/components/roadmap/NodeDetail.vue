@@ -23,6 +23,16 @@ const prereqs = computed(() =>
 
 const unlocks = computed(() => unlockedBy(props.node.id));
 
+/** The prerequisites that are not cleared yet. The tree can already say a
+ * topic is locked; this is the part that says *what to go and do about it*,
+ * which is the only reason the reader opened the brief on a locked node. */
+const outstanding = computed(() =>
+  prereqs.value.filter((p) => {
+    const s = statusOf(p);
+    return s !== "completed" && s !== "mastered";
+  }),
+);
+
 const relatedProjects = computed(() =>
   (props.node.projects ?? [])
     .map((id) => projectList.find((p) => p.id === id))
@@ -58,9 +68,9 @@ const difficultyLabel = {
         class="chip"
         :class="
           status === 'completed' || status === 'mastered'
-            ? 'border-emerald-500/40 text-emerald-600 dark:text-emerald-400'
+            ? 'chip-sealed'
             : status === 'in-progress'
-              ? 'border-amber-500/40 text-amber-600 dark:text-amber-400'
+              ? 'chip-active'
               : ''
         "
       >
@@ -123,26 +133,58 @@ const difficultyLabel = {
     <!-- prerequisites -->
     <section v-if="prereqs.length" class="mb-8">
       <h3 class="rule-heading mb-3">Come here after</h3>
+
+      <p v-if="outstanding.length" class="mb-3 text-[13px] leading-relaxed text-muted">
+        {{ outstanding.length }} of these
+        {{ outstanding.length === 1 ? "is" : "are" }} still open. You can start
+        anyway — this is a suggested order, not a gate.
+      </p>
+
       <ul class="space-y-1.5">
         <li v-for="p in prereqs" :key="p.id">
           <button
             type="button"
-            class="group flex w-full items-center gap-2 border border-line bg-raised px-3 py-2 text-left transition-colors hover:border-line-strong"
+            class="group flex min-h-[2.75rem] w-full items-center gap-2.5 border border-line bg-raised px-3 py-2 text-left transition-colors hover:border-line-strong"
             @click="emit('openNode', p.id)"
           >
-            <span
-              class="h-1.5 w-1.5 shrink-0"
+            <!-- The state was a 1.5px dot and nothing else, so "which of
+                 these have I actually finished" was unanswerable at a
+                 glance. Icon plus word now, never colour alone. -->
+            <AppIcon
+              :name="
+                statusOf(p) === 'completed' || statusOf(p) === 'mastered'
+                  ? 'check'
+                  : 'dot'
+              "
+              :size="13"
               :class="
                 statusOf(p) === 'completed' || statusOf(p) === 'mastered'
-                  ? 'bg-emerald-500'
-                  : 'bg-faint/50'
+                  ? 'text-seal'
+                  : 'text-faint'
               "
             />
-            <span class="min-w-0 flex-1 truncate text-[13px] text-ink">{{ p.title }}</span>
+            <span class="min-w-0 flex-1 text-[13px] leading-snug text-ink">{{
+              p.title
+            }}</span>
+            <span
+              class="shrink-0 font-mono text-[9px] uppercase tracking-wider"
+              :class="
+                statusOf(p) === 'completed' || statusOf(p) === 'mastered'
+                  ? 'text-seal'
+                  : 'text-faint'
+              "
+              >{{
+                statusOf(p) === "completed" || statusOf(p) === "mastered"
+                  ? "Done"
+                  : statusOf(p) === "in-progress"
+                    ? "Started"
+                    : "Not yet"
+              }}</span
+            >
             <AppIcon
               name="arrow-right"
               :size="13"
-              class="text-faint transition-transform group-hover:translate-x-0.5"
+              class="shrink-0 text-faint transition-transform group-hover:translate-x-0.5"
             />
           </button>
         </li>
@@ -194,7 +236,7 @@ const difficultyLabel = {
             <AppIcon
               :name="isProjectDone(project.id) ? 'check' : 'box'"
               :size="14"
-              :class="isProjectDone(project.id) ? 'text-emerald-500' : 'text-faint'"
+              :class="isProjectDone(project.id) ? 'text-seal' : 'text-faint'"
             />
             <span class="min-w-0 flex-1">
               <span class="block truncate text-[13px] text-ink">{{ project.title }}</span>

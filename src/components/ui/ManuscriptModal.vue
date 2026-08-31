@@ -9,6 +9,7 @@
  * untouched. Only the presentation and the motion changed.
  */
 import { nextTick, onUnmounted, ref, watch } from "vue";
+import { useScrollLock } from "@/composables/useScrollLock";
 import AppIcon from "./AppIcon.vue";
 
 const props = withDefaults(
@@ -22,6 +23,8 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{ close: [] }>();
+
+const { lock, unlock } = useScrollLock();
 
 const panel = ref<HTMLElement | null>(null);
 let lastFocused: HTMLElement | null = null;
@@ -71,12 +74,12 @@ watch(
     if (isOpen) {
       hasOpened = true;
       lastFocused = document.activeElement as HTMLElement | null;
-      document.body.style.overflow = "hidden";
+      lock();
       window.addEventListener("keydown", onKeydown, true);
       await nextTick();
       panel.value?.focus();
     } else if (hasOpened) {
-      document.body.style.overflow = "";
+      unlock();
       window.removeEventListener("keydown", onKeydown, true);
       lastFocused?.focus?.();
       lastFocused = null;
@@ -86,7 +89,7 @@ watch(
 );
 
 onUnmounted(() => {
-  document.body.style.overflow = "";
+  if (props.open) unlock();
   window.removeEventListener("keydown", onKeydown, true);
 });
 </script>

@@ -18,6 +18,7 @@ const {
   nextUp,
   streak,
   skillLevel,
+  completedNodeIds,
   completedProjectIds,
 } = useProgress();
 
@@ -45,6 +46,13 @@ const quickStart = [
     track: "track-python",
   },
 ];
+
+/** Has this reader marked anything at all? The frontispiece is the first
+ * thing anyone sees, and a 0% ring beside a 0-day streak and three empty
+ * bars reads as a broken feature rather than as an empty one. */
+const hasProgress = computed(
+  () => completedNodeIds.value.size > 0 || completedProjectIds.value.size > 0,
+);
 
 const nextNode = computed(() => nextUp.value?.node ?? null);
 const nextRoadmap = computed(() =>
@@ -316,8 +324,18 @@ function openNext() {
     <section class="py-10">
       <h2 class="mb-8 rule-heading">Where you're at</h2>
 
-      <div class="grid gap-6 lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-12">
-        <div class="flex items-center gap-6">
+      <p v-if="!hasProgress" class="mb-6 max-w-xl text-[14px] leading-relaxed text-muted">
+        Nothing marked yet. Tick a topic off inside any roadmap and these
+        fill in — it all stays in this browser, no account needed.
+      </p>
+
+      <!-- One column when the seal is hidden: otherwise the bars sit in the
+           narrow `auto` track and leave the wide one empty. -->
+      <div
+        class="grid gap-6"
+        :class="hasProgress ? 'lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-12' : ''"
+      >
+        <div v-if="hasProgress" class="flex flex-wrap items-center gap-6">
           <ProgressRing
             :percent="overallPercent"
             label="Overall"
@@ -350,9 +368,9 @@ function openNext() {
           >
             <RouterLink
               :to="`/roadmaps/${entry.roadmap.id}`"
-              class="block p-4 transition-colors border group border-line bg-surface hover:border-line-strong"
+              class="block border border-line bg-surface p-4 transition-colors hover:border-line-strong"
             >
-              <div class="flex items-baseline justify-between gap-3 mb-3">
+              <div class="mb-3 flex items-baseline justify-between gap-3">
                 <span class="text-[15px] text-ink">{{
                   entry.roadmap.title
                 }}</span>
@@ -481,7 +499,7 @@ function openNext() {
   </BookSpread>
 </template>
 
-<style>
+<style scoped>
 .seesaw-num {
   display: inline-block;
   transition: transform 0.2s ease;

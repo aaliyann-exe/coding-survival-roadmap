@@ -52,12 +52,8 @@ function projectCount(id: string) {
         v-for="f in filters"
         :key="f.id"
         type="button"
-        class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-        :class="
-          filter === f.id
-            ? 'border-[rgb(var(--track))] text-ink'
-            : 'border-line text-faint hover:border-line-strong hover:text-ink'
-        "
+        class="filter-tab"
+        :aria-pressed="filter === f.id"
         @click="filter = f.id"
       >
         {{ f.label }}

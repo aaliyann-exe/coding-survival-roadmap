@@ -30,11 +30,11 @@ const { open } = useCommandPalette();
 const { username, logout } = useUser();
 
 const links = [
-  { to: "/", label: "Frontispiece" },
-  { to: "/roadmaps", label: "Roadmaps" },
-  { to: "/projects", label: "Projects" },
-  { to: "/resources", label: "Resources" },
-  { to: "/progress", label: "Progress" },
+  { to: "/", label: "Frontispiece", short: "Home" },
+  { to: "/roadmaps", label: "Roadmaps", short: "Roadmaps" },
+  { to: "/projects", label: "Projects", short: "Projects" },
+  { to: "/resources", label: "Resources", short: "Resources" },
+  { to: "/progress", label: "Progress", short: "Progress" },
 ];
 
 // Turn a page only when the chapter changes. Opening a node brief writes
@@ -77,21 +77,26 @@ watch(
       <span class="ml-auto flex items-center gap-1.5 sm:gap-2">
         <RouterLink
           to="/progress"
-          class="hidden items-center gap-2 border border-line-strong/50 px-2 py-1 font-mono text-[10px] uppercase tracking-widest opacity-75 transition-all hover:border-line-strong hover:opacity-100 sm:flex"
+          class="flex min-h-[36px] items-center gap-2 border border-line-strong/50 px-2 font-mono text-[10px] uppercase tracking-widest opacity-75 transition-all hover:border-line-strong hover:opacity-100"
+          :aria-label="`Your progress: ${overallPercent} percent complete`"
         >
           <span class="h-1.5 w-1.5 bg-line-strong" aria-hidden="true" />
-          {{ overallPercent }}% done
+          <span aria-hidden="true">{{ overallPercent }}%<span class="hidden sm:inline"> done</span></span>
         </RouterLink>
 
+        <!-- Icon only on a phone, where there is no room for the name, but
+             still present: hiding it outright left no way to see who you were
+             signed in as or to switch, on the devices most likely to be
+             shared. -->
         <button
           v-if="username"
           type="button"
-          class="hidden items-center gap-1.5 border border-line-strong/50 px-2 py-1 font-mono text-[10px] uppercase tracking-widest opacity-75 transition-all hover:border-line-strong hover:opacity-100 sm:flex"
-          :aria-label="`Signed in as ${username}. Click to switch users.`"
+          class="flex min-h-[36px] items-center gap-1.5 border border-line-strong/50 px-2 font-mono text-[10px] uppercase tracking-widest opacity-75 transition-all hover:border-line-strong hover:opacity-100"
+          :aria-label="`Signed in as ${username}. Switch user.`"
           @click="logout()"
         >
           <AppIcon name="user" :size="11" />
-          {{ username }}
+          <span class="hidden max-w-[10ch] truncate sm:inline">{{ username }}</span>
         </button>
 
         <button

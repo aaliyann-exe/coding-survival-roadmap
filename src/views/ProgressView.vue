@@ -251,12 +251,10 @@ function doReset() {
 
     <!-- achievements -->
     <section class="mb-14">
-      <div class="mb-5 flex items-center gap-3">
-        <h2 class="min-w-0 font-rule text-[17px] uppercase leading-tight tracking-[0.08em] text-ink">
-          Achievements
-        </h2>
-        <span class="h-px flex-1 bg-line/70" aria-hidden="true" />
-        <span class="font-mono text-[10px] text-faint"
+      <div class="section-head">
+        <h2>Achievements</h2>
+        <span class="section-rule" aria-hidden="true" />
+        <span class="section-count"
           >{{ unlocked.length }} / {{ unlocked.length + locked.length }}</span
         >
       </div>

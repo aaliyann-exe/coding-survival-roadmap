@@ -71,12 +71,8 @@ function reset() {
         <span class="label-mono w-14 shrink-0">Type</span>
         <button
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="
-            activeType === 'all'
-              ? 'border-line-strong text-ink'
-              : 'border-line text-faint hover:text-ink'
-          "
+          class="filter-tab"
+          :aria-pressed="activeType === 'all'"
           @click="activeType = 'all'"
         >
           All
@@ -85,12 +81,8 @@ function reset() {
           v-for="type in resourceTypeOrder"
           :key="type"
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="
-            activeType === type
-              ? 'border-line-strong text-ink'
-              : 'border-line text-faint hover:text-ink'
-          "
+          class="filter-tab"
+          :aria-pressed="activeType === type"
           @click="activeType = type"
         >
           {{ resourceTypeLabels[type] }}
@@ -101,12 +93,8 @@ function reset() {
         <span class="label-mono w-14 shrink-0">Track</span>
         <button
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="
-            activeTrack === 'all'
-              ? 'border-line-strong text-ink'
-              : 'border-line text-faint hover:text-ink'
-          "
+          class="filter-tab"
+          :aria-pressed="activeTrack === 'all'"
           @click="activeTrack = 'all'"
         >
           All
@@ -115,26 +103,22 @@ function reset() {
           v-for="r in roadmaps"
           :key="r.id"
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="[
-            r.trackClass,
-            activeTrack === r.id
-              ? 'border-[rgb(var(--track))] text-ink'
-              : 'border-line text-faint hover:text-ink',
-          ]"
+          class="filter-tab"
+          :class="r.trackClass"
+          :aria-pressed="activeTrack === r.id"
           @click="activeTrack = r.id"
         >
           {{ r.short }}
         </button>
+      </div>
 
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span class="label-mono w-14 shrink-0">Cost</span>
+        <!-- Its own row rather than tacked onto the end of "Track": it filters
+             a different thing, and sitting in that row implied otherwise. -->
         <button
           type="button"
-          class="border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors"
-          :class="
-            freeOnly
-              ? 'border-line-strong text-ink'
-              : 'border-line text-faint hover:text-ink'
-          "
+          class="filter-tab"
           :aria-pressed="freeOnly"
           @click="freeOnly = !freeOnly"
         >
@@ -142,7 +126,7 @@ function reset() {
         </button>
 
         <label
-          class="ml-auto flex min-w-[180px] flex-1 items-center gap-2 border border-line bg-surface px-3 sm:max-w-xs"
+          class="ml-auto flex min-h-[2.25rem] min-w-[180px] flex-1 items-center gap-2 border border-line bg-surface px-3 focus-within:border-line-strong sm:max-w-xs"
         >
           <AppIcon name="search" :size="13" class="text-faint" />
           <input
@@ -167,12 +151,10 @@ function reset() {
 
     <div v-else class="space-y-14">
       <section v-for="group in grouped" :key="group.type">
-        <div class="mb-5 flex items-center gap-3">
-          <h2 class="min-w-0 font-rule text-[17px] uppercase leading-tight tracking-[0.08em] text-ink">
-            {{ resourceTypeLabels[group.type] }}
-          </h2>
-          <span class="h-px flex-1 bg-line/70" aria-hidden="true" />
-          <span class="font-mono text-[10px] text-faint">{{ group.items.length }}</span>
+        <div class="section-head">
+          <h2>{{ resourceTypeLabels[group.type] }}</h2>
+          <span class="section-rule" aria-hidden="true" />
+          <span class="section-count">{{ group.items.length }}</span>
         </div>
 
         <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">

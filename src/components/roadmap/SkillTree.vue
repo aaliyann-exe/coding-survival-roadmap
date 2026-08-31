@@ -108,11 +108,23 @@ const layout = computed(() => {
   return { items, rows: cursor };
 });
 
-function stageProgress(stageId: string) {
-  const nodes = props.roadmap.nodes.filter((n) => n.stage === stageId);
-  const done = nodes.filter((n) => completedNodeIds.value.has(n.id)).length;
-  return { done, total: nodes.length };
-}
+/** Cleared / total per stage, built once per progress change.
+ * The template asks for this three times per stage band, and the previous
+ * version walked every node in the roadmap on each of those calls — around
+ * 120 nodes x 3 x however many bands, on every render. */
+const stageProgress = computed(() => {
+  const out = new Map<string, { done: number; total: number }>();
+  for (const stage of props.roadmap.stages) {
+    out.set(stage.id, { done: 0, total: 0 });
+  }
+  for (const node of props.roadmap.nodes) {
+    const entry = out.get(node.stage);
+    if (!entry) continue;
+    entry.total += 1;
+    if (completedNodeIds.value.has(node.id)) entry.done += 1;
+  }
+  return out;
+});
 
 /** One batched layout read per frame — see onMounted for the throttling. */
 function measure() {
@@ -374,20 +386,22 @@ const edgeStroke: Record<EdgeKind, string> = {
                   "
                 />
                 <span
+                  v-if="stageProgress.get(item.stage.id)"
                   class="shrink-0 font-mono text-[10px] tabular-nums"
                   :class="
-                    stageProgress(item.stage.id).done === stageProgress(item.stage.id).total
+                    stageProgress.get(item.stage.id)!.done ===
+                    stageProgress.get(item.stage.id)!.total
                       ? 'text-[rgb(var(--seal))]'
                       : 'text-[rgb(var(--astral))]/70'
                   "
                 >
-                  {{ stageProgress(item.stage.id).done }}/{{
-                    stageProgress(item.stage.id).total
+                  {{ stageProgress.get(item.stage.id)!.done }}/{{
+                    stageProgress.get(item.stage.id)!.total
                   }}
                 </span>
               </div>
               <p
-                class="mt-1.5 max-w-2xl pl-10 text-[12px] leading-relaxed text-[rgb(var(--star))]/50"
+                class="mt-1.5 max-w-2xl pl-1 text-[12px] leading-relaxed text-[rgb(var(--star))]/50 md:pl-10"
               >
                 {{ item.stage.blurb }}
               </p>

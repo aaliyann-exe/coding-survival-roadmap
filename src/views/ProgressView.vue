@@ -187,8 +187,13 @@ function doReset() {
         waiting on a server.
       </p>
       <div class="flex flex-wrap gap-2.5">
-        <RouterLink v-if="nextUp" :to="`/roadmaps/${roadmapForNode(nextUp.node.id)?.id}?node=${nextUp.node.id}`" class="btn btn-primary">
-          <AppIcon name="arrow-right" :size="12" /> Start with {{ nextUp.node.title }}
+        <RouterLink
+          v-if="nextUp"
+          :to="`/roadmaps/${roadmapForNode(nextUp.node.id)?.id}?node=${nextUp.node.id}`"
+          class="btn btn-primary text-left"
+        >
+          <AppIcon name="arrow-right" :size="12" />
+          Start with {{ nextUp.node.title }}
         </RouterLink>
         <RouterLink to="/roadmaps" class="btn">See all three paths</RouterLink>
       </div>

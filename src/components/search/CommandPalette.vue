@@ -11,6 +11,7 @@ const { isOpen, query, results, close, toggle } = useCommandPalette();
 const { lock, unlock } = useScrollLock();
 
 const input = ref<HTMLInputElement | null>(null);
+const panel = ref<HTMLElement | null>(null);
 const listbox = ref<HTMLElement | null>(null);
 const highlighted = ref(0);
 let lastFocused: HTMLElement | null = null;
@@ -124,20 +125,32 @@ function onDialogKey(event: KeyboardEvent) {
     move(-1);
     return;
   }
-  if (event.key === "Enter") {
+  if (event.key === "Enter" && document.activeElement === input.value) {
     event.preventDefault();
     go(highlighted.value);
     return;
   }
 
-  // Focus never leaves the field: results are driven by the arrow keys and
-  // `aria-activedescendant`, which is the pattern screen readers expect from
-  // a combobox. So Tab has nowhere useful to go inside the sheet, and letting
-  // it walk into the page behind an `aria-modal` dialog is worse than
-  // swallowing it.
-  if (event.key === "Tab") {
+  // Tab stays inside the sheet. Once a query is typed the only focusable
+  // thing in here is the field itself — results are driven by the arrow keys
+  // and `aria-activedescendant`, the pattern a combobox is expected to use —
+  // so this cycles to itself and Tab is effectively inert. On the empty
+  // state the suggestion chips join the cycle, which is the only way to
+  // reach them without a mouse.
+  if (event.key !== "Tab" || !panel.value) return;
+  const items = [
+    ...panel.value.querySelectorAll<HTMLElement>("input, button:not([disabled])"),
+  ].filter((el) => el.offsetParent !== null);
+  if (items.length === 0) return;
+  const first = items[0];
+  const last = items[items.length - 1];
+
+  if (event.shiftKey && document.activeElement === first) {
     event.preventDefault();
-    input.value?.focus();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
   }
 }
 
@@ -152,6 +165,11 @@ function move(delta: number) {
       ?.querySelector<HTMLElement>(`[data-index="${highlighted.value}"]`)
       ?.scrollIntoView({ block: "nearest" });
   });
+}
+
+function applySuggestion(term: string) {
+  query.value = term;
+  input.value?.focus();
 }
 
 function go(index: number) {
@@ -220,6 +238,7 @@ onUnmounted(() => {
            taller than what you can actually see. -->
       <div
         v-if="isOpen"
+        ref="panel"
         class="inset-rule corner-frame fixed left-1/2 top-[5vh] z-[120] flex max-h-[86dvh] w-[min(640px,calc(100vw-1.5rem))] -translate-x-1/2 flex-col border-2 border-line bg-surface shadow-lift sm:top-[8vh]"
         role="dialog"
         aria-modal="true"
@@ -258,7 +277,7 @@ onUnmounted(() => {
               :key="s"
               type="button"
               class="chip min-h-[1.75rem] transition-colors hover:border-line-strong hover:text-ink"
-              @click="query = s"
+              @click="applySuggestion(s)"
             >
               {{ s }}
             </button>

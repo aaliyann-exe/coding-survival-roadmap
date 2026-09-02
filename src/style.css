@@ -182,6 +182,14 @@
     color-scheme: dark;
   }
 
+  /* Discord Twemoji */
+  .emoji {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.125em;
+  }
+
   /* Discipline accents. Set on a wrapper via `trackClass`, inherited below. */
   .track-frontend {
     --track: 61 90 122;
@@ -310,7 +318,7 @@
   .rule-heading::before,
   .rule-heading::after {
     content: "";
-    @apply h-px flex-1 bg-line/70;
+    @apply flex-1 h-px bg-line/70;
   }
 
   .panel {
@@ -373,13 +381,13 @@
      Used by every grouped list (projects by tier, resources by type,
      achievements). Previously copied inline into three views. */
   .section-head {
-    @apply mb-5 flex items-center gap-3;
+    @apply flex items-center gap-3 mb-5;
   }
   .section-head > h2 {
     @apply min-w-0 font-rule text-[17px] uppercase leading-tight tracking-[0.08em] text-ink;
   }
   .section-head > .section-rule {
-    @apply h-px flex-1 bg-line/70;
+    @apply flex-1 h-px bg-line/70;
   }
   .section-head > .section-count {
     @apply shrink-0 font-mono text-[10px] tabular-nums text-faint;
@@ -781,7 +789,7 @@
 
   /* The rune column on the left of every node: a glyph well. */
   .rune-well {
-    @apply flex shrink-0 items-center justify-center border-r-2 border-line;
+    @apply flex items-center justify-center border-r-2 shrink-0 border-line;
     width: 2.5rem;
     background-color: rgb(var(--sunken) / 0.7);
   }
@@ -1070,11 +1078,11 @@
       ),
       /* stitching: short, low-contrast, and widely spaced — at full strength
          it read as a barber's pole rather than thread */
-      repeating-linear-gradient(
-        to bottom,
-        transparent 0 30px,
-        rgb(var(--line-strong) / 0.22) 30px 40px
-      );
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0 30px,
+          rgb(var(--line-strong) / 0.22) 30px 40px
+        );
     box-shadow: 3px 0 9px -3px rgb(var(--ink) / 0.55);
   }
   @media (min-width: 1024px) {
@@ -1089,7 +1097,7 @@
   }
   .running-head::after {
     content: "";
-    @apply h-px flex-1;
+    @apply flex-1 h-px;
     background-image: linear-gradient(
       to right,
       rgb(var(--line) / 0.45),
@@ -1170,13 +1178,13 @@
 
   /* A ruled register row: label left, figure right, leader rule between. */
   .ledger-row {
-    @apply flex items-baseline gap-3 border-b border-dotted border-line/45 py-2;
+    @apply flex items-baseline gap-3 py-2 border-b border-dotted border-line/45;
   }
   .ledger-row > .ledger-label {
     @apply shrink-0 font-mono text-[10px] uppercase tracking-widest text-faint;
   }
   .ledger-row > .ledger-rule {
-    @apply h-px flex-1;
+    @apply flex-1 h-px;
     background-image: repeating-linear-gradient(
       to right,
       rgb(var(--line) / 0.3) 0 2px,
@@ -1184,7 +1192,7 @@
     );
   }
   .ledger-row > .ledger-value {
-    @apply shrink-0 font-mono tabular-nums text-ink;
+    @apply font-mono shrink-0 tabular-nums text-ink;
   }
 }
 
@@ -1206,7 +1214,6 @@
         transparent 1px 6px
       );
   }
-
 
   .track-text {
     color: rgb(var(--track));
@@ -1265,7 +1272,6 @@
     background: rgb(var(--line-strong) / 0.8);
   }
 
-
   /* Struck wax seal. */
   .wax-seal {
     @apply flex items-center justify-center;
@@ -1274,9 +1280,6 @@
     border-radius: 9999px;
     border: 4px double currentColor;
   }
-
-
-
 
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;

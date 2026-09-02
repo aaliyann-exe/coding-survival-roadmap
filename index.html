@@ -17,8 +17,16 @@
 
     <!-- The desk colour per theme, not the page colour: the book sits on the
          desk, so that is what meets the browser chrome at the edges. -->
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#261B14" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0E0A09" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#261B14"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#0E0A09"
+    />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Coding Survival Roadmap" />
@@ -37,8 +45,20 @@
     <!-- Display faces are self-hosted (src/style.css @font-face, files in
          public/fonts) so first paint doesn't depend on reaching Google's
          CDN — preload the two used above the fold. -->
-    <link rel="preload" href="/fonts/cinzel-variable.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/eb-garamond-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/cinzel-variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/eb-garamond-variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
 
     <!-- Google Fonts as a secondary source. The self-hosted @font-face rules
          above win (same family names, declared first in the cascade); this is
@@ -64,7 +84,8 @@
           var saved = localStorage.getItem("theme");
           var dark =
             saved === "dark" ||
-            (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches);
+            (!saved &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
           if (dark) document.documentElement.classList.add("dark");
         } catch (e) {
           /* private mode / storage blocked — just render light. */

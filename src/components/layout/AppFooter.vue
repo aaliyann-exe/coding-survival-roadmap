@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { roadmaps, totalTopics } from "@/data/roadmaps";
 import projects from "@/data/projects";
 import { allResources } from "@/data/resources";
@@ -9,6 +10,12 @@ const siteLinks = [
   { to: "/resources", label: "Resources" },
   { to: "/progress", label: "Progress" },
 ];
+
+/** The "top secret" link is a rickroll. Once it has been taken the label owns
+ * up to it, and the pointing emoji go with it: they were there to bait the
+ * click, and there is no second click to bait. Deliberately not persisted —
+ * a reload sets the bait again for whoever opens the page next. */
+const rickrolled = ref(false);
 </script>
 
 <template>
@@ -97,16 +104,21 @@ const siteLinks = [
         <div
           class="flex items-center justify-center ml-auto min-h-[40px] gap-1.5 font-mono uppercase tracking-widest text-[10px] transition-opacity"
         >
-          <span>🤓👉</span>
+          <span v-if="!rickrolled">🤓👉</span>
 
           <a
             href="https://youtu.be/QDia3e12czc"
             target="_blank"
             rel="noopener noreferrer"
             class="ml-auto flex min-h-[40px] items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest opacity-55 transition-opacity hover:opacity-100"
-            >Top secret</a
+            @click="rickrolled = true"
+            >{{
+              rickrolled
+                ? "Rickroll in big 26, did I just get negative aura..."
+                : "Top secret"
+            }}</a
           >
-          <span>👈🤓</span>
+          <span v-if="!rickrolled">👈🤓</span>
         </div>
       </div>
     </div>

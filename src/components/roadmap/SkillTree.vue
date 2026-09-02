@@ -263,11 +263,13 @@ watch(
 );
 
 /** Pathway inks. Sealed routes burn druid-green, walkable ones astral, and
- * dormant ones are barely charted. */
+ * dormant ones are barely charted. The astral tone comes from the sky token
+ * rather than `--astral` directly: these are drawn on the sky itself, and a
+ * pale blue filament disappears into a daylit one. */
 const edgeStroke: Record<EdgeKind, string> = {
   sealed: "rgb(var(--seal))",
-  open: "rgb(var(--astral))",
-  locked: "rgb(var(--astral))",
+  open: "rgb(var(--sky-accent))",
+  locked: "rgb(var(--sky-accent))",
 };
 </script>
 
@@ -370,7 +372,7 @@ const edgeStroke: Record<EdgeKind, string> = {
                   <ArcaneSigil :seed="item.stage.id" :size="14" />
                 </span>
                 <h2
-                  class="shrink-0 text-[12px] uppercase tracking-[0.28em] text-[rgb(var(--star))]/90"
+                  class="shrink-0 text-[12px] uppercase tracking-[0.28em] text-[rgb(var(--sky-ink))]"
                   style="font-family: 'Cinzel', Georgia, serif"
                 >
                   {{ item.stage.title }}
@@ -380,7 +382,7 @@ const edgeStroke: Record<EdgeKind, string> = {
                   style="
                     background-image: linear-gradient(
                       to right,
-                      rgb(var(--astral) / 0.5),
+                      rgb(var(--sky-accent) / 0.55),
                       transparent
                     );
                   "
@@ -392,7 +394,7 @@ const edgeStroke: Record<EdgeKind, string> = {
                     stageProgress.get(item.stage.id)!.done ===
                     stageProgress.get(item.stage.id)!.total
                       ? 'text-[rgb(var(--seal))]'
-                      : 'text-[rgb(var(--astral))]/70'
+                      : 'text-[rgb(var(--sky-accent))]'
                   "
                 >
                   {{ stageProgress.get(item.stage.id)!.done }}/{{
@@ -401,7 +403,7 @@ const edgeStroke: Record<EdgeKind, string> = {
                 </span>
               </div>
               <p
-                class="mt-1.5 max-w-2xl pl-1 text-[12px] leading-relaxed text-[rgb(var(--star))]/50 md:pl-10"
+                class="mt-1.5 max-w-2xl pl-1 text-[12px] leading-relaxed text-[rgb(var(--sky-ink-soft))] md:pl-10"
               >
                 {{ item.stage.blurb }}
               </p>

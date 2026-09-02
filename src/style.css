@@ -116,6 +116,27 @@
     --ember: 214 168 96;
     --portal-rim: 176 142 82;
 
+    /* Ink for the handful of things drawn straight onto the sky rather than
+       onto a plate: stage headings, their blurbs, the tally, the pathways.
+       The plates carry their own dark ground and so keep starlight text in
+       both themes, but a heading floating on a daylight sky has to be dark or
+       it disappears — hence a token rather than `--star` at an opacity. */
+    --sky-ink: 40 32 52;
+    --sky-ink-soft: 88 74 98;
+    --sky-accent: 46 82 142;
+
+    /* Daylight. In the light theme the portal opens onto a sky running from
+       dawn at the rim down to the sun going out at the sill, so the two
+       themes read as the same aperture at two different hours. Night keeps
+       its own palette below; these are never referenced under `.dark`. */
+    --sky-dawn: 128 178 226;
+    --sky-high: 176 208 235;
+    --sky-pale: 238 216 188;
+    --sky-dusk: 240 162 96;
+    --sky-ember: 212 100 54;
+    --sun: 255 232 178;
+    --portal-ground: 158 199 233;
+
     color-scheme: light;
   }
 
@@ -151,6 +172,12 @@
     --arcane: 172 148 244;
     --ember: 224 180 108;
     --portal-rim: 150 118 62;
+
+    /* On the night sky that same ink is starlight again. */
+    --sky-ink: 236 240 255;
+    --sky-ink-soft: 126 132 152;
+    --sky-accent: 146 172 240;
+    --portal-ground: 5 6 18;
 
     color-scheme: dark;
   }
@@ -557,7 +584,7 @@
      parchment, then the material darkens into the void beneath. */
   .portal {
     position: relative;
-    background-color: rgb(var(--void));
+    background-color: rgb(var(--portal-ground));
     box-shadow:
       /* engraved lip in the parchment */
       0 0 0 1px rgb(var(--portal-rim) / 0.9),
@@ -862,10 +889,18 @@
     animation: loop-draw 2s ease-in-out infinite;
   }
 
-  /* Arrowhead: static geometry, independently animated */
+  /* Arrowhead: static geometry, independently animated.
+
+     Drawn as two open strokes rather than a filled triangle so it reads as
+     the tip of the same pen line as the arc — a solid wedge reads as a play
+     button sitting on the end of the curve. It inherits the arc's stroke
+     width and round joins, but must clear the dash pattern the arc uses to
+     draw itself in, or the head would be offset out of sight along with it. */
   .quote-loop .loop-head {
-    fill: currentColor;
-    stroke: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
     opacity: 0;
   }
 

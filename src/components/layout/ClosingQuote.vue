@@ -71,16 +71,15 @@ onBeforeUnmount(() => observer?.disconnect());
         <span class="quote-key"
           >relearn<!-- the arc runs right-to-left: from the "n" back over the
                word to the "r", ending in a head that points down at it -->
-          <svg
-            class="quote-loop"
-            viewBox="0 0 120 40"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
+          <svg class="quote-loop" viewBox="0 0 120 40" aria-hidden="true">
             <path d="M110 36 C110 2 10 2 10 30" vector-effect="non-scaling-stroke" />
+            <!-- The arc's final control point is directly above its end, so
+                 the pen is travelling straight down as it lands: the head is
+                 a chevron symmetric about the vertical, tipped just past the
+                 end of the curve. -->
             <path
               class="loop-head"
-              d="M1 16 L10 34 L21 17"
+              d="M4 22 L10 33 L16 22"
               vector-effect="non-scaling-stroke"
             />
           </svg></span
